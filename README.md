@@ -17,6 +17,10 @@ Current replicated papers:
 - Koop and Korobilis (2010), "Bayesian Multivariate Time Series Methods for
   Empirical Macroeconomics";
 - Chan (2022), "Asymmetric conjugate priors for large Bayesian VARs".
+- Selected next 10 core papers from the reference networks of the three papers
+  above, including Del Negro-Schorfheide, Litterman, Kadiyala-Karlsson,
+  Sims-Zha, Banbura-Giannone-Reichlin, GLP, Carriero-Clark-Marcellino,
+  Primiceri, Bernanke-Boivin-Eliasz, and Stock-Watson.
 
 Each paper folder contains the source paper, reproduction code, raw and
 processed data, generated results, figures, references, formula derivations, and
@@ -36,6 +40,8 @@ Examples:
 Rscript paper_reproductions/paccagnini_2010_dsge_var/code/run_replication.R
 Rscript paper_reproductions/koop_korobilis_2010_bayesian_multivariate_time_series/code/run_replication.R
 Rscript paper_reproductions/chan_2022_asymmetric_conjugate_bvar/code/run_replication.R
+python3 paper_reproductions/selected_next_10_core_papers/code/download_sources.py
+Rscript paper_reproductions/selected_next_10_core_papers/code/run_baseline_replications.R
 ```
 
 The older root-level Paccagnini scripts are still available:
@@ -56,6 +62,7 @@ The cross-paper summary is:
 
 ```text
 paper_reproductions/replication_overview_zh.md
+paper_reproductions/selected_next_10_core_papers/notes/replication_summary_zh.md
 ```
 
 Use `paper_reproductions/_template/` as the starting structure for each new

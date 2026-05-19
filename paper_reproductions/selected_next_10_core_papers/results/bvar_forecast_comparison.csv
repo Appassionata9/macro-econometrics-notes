@@ -1,0 +1,13 @@
+"model","variable","rmse","lambda"
+"OLS VAR","ip_growth",11.4798023800544,NA
+"OLS VAR","inflation",3.33682995560178,NA
+"OLS VAR","unemployment",0.252890409629395,NA
+"OLS VAR","fedfunds",0.198007241184983,NA
+"Litterman Minnesota BVAR","ip_growth",11.4862385943785,0.2
+"Litterman Minnesota BVAR","inflation",3.30347731596332,0.2
+"Litterman Minnesota BVAR","unemployment",0.217695414946738,0.2
+"Litterman Minnesota BVAR","fedfunds",0.180179165012656,0.2
+"GLP selected-tightness BVAR","ip_growth",11.4817570996346,0.3
+"GLP selected-tightness BVAR","inflation",3.30697223495172,0.3
+"GLP selected-tightness BVAR","unemployment",0.232124921980501,0.3
+"GLP selected-tightness BVAR","fedfunds",0.185119573243255,0.3
