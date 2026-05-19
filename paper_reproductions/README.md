@@ -77,3 +77,6 @@ smets_wouters_2007_bayesian_dsge
 See `replication_overview_zh.md` for the thesis-proposal-oriented summary across
 the first three papers, and `selected_next_10_core_papers/notes/replication_summary_zh.md`
 for the 10-paper follow-up batch.
+
+The latest folder-completion audit is documented in
+`selected_next_10_core_papers/notes/project_completion_audit_zh.md`.

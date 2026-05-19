@@ -65,6 +65,7 @@ The cross-paper summary is:
 paper_reproductions/replication_overview_zh.md
 paper_reproductions/selected_next_10_core_papers/notes/replication_summary_zh.md
 paper_reproductions/selected_next_10_core_papers/notes/exact_replication_status_zh.md
+paper_reproductions/selected_next_10_core_papers/notes/project_completion_audit_zh.md
 ```
 
 Use `paper_reproductions/_template/` as the starting structure for each new
