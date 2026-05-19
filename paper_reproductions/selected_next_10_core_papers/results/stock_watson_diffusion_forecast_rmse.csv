@@ -1,0 +1,13 @@
+"target","horizon","model","rmse"
+"ip_growth",6,"AR",9.56882996229335
+"ip_growth",6,"AR plus diffusion factors",10.0860747208969
+"ip_growth",12,"AR",10.0108987508798
+"ip_growth",12,"AR plus diffusion factors",12.0311209250712
+"ip_growth",24,"AR",12.1015167009063
+"ip_growth",24,"AR plus diffusion factors",12.0422786356945
+"inflation",6,"AR",3.82325889977007
+"inflation",6,"AR plus diffusion factors",3.91268845213458
+"inflation",12,"AR",3.90701029837188
+"inflation",12,"AR plus diffusion factors",3.88060599152288
+"inflation",24,"AR",4.12529191775836
+"inflation",24,"AR plus diffusion factors",4.76301721841223

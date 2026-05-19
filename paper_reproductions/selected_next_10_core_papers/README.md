@@ -50,6 +50,7 @@ From the repository root:
 ```sh
 python3 paper_reproductions/selected_next_10_core_papers/code/download_sources.py
 Rscript paper_reproductions/selected_next_10_core_papers/code/run_baseline_replications.R
+Rscript paper_reproductions/selected_next_10_core_papers/code/run_extended_replications.R
 ```
 
 Outputs are written to:
@@ -64,4 +65,6 @@ small BVAR marginal-likelihood grid. See:
 
 ```text
 paper_reproductions/selected_next_10_core_papers/notes/replication_summary_zh.md
+paper_reproductions/selected_next_10_core_papers/notes/exact_replication_status_zh.md
+paper_reproductions/selected_next_10_core_papers/notes/reference_matrix_zh.md
 ```

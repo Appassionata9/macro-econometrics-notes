@@ -17,7 +17,7 @@ Litterman 是 Minnesota prior 的经典源头。后面的 Sims-Zha、Banbura-Gia
 - 代码：`../code/run_baseline_replications.R`
 - 输出：`../results/bvar_forecast_comparison.csv`
 
-Minneapolis Fed 的 WP274 PDF 当前返回 403，失败记录在 `../data/raw/DOWNLOAD_FAILURES.md`。文献信息仍保留在 source inventory 中。
+Minneapolis Fed 的 WP274 PDF 当前返回 403，失败记录在 `../data/raw/DOWNLOAD_FAILURES.md`；脚本已通过可访问的 JBES PDF 镜像下载论文到 `paper/wp274_litterman_1986.pdf`。
 
 ## 公式入口
 

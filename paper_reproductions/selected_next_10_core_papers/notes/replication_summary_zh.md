@@ -36,8 +36,13 @@ DSGE-VAR 先验构造
 | FRED-QD 2026-04 quarterly CSV | `data/raw/fred_qd/2026-04-qd.csv` | quarterly macro robustness check |
 | FRED 单序列 | `data/raw/fred_series/` | 小型 VAR/BVAR 基准变量 |
 | GLP replication archive | `giannone_lenza_primiceri_2015_prior_selection/data/raw/GLPreplicationWeb.zip` | 原作者 Matlab 代码、DataSW 数据和 marginal-likelihood 例子 |
+| BGR replication archive | `banbura_giannone_reichlin_2010_large_bvar/data/raw/LargeBVARReplicationWeb.zip` | 原作者 Matlab 代码、HoF 数据和 large BVAR 表图复现入口 |
+| CCM JAE archive | `carriero_clark_marcellino_2015_bvar_specification/data/raw/` | 原作者数据和 specification-choice 程序 |
 | Kadiyala-Karlsson JAE archive | `kadiyala_karlsson_1997_bvar_numerical/data/raw/` | 原作者数据、Fortran/Gauss 代码和输出 |
+| Litterman JBES PDF | `litterman_1986_bvar_forecasting/paper/wp274_litterman_1986.pdf` | Minnesota prior 论文版本 |
+| Primiceri working paper PDF | `primiceri_2005_tvp_svar/paper/tvsvar_final_july_04.pdf` | TVP-SVAR 论文版本 |
 | Bernanke-Boivin-Eliasz FEDS PDF | `bernanke_boivin_eliasz_2005_favar/paper/feds_2004_03_favar.pdf` | FAVAR 论文版本 |
+| BBE 原始 Excel | `bernanke_boivin_eliasz_2005_favar/data/raw/bbe_data.xlsx` | Table I / Figure II 风格 FAVAR 复现 |
 | Stock-Watson JBES PDF | `stock_watson_2002_diffusion_indexes/paper/stock_watson_2002_diffusion_indexes.pdf` | diffusion index 论文版本 |
 
 仍需注意：Litterman (1986) 的 Minneapolis Fed PDF 链接当前返回 403，因此下载脚本把它记录在 `data/raw/DOWNLOAD_FAILURES.md`。文献信息和 DOI 已记录，方法复现不受影响。
@@ -49,6 +54,7 @@ DSGE-VAR 先验构造
 ```sh
 python3 paper_reproductions/selected_next_10_core_papers/code/download_sources.py
 Rscript paper_reproductions/selected_next_10_core_papers/code/run_baseline_replications.R
+Rscript paper_reproductions/selected_next_10_core_papers/code/run_extended_replications.R
 ```
 
 本地输出：
@@ -64,6 +70,11 @@ Rscript paper_reproductions/selected_next_10_core_papers/code/run_baseline_repli
 | `figures/diffusion_factor_variance.png` | diffusion index 方差解释图 |
 | `figures/favar_policy_irf_baseline.png` | FAVAR policy shock IRF 图 |
 | `figures/rolling_policy_rule_coefficients.png` | rolling policy coefficients 图 |
+| `results/stock_watson_diffusion_forecast_rmse.csv` | Stock-Watson 风格 diffusion-index 直接预测 |
+| `results/bgr_system_size_bvar_rmse.csv` | Banbura-Giannone-Reichlin 风格 system-size BVAR 比较 |
+| `results/carriero_specification_grid.csv` | Carriero-Clark-Marcellino 风格 lag/tightness/horizon grid |
+| `results/primiceri_rolling_window_sensitivity.csv` | Primiceri 风格 rolling window 敏感性 |
+| `results/bbe_table_i_replication.csv` | Bernanke-Boivin-Eliasz Table-I 风格 contribution/R2 |
 
 ## 关键结果
 
@@ -85,6 +96,8 @@ lambda = 0.30
 
 FRED-MD PCA diffusion index 的前 3 个因子累计解释约 36.9% 的 transformed panel variation，前 20 个因子累计解释约 75.0%。这支持 Stock-Watson 和 FAVAR 的核心直觉：大信息集可以被少数 common factors 压缩。
 
+扩展结果里，BBE 原始 Excel 的 Table-I 风格复现显示，Fed funds、industrial production、CPI 的 R-squared 分别约为 1.000、0.746、0.863；monetary policy shock contribution 分别约为 0.151、0.093、0.082。本地数值和公开 R 复现笔记中的数量级一致，但由于当前脚本使用 point-estimate VAR 而非 500 次 bootstrap，置信区间没有在这一轮生成。
+
 ## 10篇论文对应的本地复现内容
 
 | 论文 | 本地复现方式 | 主要输出 |
@@ -100,6 +113,8 @@ FRED-MD PCA diffusion index 的前 3 个因子累计解释约 36.9% 的 transfor
 | Bernanke et al. (2005) | 两步 PCA FAVAR 与 policy IRF | `results/favar_policy_irf_baseline.csv` |
 | Stock and Watson (2002) | FRED-MD principal components / diffusion indexes | `results/diffusion_factor_variance.csv` |
 
+更细的 exact/data/code 状态见 `notes/exact_replication_status_zh.md`；参考文献路线图见 `notes/reference_matrix_zh.md`。
+
 ## 公式推导位置
 
 - 总公式：`notes/formula_derivations.md`
@@ -108,4 +123,4 @@ FRED-MD PCA diffusion index 的前 3 个因子累计解释约 36.9% 的 transfor
 
 ## 当前复现的边界
 
-这一轮已经完成 proposal 阶段最需要的三件事：真实数据、可运行代码、核心公式推导。它不是 10 篇论文全部表格逐表逐图的最终级别复现；其中 GLP 和 Kadiyala-Karlsson 已经拿到原作者 archive，后续可以进一步做 exact table replication。对没有稳定公开代码的论文，本项目先采用 FRED-MD/FRED-QD 真实数据做 method-level replication。
+这一轮已经完成 proposal 阶段最需要的四件事：真实数据、可运行代码、核心公式推导、参考文献路线图。对于有公开 archive 的 BGR、GLP、CCM、Kadiyala-Karlsson 和 BBE，资料已落地；对于没有稳定公开代码的论文，本项目用 FRED-MD/FRED-QD 或公开复现数据做 method-level replication，并在 `exact_replication_status_zh.md` 中标明边界。

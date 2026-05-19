@@ -4,11 +4,16 @@
 
 - FRED-MD/FRED-QD official page: https://www.stlouisfed.org/research/economists/mccracken/fred-databases
 - Giannone, Lenza and Primiceri replication archive: https://doi.org/10.7910/DVN/27345
+- Banbura, Giannone and Reichlin author replication files: https://sites.uw.edu/dgiannon/domenico-giannone-s-homepage/
 - Kadiyala and Karlsson JAE data archive: http://qed.econ.queensu.ca/jae/1997-v12.2/kadiyala-karlsson/
+- Carriero, Clark and Marcellino JAE archive: http://qed.econ.queensu.ca/jae/datasets/carriero002/
 - Litterman working paper, Minneapolis Fed: https://www.minneapolisfed.org/research/wp/wp274.pdf
+- Litterman JBES PDF mirror: https://gpe.ufes.br/sites/gpe.ufes.br/files/field/anexo/Forecasting%20with%20Bayesian%20Vector%20Autoregressions%20Five%20Years%20of%20Experience.pdf
 - Litterman Fed in Print record: https://fedinprint.org/item/fedmwp/42678/original
+- Del Negro and Schorfheide FRB Atlanta/RePEc record: https://econpapers.repec.org/paper/fipfedawp/2002-14.htm
 - Bernanke, Boivin and Eliasz FEDS version: https://www.federalreserve.gov/pubs/feds/2004/200403/200403pap.pdf
 - Bernanke, Boivin and Eliasz QJE DOI page: https://doi.org/10.1162/0033553053327452
+- Bernanke, Boivin and Eliasz R replication notebook/data: https://github.com/jbduarte/blog/blob/master/_notebooks/2020-04-24-FAVAR-Replication.ipynb
 - Stock and Watson NBER working paper page: https://www.nber.org/papers/w6702
 - Stock and Watson paper PDF: https://scholar.harvard.edu/files/stock/files/macroeconomic_forecasting_using_diffusion_indexes.pdf
 - Stock and Watson backup PDF: https://www.princeton.edu/~mwatson/papers/Stock_Watson_JBES_2002.pdf
@@ -44,8 +49,9 @@ instead of current revised FRED data.
 
 ## Download Caveats
 
-- `download_sources.py` currently records a 403 for the Minneapolis Fed
-  Litterman PDF. The bibliographic source is still documented through Fed in
-  Print and DOI records.
+- `download_sources.py` records a 403 for the Minneapolis Fed Litterman PDF,
+  but the JBES PDF mirror downloaded successfully.
 - The Harvard Stock-Watson PDF endpoint was unreliable during this run, so the
   script uses the Princeton author PDF as a fallback.
+- The Del Negro-Schorfheide FRB Atlanta and EconStor PDF endpoints returned
+  HTML/bot-check pages rather than valid PDF payloads, so no fake PDF was saved.

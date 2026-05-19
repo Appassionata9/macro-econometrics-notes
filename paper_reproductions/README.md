@@ -72,7 +72,7 @@ smets_wouters_2007_bayesian_dsge
 | `paccagnini_2010_dsge_var` | Paccagnini (2010), DSGE model evaluation in a Bayesian framework | Reduced DSGE-VAR Monte Carlo replication, real FRED data collected, references and formula derivations documented |
 | `koop_korobilis_2010_bayesian_multivariate_time_series` | Koop and Korobilis (2010), Bayesian multivariate time series methods | Section 2.3 BVAR illustration replicated, author code/data and FRED data collected, references and formula derivations documented |
 | `chan_2022_asymmetric_conjugate_bvar` | Chan (2022), asymmetric conjugate priors for large Bayesian VARs | Table 2 ACP-BVAR marginal-likelihood replication matched, author MATLAB code checked, real source data documented, references and formula derivations documented |
-| `selected_next_10_core_papers` | 10 follow-up core papers selected from the first three papers' reference networks | FRED-MD/FRED-QD data collected, GLP and Kadiyala-Karlsson archives downloaded, BVAR/FAVAR/diffusion-index/rolling-VAR baseline replications run, Chinese notes and formula derivations documented |
+| `selected_next_10_core_papers` | 10 follow-up core papers selected from the first three papers' reference networks | FRED-MD/FRED-QD data collected, GLP, BGR, CCM and Kadiyala-Karlsson archives downloaded, BVAR/FAVAR/diffusion-index/rolling-VAR baseline and extended replications run, Chinese notes, reference matrix and formula derivations documented |
 
 See `replication_overview_zh.md` for the thesis-proposal-oriented summary across
 the first three papers, and `selected_next_10_core_papers/notes/replication_summary_zh.md`

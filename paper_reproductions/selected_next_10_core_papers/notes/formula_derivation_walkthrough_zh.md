@@ -346,3 +346,62 @@ $$
 $$
 
 完整复现需要 MCMC、simulation smoother 和 stochastic volatility block。本批先做 proposal 阶段的透明版本：用 rolling VAR 估计政策方程系数，观察利率对 inflation/unemployment 滞后项的反应是否随时间变化。这个结果不能替代完整 TVP-SVAR posterior，但适合作为后续 exact replication 的 diagnostic baseline。
+
+## 11. BBE Table-I 风格 variance contribution
+
+BBE 两步法估计后，有：
+
+$$
+X_t=\Lambda
+\begin{bmatrix}
+F_t\\R_t
+\end{bmatrix}
++e_t.
+$$
+
+设 FAVAR 的结构冲击响应为
+
+$$
+\Psi_j=\frac{\partial [F_{t+j}',R_{t+j}]'}{\partial \varepsilon_t'}.
+$$
+
+某个可观测变量 \(x_{i,t}\) 对第 \(s\) 个结构冲击的 \(j\) 期响应为：
+
+$$
+\psi_{i,s}(j)=\lambda_i'\Psi_j e_s.
+$$
+
+因此 \(h\) 期累计解释方差 proxy 为：
+
+$$
+V_{i,s}(h)=\sum_{j=0}^h \psi_{i,s}(j)^2.
+$$
+
+货币政策冲击的 contribution 写成：
+
+$$
+\text{Contribution}_{i,MP}(h)
+=
+\frac{V_{i,MP}(h)}
+{\sum_s V_{i,s}(h)+\widehat\sigma_{e,i}^2}.
+$$
+
+本地 `results/bbe_table_i_replication.csv` 就是按这个逻辑，用 BBE 原始 Excel 数据、3 个 PCA 因子和 FYFF 估计得到的 contribution 与 \(R^2\)。
+
+## 12. Stock-Watson direct diffusion forecast
+
+Stock-Watson 的 direct forecast 可以写成：
+
+$$
+y_{t+h}=\alpha_h+\sum_{\ell=0}^{p-1}\rho_{\ell,h}y_{t-\ell}
++\gamma_h'\widehat F_t+\eta_{t+h}.
+$$
+
+对照模型是不含因子的 AR：
+
+$$
+y_{t+h}=\alpha_h+\sum_{\ell=0}^{p-1}\rho_{\ell,h}y_{t-\ell}
++\eta_{t+h}.
+$$
+
+本地扩展复现对 \(h=6,12,24\) 个月分别估计 AR 和 AR+diffusion factors，并在 holdout 样本上计算 RMSE。

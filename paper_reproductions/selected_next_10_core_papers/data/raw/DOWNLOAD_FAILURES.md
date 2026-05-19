@@ -1,1 +1,2 @@
-- https://www.minneapolisfed.org/research/wp/wp274.pdf -> HTTP Error 403: Forbidden
+- https://www.frbatlanta.org/-/media/documents/research/publications/wp/2002/wp0214a.pdf -> downloaded payload did not match .pdf format
+- https://www.econstor.eu/bitstream/10419/100838/1/wp2002-14.pdf -> downloaded payload did not match .pdf format

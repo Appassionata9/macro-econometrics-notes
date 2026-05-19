@@ -7,6 +7,15 @@ ROOT = Path(__file__).resolve().parents[3]
 BASE = ROOT / "paper_reproductions" / "selected_next_10_core_papers"
 
 
+def looks_valid_payload(dest: Path, payload: bytes) -> bool:
+    suffix = dest.suffix.lower()
+    if suffix == ".pdf":
+        return payload.startswith(b"%PDF")
+    if suffix in {".zip", ".xlsx"}:
+        return payload.startswith(b"PK")
+    return True
+
+
 def download(url: str, dest: Path) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists() and dest.stat().st_size > 0:
@@ -15,8 +24,11 @@ def download(url: str, dest: Path) -> None:
     req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     try:
         with urlopen(req, timeout=20) as response:
-            dest.write_bytes(response.read())
-    except (HTTPError, URLError) as exc:
+            payload = response.read()
+        if not looks_valid_payload(dest, payload):
+            raise ValueError(f"downloaded payload did not match {dest.suffix} format")
+        dest.write_bytes(payload)
+    except (HTTPError, URLError, ValueError) as exc:
         failures = BASE / "data/raw/DOWNLOAD_FAILURES.md"
         with failures.open("a", encoding="utf-8") as fh:
             fh.write(f"- {url} -> {exc}\n")
@@ -73,6 +85,10 @@ def main() -> None:
         BASE / "giannone_lenza_primiceri_2015_prior_selection/data/raw/GLPreplicationWeb.zip",
     )
     download(
+        "https://sites.uw.edu/dgiannon/files/2023/01/LargeBVARReplicationWeb.zip",
+        BASE / "banbura_giannone_reichlin_2010_large_bvar/data/raw/LargeBVARReplicationWeb.zip",
+    )
+    download(
         "http://qed.econ.queensu.ca/jae/1997-v12.2/kadiyala-karlsson/readme.kk.txt",
         BASE / "kadiyala_karlsson_1997_bvar_numerical/data/raw/readme.kk.txt",
     )
@@ -84,14 +100,52 @@ def main() -> None:
         "http://qed.econ.queensu.ca/jae/1997-v12.2/kadiyala-karlsson/var.zip",
         BASE / "kadiyala_karlsson_1997_bvar_numerical/data/raw/var.zip",
     )
-
     download(
-        "https://www.minneapolisfed.org/research/wp/wp274.pdf",
+        "http://qed.econ.queensu.ca/jae/datasets/carriero002/readme.ccm.txt",
+        BASE / "carriero_clark_marcellino_2015_bvar_specification/data/raw/readme.ccm.txt",
+    )
+    download(
+        "http://qed.econ.queensu.ca/jae/datasets/carriero002/ccm-data-txt.zip",
+        BASE / "carriero_clark_marcellino_2015_bvar_specification/data/raw/ccm-data-txt.zip",
+    )
+    download(
+        "http://qed.econ.queensu.ca/jae/datasets/carriero002/ccm-data-zip.zip",
+        BASE / "carriero_clark_marcellino_2015_bvar_specification/data/raw/ccm-data-zip.zip",
+    )
+    download(
+        "http://qed.econ.queensu.ca/jae/datasets/carriero002/ccm-programs.zip",
+        BASE / "carriero_clark_marcellino_2015_bvar_specification/data/raw/ccm-programs.zip",
+    )
+
+    download_first_available(
+        [
+            "https://www.minneapolisfed.org/research/wp/wp274.pdf",
+            "https://gpe.ufes.br/sites/gpe.ufes.br/files/field/anexo/Forecasting%20with%20Bayesian%20Vector%20Autoregressions%20Five%20Years%20of%20Experience.pdf",
+        ],
         BASE / "litterman_1986_bvar_forecasting/paper/wp274_litterman_1986.pdf",
+    )
+    download_first_available(
+        [
+            "https://www.frbatlanta.org/-/media/documents/research/publications/wp/2002/wp0214a.pdf",
+            "https://www.econstor.eu/bitstream/10419/100838/1/wp2002-14.pdf",
+        ],
+        BASE / "delnegro_schorfheide_2004_dsge_var/paper/wp2002_14a_delnegro_schorfheide.pdf",
+    )
+    download(
+        "https://faculty.wcas.northwestern.edu/gep575/tvsvar_final_july_04.pdf",
+        BASE / "primiceri_2005_tvp_svar/paper/tvsvar_final_july_04.pdf",
     )
     download(
         "https://www.federalreserve.gov/pubs/feds/2004/200403/200403pap.pdf",
         BASE / "bernanke_boivin_eliasz_2005_favar/paper/feds_2004_03_favar.pdf",
+    )
+    download(
+        "https://raw.githubusercontent.com/jbduarte/blog/master/_notebooks/Data/bbe_data.xlsx",
+        BASE / "bernanke_boivin_eliasz_2005_favar/data/raw/bbe_data.xlsx",
+    )
+    download(
+        "https://raw.githubusercontent.com/jbduarte/blog/master/_notebooks/2020-04-24-FAVAR-Replication.ipynb",
+        BASE / "bernanke_boivin_eliasz_2005_favar/code/2020-04-24-FAVAR-Replication.ipynb",
     )
     download_first_available(
         [
@@ -128,9 +182,15 @@ Downloaded by `code/download_sources.py`.
 ## Paper Archives
 
 - Giannone, Lenza and Primiceri (2015), Harvard Dataverse DOI: https://doi.org/10.7910/DVN/27345
+- Banbura, Giannone and Reichlin (2010), author replication files: https://sites.uw.edu/dgiannon/domenico-giannone-s-homepage/
 - Kadiyala and Karlsson (1997), JAE archive: http://qed.econ.queensu.ca/jae/1997-v12.2/kadiyala-karlsson/
+- Carriero, Clark and Marcellino (2015), JAE archive: http://qed.econ.queensu.ca/jae/datasets/carriero002/
 - Litterman (1986), Minneapolis Fed WP 274: https://www.minneapolisfed.org/research/wp/wp274.pdf
+- Litterman (1986), accessible JBES PDF mirror: https://gpe.ufes.br/sites/gpe.ufes.br/files/field/anexo/Forecasting%20with%20Bayesian%20Vector%20Autoregressions%20Five%20Years%20of%20Experience.pdf
+- Del Negro and Schorfheide (2004), FRB Atlanta/EconStor working paper: https://www.frbatlanta.org/-/media/documents/research/publications/wp/2002/wp0214a.pdf
+- Primiceri (2005), author working paper PDF: https://faculty.wcas.northwestern.edu/gep575/tvsvar_final_july_04.pdf
 - Bernanke, Boivin and Eliasz (2005), FEDS version: https://www.federalreserve.gov/pubs/feds/2004/200403/200403pap.pdf
+- Bernanke, Boivin and Eliasz (2005), R replication data and notebook: https://github.com/jbduarte/blog/blob/master/_notebooks/2020-04-24-FAVAR-Replication.ipynb
 - Stock and Watson (2002), author PDF: https://scholar.harvard.edu/files/stock/files/macroeconomic_forecasting_using_diffusion_indexes.pdf
 - Stock and Watson (2002), backup PDF: https://www.princeton.edu/~mwatson/papers/Stock_Watson_JBES_2002.pdf
 """

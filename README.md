@@ -42,6 +42,7 @@ Rscript paper_reproductions/koop_korobilis_2010_bayesian_multivariate_time_serie
 Rscript paper_reproductions/chan_2022_asymmetric_conjugate_bvar/code/run_replication.R
 python3 paper_reproductions/selected_next_10_core_papers/code/download_sources.py
 Rscript paper_reproductions/selected_next_10_core_papers/code/run_baseline_replications.R
+Rscript paper_reproductions/selected_next_10_core_papers/code/run_extended_replications.R
 ```
 
 The older root-level Paccagnini scripts are still available:
@@ -63,6 +64,7 @@ The cross-paper summary is:
 ```text
 paper_reproductions/replication_overview_zh.md
 paper_reproductions/selected_next_10_core_papers/notes/replication_summary_zh.md
+paper_reproductions/selected_next_10_core_papers/notes/exact_replication_status_zh.md
 ```
 
 Use `paper_reproductions/_template/` as the starting structure for each new
