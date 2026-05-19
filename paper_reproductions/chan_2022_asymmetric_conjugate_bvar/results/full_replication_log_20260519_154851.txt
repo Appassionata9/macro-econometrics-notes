@@ -1,0 +1,8 @@
+Preparing author and FRED data...
+Running asymmetric conjugate BVAR replication...
+Error in file(file, "rt") : cannot open the connection
+Calls: source ... run_dataset -> read_author_data -> read.csv -> read.table -> file
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '/Users/appassionata/Documents/New project/paper_reproductions/chan_2022_asymmetric_conjugate_bvar/data/processed/author_database_6var_1985q1_2019q4.csv': No such file or directory
+Execution halted

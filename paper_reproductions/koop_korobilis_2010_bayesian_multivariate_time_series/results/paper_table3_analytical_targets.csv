@@ -1,0 +1,5 @@
+"prior","inflation_mean_paper","inflation_sd_paper","unemployment_mean_paper","unemployment_sd_paper","tbill_rate_mean_paper","tbill_rate_sd_paper"
+"noninformative",3.105,0.315,4.61,0.318,4.382,0.776
+"minnesota",3.124,0.302,4.628,0.319,4.35,0.741
+"natural_conjugate",3.106,0.313,4.611,0.314,4.38,0.748
+"true_value",3.275,NA,4.7,NA,4.6,NA

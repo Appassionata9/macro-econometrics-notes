@@ -1,0 +1,3458 @@
+
+
+===== PAGE 1 =====
+Electronic copy available at: http://ssrn.com/abstract=1514412
+Bayesian Multivariate Time Series Methods for
+Empirical Macroeconomics
+Gary Koop
+University of Strathclyde
+Dimitris Korobilis
+University of Strathclyde
+September 2009
+Abstract
+Macroeconomic practitioners frequently work with multivariate time
+series models such as VARs, factor augmented VARs as well as time-
+varying parameter versions of these models (including variants with mul-
+tivariate stochastic volatility). These models have a large number of pa-
+rameters and, thus, over-parameterization problems may arise. Bayesian
+methods have become increasingly popular as a way of overcoming these
+problems. In this monograph, we discuss VARs, factor augmented VARs
+and time-varying parameter extensions and show how Bayesian inference
+proceeds. Apart from the simplest of VARs, Bayesian inference requires
+the use of Markov chain Monte Carlo methods developed for state space
+models and we describe these algorithms. The focus is on the empiri-
+cal macroeconomist and we o¤er advice on how to use these models and
+methods in practice and include empirical illustrations. A website pro-
+vides Matlab code for carrying out Bayesian inference in these models.
+1 Introduction
+Most questions of interest to empirical macroeconomists involve several variables
+and, thus, must be addressed using multivariate time series methods. Many
+di¤erent multivariate time series models have been used in macroeconomics,
+but since the pioneering work of Sims (1980), Vector Autoregressive (V AR)
+models have been among the most popular. It soon became apparent that,
+in many applications, the assumption that the V AR coe¢ cients were constant
+over time might be a poor one. For instance, in practice, it is often found that
+the macroeconomy of the 1960s and 1970s was di¤erent from the 1980s and
+1990s. This led to an interest in models which allowed for time variation in
+the V AR coe¢ cients and time-varying parameter V ARs (TVP-V ARs) arose. In
+Both authors are Fellows at the Rimini Centre for Economic Analysis. Address for corre-
+spondence: Gary Koop, Department of Economics, University of Strathclyde, 130 Rottenrow,
+Glasgow G4 0GE, UK. Email: Gary.Koop@strath.ac.uk
+1
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 2 =====
+Electronic copy available at: http://ssrn.com/abstract=1514412
+addition, in the 1980s many industrialized economies experienced a reduction
+in the volatility of many macroeconomic variables. This Great Moderation of
+the business cycle led to an increasing focus on appropriate modelling of the
+error covariance matrix in multivariate time series models and this led to the
+incorporation of multivariate stochastic volatility in many empirical papers. In
+2008 many economies went into recession and many of the associated policy
+discussions suggest that the parameters in V ARs may be changing again.
+Macroeconomic data sets typically involve monthly, quarterly or annual ob-
+servations and, thus are only of moderate size. But V ARs have a great number
+of parameters to estimate. This is particularly true if the number of dependent
+variables is more than two or three (as is required for an appropriate mod-
+elling of many macroeconomic relationships). Allowing for time-variation in
+V AR coe¢ cients causes the number of parameters to proliferate. Allowing for
+the error covariance matrix to change over time only increases worries about
+over-parameterization. The research challenge facing macroeconomists is how
+to build models that are  exible enough to be empirically relevant, capturing
+key data features such as the Great Moderation, but not so  exible as to be
+seriously over-parameterized. Many approaches have been suggested, but a
+common theme in most of these is shrinkage. Whether for forecasting or es-
+timation, it has been found that shrinkage can be of great bene t in reducing
+over-parameterization problems. This shrinkage can take the form of imposing
+restrictions on parameters or shrinking them towards zero. This has initiated a
+large increase in the use of Bayesian methods since prior 1 information provides a
+logical and formally consistent way of introducing shrinkage. Furthermore, the
+computational tools necessary to carry out Bayesian estimation of high dimen-
+sional multivariate time series models have become well-developed and, thus,
+models which may have been di¢ cult or impossible to estimate ten or twenty
+years ago can now be routinely used by macroeconomic practitioners.
+A related class of models, and associated worries about over-parameterization,
+has arisen due to the increase in data availability. Macroeconomists are able to
+work with hundreds of di¤erent time series variables collected by government
+statistical agencies and other policy institutes. Building a model with hundreds
+of time series variables (with at most a few hundred observations on each) is a
+daunting task, raising the issue of a potential proliferation of parameters and
+a need for shrinkage or other methods for reducing the dimensionality of the
+model. Factor methods, where the information in the hundreds of variables
+is distilled into a few factors, are a popular way of dealing with this prob-
+lem. Combining factor methods with V ARs results in Factor-augmented V ARs
+or F A V ARs. However, just as with V ARs, there is a need to allow for time-
+variation in parameters, which leads to an interest in TVP-F A V ARs. Here, too,
+Bayesian methods are popular and for the same reason as with TVP-V ARs:
+Bayesian priors provide a sensible way of avoiding over-parameterization prob-
+lems and Bayesian computational tools are well-designed for dealing with such
+1 Prior information can be purely subjective. However, as will be discussed below, often
+empirical Bayesian or hierarchical priors are used by macroeconomists. For instance, the state
+equation in a state space model can be interpreted as a hierarchical prior.
+2
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 3 =====
+models.
+In this monograph, we survey, discuss and extend the Bayesian literature on
+V ARs, TVP-V ARs and TVP-F A V ARs with a focus on the practitioner. That
+is, we go beyond simply de ning each model, but specify how to use them in
+practice, discuss the advantages and disadvantages of each and o¤er some tips
+on when and why each model can be used. In addition to this, we discuss some
+new modelling approaches for TVP-V ARs. A website contains Matlab code
+which allows for Bayesian estimation of the models discussed in this monograph.
+Bayesian inference often involves the use of Markov chain Monte Carlo (MCMC)
+posterior simulation methods such as the Gibbs sampler. For many of the
+models, we provide complete details in this monograph. However, in some cases
+we only provide an outline of the MCMC algorithm. Complete details of all
+algorithms are given in a manual on the website.
+Empirical macroeconomics is a very wide  eld and V ARs, TVP-V ARs and
+factor models, although important, are only some of the tools used in the  eld.
+It is worthwhile brie y mentioning what we are not covering in this monograph.
+There is virtually nothing in this monograph about macroeconomic theory and
+how it might infuse econometric modelling. For instance, Bayesian estima-
+tion of dynamic stochastic general equilibrium (DSGE) models is very popular.
+There will be no discussion of DSGE models in this monograph (see An and
+Schorfheide, 2007 or Del Negro and Schorfheide, 2009 for excellent treatments
+of Bayesian DSGE methods). Also, macroeconomic theory is often used to pro-
+vide identifying restrictions to turn reduced form V ARs into structural V ARs
+suitable for policy analysis. We will not discuss structural V ARs, although some
+of our empirical examples will provide impulse responses from structural V ARs
+using standard identifying assumptions.
+There is also a large literature on what might, in general, be called regime-
+switching models. Examples include Markov switching V ARs, threshold V ARs,
+smooth transition V ARs,  oor and ceiling V ARs, etc. These, although impor-
+tant, are not discussed here.
+The remainder of this monograph is organized as follows. Section 2 provides
+discussion of V ARs to develop some basic insights into the sorts of shrinkage
+priors (e.g. the Minnesota prior) and methods of  nding empirically-sensible
+restrictions (e.g. stochastic search variable selection, or SSVS) that are used
+in empirical macroeconomics. Our goal is to extend these basic methods and
+priors used with V ARs, to TVP variants. However, before considering these
+extensions, Section 3 discusses Bayesian inference in state space models using
+MCMC methods. We do this since TVP-V ARs (including variants with mul-
+tivariate stochastic volatility) are state space models and it is important that
+the practitioner knows the Bayesian tools associated with state space models
+before proceeding to TVP-V ARs. Section 4 discusses Bayesian inference in TVP-
+V ARs, including variants which combine the Minnesota prior or SSVS with the
+standard TVP-V AR. Section 5 discusses factor methods, beginning with the dy-
+namic factor model, before proceeding to the factor augmented V AR (F A V AR)
+and TVP-F A V ARs. Empirical illustrations are used throughout and Matlab
+code for implementing these illustrations (or, more generally, doing Bayesian
+3
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 4 =====
+inference in V ARs, TVP-V ARs and TVP-F A V ARs) is available on the website
+associated with this monograph. 2
+2 Bayesian V ARs
+2.1 Introduction and Notation
+The V AR(p) model can be written as:
+yt = a0 +
+pX
+j=1
+Ajytj + "t (1)
+where yt for t = 1 ; ::; T is an M  1 vector containing observations on M time
+series variables, "t is an M 1 vector of errors, a0 is an M 1 vector of intercepts
+and Aj is an M  M matrix of coe¢ cients. We assume "t to be i.i.d. N (0; ).
+Exogenous variables or more deterministic terms (e.g. deterministic trends or
+seasonals) can easily be added to the V AR and included in all the derivations
+below, but we do not do so to keep the notation as simple as possible.
+The V AR can be written in matrix form in di¤erent ways and, depending on
+how this is done, some of the literature expresses results in terms of the mul-
+tivariate Normal and others in terms of the matric-variate Normal distribution
+(see, e.g. Canova, 2007, and Kadiyala and Karlsson, 1997). The former arises if
+we use an M T 1 vector y which stacks all T observations on the  rst dependent
+variable, then all T observations on the second dependent variable, etc.. The
+latter arises if we de ne Y to be a T M matrix which stacks the T observations
+on each dependent variable in columns next to one another. " and E denote
+stackings of the errors in a manner conformable to y and Y , respectively. De ne
+xt =
+
+1; y0
+t1; ::; y0
+tp
+
+and
+X =
+2
+6664
+x1
+x2
+...
+xT
+3
+7775 : (2)
+Note that, if we let K = 1 + M p be the number of coe¢ cients in each equation
+of the V AR, then X is a T  K matrix.
+Finally, if A = ( a0 A1 :: A p)0 we de ne  = vec (A) which is a KM  1
+vector which stacks all the V AR coe¢ cients (and the intercepts) into a vector.
+With all these de nitions, we can write the V AR either as:
+Y = XA + E (3)
+or
+y = (IM 
+ X)  + "; (4)
+2 The website address is: http://personal.strath.ac.uk/gary.koop/bayes_matlab_code_by_koop_and_korobilis.html
+4
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 5 =====
+where "  N (0;  
+ IM ).
+The likelihood function can be derived and shown to be of a form that breaks
+into two parts: one a distribution for  given  and another where 1 has a
+Wishart distribution. 3 That is,
+j; y  N
+
+b;  
+ (X 0X)1
+(5)
+and
+1jy  W
+
+S1; T  K  M  1
+
+; (6)
+where bA = (X 0X)1 X 0Y is the OLS estimate of A andb = vec
+
+bA
+
+and
+S =
+
+Y  XbA
+0
+Y  XbA
+
+:
+2.2 Priors
+A variety of priors can be used with the V AR, of which we discuss some useful
+ones below. They di¤er in relation to three issues.
+First, V ARs are not parsimonious models. They have a great many coe¢ -
+cients. For instance,  contains KM parameters which, for a V AR(4) involving
+5 dependent variables is 105. With quarterly macroeconomic data, the number
+of observations on each variable might be at most a few hundred. Without prior
+information, it is hard to obtain precise estimates of so many coe¢ cients and,
+thus, features such as impulse responses and forecasts will tend to be impre-
+cisely estimated (i.e. posterior or predictive standard deviations can be large).
+For this reason, it can be desirable to shrink forecasts and prior information
+o¤ers a sensible way of doing this shrinkage. The priors discussed below di¤er
+in the way they achieve this goal.
+Second, the priors used with V ARs di¤er in whether they lead to analytical
+results for the posterior and predictive densities or whether MCMC methods
+are required to carry out Bayesian inference. With the V AR, natural conju-
+gate priors lead to analytical results, which can greatly reduce the computa-
+tional burden. Particularly if one is carrying out a recursive forecasting exercise
+which requires repeated calculation of posterior and predictive distributions,
+non-conjugate priors which require MCMC methods can be very computation-
+ally demanding.
+Third, the priors di¤er in how easily they can handle departures from the
+unrestricted V AR given in (1) such as allowing for di¤erent equations to have
+di¤erent explanatory variables, allowing for V AR coe¢ cients to change over
+time, allowing for heteroskedastic structures for the errors of various sorts, etc.
+Natural conjugate priors typically do not lend themselves to such extensions.
+3 In this monograph, we use standard notational conventions to dene all distributions such
+as the Wishart. See, among many other places, the appendix to Koop, Poirier and Tobias
+(2007). Wikipedia is also a quick and easy source of information about distributions.
+5
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 6 =====
+2.2.1 The Minnesota Prior
+Early work with Bayesian V ARs with shrinkage priors was done by researchers
+at the University of Minnesota or the Federal Reserve Bank of Minneapolis (see
+Doan, Litterman and Sims (1984) and Litterman (1986)). The priors they used
+have come to be known as Minnesota priors. They are based on an approxima-
+tion which leads to great simpli cations in prior elicitation and computation.
+This approximation involves replacing  with an estimate, b. The original Min-
+nesota prior simpli es even further by assuming  to be a diagonal matrix. In
+this case, each equation of the V AR can be estimated one at a time and we can
+setbii = s2
+i (where s2
+i is the standard OLS estimate of the error variance in the
+ith equation and bii is the iith element of b). When  is not assumed to be
+diagonal, a simple estimate such as b = S
+T can be used.
+When  is replaced by an estimate, we only have to worry about a prior for
+ and the Minnesota prior assumes:
+  N (M in; V M in) : (7)
+The Minnesota prior can be thought of as a way of automatically choosing M in
+and V M in in a manner which is sensible in many empirical contexts. To explain
+the Minnesota prior, note  rst that the explanatory variables in the V AR in any
+equation can be divided into the own lags of the dependent variable, the lags
+of the other dependent variables and exogenous or deterministic variables (in
+1 the intercept is the only exogenous or deterministic variable, but in general
+there can be more such variables).
+For the prior mean, M in, the Minnesota prior involves setting most or all
+of its elements to zero (thus ensuring shrinkage of the V AR coe¢ cients towards
+zero and lessening the risk of over- tting). When using growth rates data (e.g.
+GDP growth, the growth in the money supply, etc., which are typically found to
+be stationary and exhibit little persistence), it is sensible to simply set M in =
+0KM . However, when using levels data (e.g. GDP, the money supply, etc.)
+the Minnesota prior uses a prior mean expressing a belief that the individual
+variables exhibit random walk behavior. Thus, M in = 0 KM except for the
+elements corresponding to the  rst own lag of the dependent variable in each
+equation. These elements are set to one. These are the traditional choices for
+M in, but anything is possible. For instance, in our empirical illustration we
+set the prior mean for the coe¢ cient on the  rst own lag to be 0:9, re ecting a
+prior belief that our variables exhibit a fair degree of persistence, but not unit
+root behavior.
+The Minnesota prior assumes the prior covariance matrix, V M in, to be diag-
+onal. If we let V i denote the block of V M in associated with the K coe¢ cients in
+equation i and V i;jj be its diagonal elements, then a common implementation
+of the Minnesota prior would set:
+V i;jj =
+8
+<
+:
+a1
+p2 for coe¢ cients on own lags
+a2ii
+p2jj
+for coe¢ cients on lags of variable j 6= i
+a3ii for coe¢ cients on exogenous variables
+: (8)
+6
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 7 =====
+This prior simpli es the complicated choice of fully specifying all the ele-
+ments of V M in to choosing three scalars, a1; a2; a3. This form captures the
+sensible properties that, as lag length increases, coe¢ cients are increasingly
+shrunk towards zero and that (by setting a1 > a 2) own lags are more likely to
+be important predictors than lags of other variables. The exact choice of values
+for a1; a2; a3 depends on the empirical application at hand and the researcher
+may wish to experiment with di¤erent values for them. Typically, the researcher
+sets ii = s2
+i . Litterman (1986) provides much additional motivation and dis-
+cussion of these choices (e.g. an explanation for how the term ii
+jj
+adjusts for
+di¤erences in the units that the variables are measured in).
+Many variants of the Minnesota prior have been used in practice (e.g. Kadiyala
+and Karlsson (1997) divide prior variances by p instead of the p2 which is used
+in (8)) as researchers make slight adjustments to tailor the prior for their partic-
+ular application. The Minnesota prior has enjoyed a recent boom in popularity
+because of its simplicity and success in many applications, particularly involving
+forecasting. For instance, Banbura, Giannone and Reichlin (2008) use a slight
+modi cation of the Minnesota prior in a large V AR with over 100 dependent
+variables. Typically, factor methods are used with such large panels of data,
+but Banbura et al (2008)  nd that the Minnesota prior leads to even better
+forecasting performance than factor methods.
+A big advantage of the Minnesota prior is that it leads to simple poste-
+rior inference involving only the Normal distribution. It can be show that the
+posterior for  has the form:
+jy  N
+
+M in; V M in
+
+(9)
+where
+V M in =
+h
+V 1
+M in +
+
+b1 
+ (X 0X)
+i1
+and
+M in = V M in
+
+V 1
+M inM in +
+
+b1 
+ X
+0
+y
+
+:
+But a disadvantage of the Minnesota prior is that it does not provide a full
+Bayesian treatment of  as an unknown parameter. Instead it simply plugs
+in  = b, ignoring any uncertainty in this parameter. In the remainder of
+this section we will discuss methods which treat  as an unknown parameter.
+However, as we shall see, this (apart from one restrictive special case) means
+that analytical methods are not available and MCMC methods are required).
+2.2.2 Natural conjugate priors
+Natural conjugate priors are those where the prior, likelihood and posterior
+come from the same family of distributions. Our previous discussion of the
+7
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 8 =====
+likelihood function (see equations 5 and 6) suggests that, for the V AR, the
+natural conjugate prior has the form:
+j  N (;  
+ V ) (10)
+and
+1  W
+
+S1; 
+
+(11)
+where ; V ;  and S are prior hyperparameters chosen by the researcher.
+With this prior the posterior becomes:
+j; y  N
+
+;  
+ V
+
+(12)
+and
+1jy  W
+
+S
+1
+; 
+
+(13)
+where
+V =
+
+V 1 + X 0X
+1
+;
+A = V
+h
+V 1A + X 0XbA
+i
+;
+ = vec
+
+A
+
+,
+S = S + S + bA0X 0XbA + A0V 1A  A
+0
+V 1 + X 0X
+
+A
+and
+ = T + :
+In the previous formulae, we use notation where A is a K  M matrix made by
+unstacking the KM  1 vector .
+Posterior inference about the V AR coe¢ cients can be carried out using the
+fact that the marginal posterior (i.e. after integrating out ) for  is a multivari-
+ate t-distribution. The mean of this t-distribution is , its degrees of freedom
+parameter is  and its covariance matrix is:
+var (jy) = 1
+  M  1 S 
+ V :
+These facts can be used to carry out carry out posterior inference in this model.
+The predictive distribution for yT +1 in this model has an analytical form
+and, in particular, is multivariate-t with  degrees of freedom. The predictive
+mean of yT +1 is
+
+xT +1A
+0
+which can be used to produce point forecasts. The
+predictive covariance matrix is 1
+2
+
+1 + xT +1V x0
+T +1
+
+S. When forecasting more
+than one period ahead, an analytical formula for the predictive density does not
+exist. This means that either the direct forecasting method must be used (which
+turns the problem into one which only involves one step ahead forecasting) or
+predictive simulation is required.
+8
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 9 =====
+Any values for the prior hyperparameters, ; V ;  and S, can be chosen.
+The noninformative prior is obtained by setting  = S = V 1 = cI and letting
+c ! 0. It can be seen that this leads to posterior and predictive results which
+are based on familiar OLS quantities. The drawback of the noninformative prior
+is that it does not do any of the shrinkage which we have argued is so important
+for V AR modelling.
+Thus, for the natural conjugate prior, analytical results exist which allow for
+Bayesian estimation and prediction. There is no need to use posterior simula-
+tion algorithms unless interest centers on nonlinear functions of the parameters
+(e.g. impulse response analysis such as those which arise in structural V ARs,
+see Koop, 1992). The posterior distribution of, e.g., impulse responses can be
+obtained by Monte Carlo integration. That is, draws of 1 can be obtained
+from (13) and, conditional on these, draws of  can be taken from (12). 4 Then
+draws of impulse responses can be calculated using these drawn values of 1
+and .
+However, there are two properties of this prior that can be undesirable in
+some circumstances. The  rst is that the (IM 
+ X) form of the explanatory
+variables in (4) means that every equation must have the same set of explanatory
+variables. For an unrestricted V AR this is  ne, but is not appropriate if the
+researcher wishes to impose restrictions. Suppose, for instance, the researcher is
+working with a V AR involving variables such as output growth and the growth in
+the money supply and wants to impose a strict form of the neutrality of money.
+This would imply that the coe¢ cients on the lagged money growth variables in
+the output growth equation are zero (but coe¢ cients of lagged money growth in
+other equations would not be zero). Such restrictions cannot be imposed with
+the natural conjugate prior described here.
+To explain the second possibly undesirable property of this prior, we intro-
+duce notation where individual elements of  are denoted by ij. The fact that
+the prior covariance matrix has the form 
+V (which is necessary to ensure nat-
+ural conjugacy of the prior), implies that the prior covariance of the coe¢ cients
+in equation i is iiV . This means that the prior covariance of the coe¢ cients in
+any two equations must be proportional to one another, a possibly restrictive
+feature. In our example, the researcher believing in the neutrality of money
+may wish to proceed as follows: in the output growth equation, the prior mean
+of the coe¢ cients on lagged money growth variables should be zero and the
+prior covariance matrix should be very small (i.e. expressing a prior belief that
+these coe¢ cients are very close to zero). In other equations, the prior covariance
+matrix on the coe¢ cients on lagged money growth should be much larger. The
+natural conjugate prior does not allow us to use prior information of this form.
+It also does not allow us to use the Minnesota prior. That is, the Minnesota
+prior covariance matrix in (8) is written in terms of blocks which were labelled
+V i;jj involving i subscripts. That is, these blocks vary across equations which
+is not allowed for in the natural conjugate prior.
+4 Alternatively, draws of  can be directly taken from its multivariate-t marginal posterior
+distribution.
+9
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 10 =====
+These two properties should be kept in mind when using the natural conju-
+gate prior. There are generalizations of this natural conjugate prior, such as the
+extended natural conjugate prior of Kadiyala and Karlsson (1997), which sur-
+mount these problems. However, these lose the huge advantage of the natural
+conjugate prior described in this section: that analytical results are available
+and so no posterior simulation is required.
+A property of natural conjugate priors is that, since the prior and likelihood
+have the same distributional form, the prior can be considered as arising from
+a  ctitious sample. For instance, a comparison of (5) and (10) shows that b
+and (X 0X)1 in the likelihood play the same role as  and V in the prior. The
+latter can be interpreted as arising from a  ctitious sample (also called dummy
+observations ),Y0 and X0 (e.g. V = (X 0
+0X0)1 and  based on an OLS estimate
+(X 0
+0X0)1 X 0
+0Y0). This interpretation is developed in papers such as Sims (1993)
+and Sims and Zha (1998). On one level, this insight can simply serve as another
+way of motivating choices for  and V as arising from particular choices for
+Y0 and X0. But papers such as Sims and Zha (1998) show how the dummy
+observation approach can be used to elicit priors for structural V ARs. In this
+monograph, we will focus on the econometric as opposed to the macroeconomic
+issues. Accordingly, we will work with reduced form V ARs and not say much
+about structural V ARs. Here we only note that posterior inference in structural
+V ARs is usually based on a reduced form V AR such as that discussed here, but
+then coe¢ cients are transformed so as to give them a structural interpretation
+(see, e.g., Koop, 1992, for a simple example). For instance, structural V ARs are
+often written as:
+C0yt = c0 +
+pX
+j=1
+Cjytj + ut (14)
+where ut is i.i.d. N (0; I). Given appropriate identifying restrictions, there
+will be a mapping from the parameters of the reduced form V AR in (1) to
+the structural V AR. Thus, Bayesian inference can be done by using posterior
+simulation methods in the reduced form V AR and transforming each draw into
+a draw from the structural V AR.
+While discussing such macroeconomic issues, it is worth noting that there
+is a growing literature that uses the insights of economic theory (e.g. from real
+business cycle or DSGE models) to elicit priors for V ARs. Prominent examples
+include Ingram and Whiteman (1994) and Del Negro and Schorfheide (2004).
+We will not discuss this work in this monograph.
+Finally, it is also worth mentioning the work of Villani (2009) on steady state
+priors for V ARs. We have motivated prior information as being important as a
+way of ensuring shrinkage in an over-parameterized V AR. However, most of the
+shrinkage discussed previously relates to the V AR coe¢ cients. Often researchers
+have strong prior information about the unconditional means (i.e. the steady
+states) of the variables in their V ARs. It is desirable to include such information
+as an additional source of shrinkage in the V AR. However, it is not easy to do
+this in the V AR in (1) since the intercepts cannot be directly interpreted as the
+10
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 11 =====
+unconditional means of the variables in the V AR. Villani (2009) recommends
+writing the V AR as:
+eA (L) (yt ea0) = "t (15)
+where eA (L) = I eA1L::eApLp, L is the lag operator and "t is i.i.d. N (0; ).
+In this parameterization, ea0 can be interpreted as the vector of unconditional
+means of the dependent variables and a prior placed on it re ecting the re-
+searcher s beliefs about steady state values for them. For eA (L) and  one of
+the priors described previously (or below) can be used. A drawback of this
+approach is that an analytical form for the posterior no longer exists. However,
+Villani (2009) develops a Gibbs sampling algorithm for carrying out Bayesian
+inference in this model.
+2.2.3 The Independent Normal-Wishart Prior
+The natural conjugate prior has the large advantage that analytical results are
+available for posterior inference and prediction. However, it does have the draw-
+backs noted previously (i.e. it assumes each equation to have the same explana-
+tory variables and it restricts the prior covariance of the coe¢ cients in any two
+equations to be proportional to one another). Accordingly, in this section, we
+introduce a more general framework for V AR modelling. To carry out Bayesian
+inference in these models will require posterior simulation algorithms such as
+the Gibbs sampler. The natural conjugate prior had j being Normal and 1
+being Wishart. Note that the fact that the prior for  depends on  implies
+that  and  are not independent of one another. In this section, we work with
+a prior which has V AR coe¢ cients and the error covariance being independent
+of one another (hence the name independent Normal-Wishart prior ).
+To allow for di¤erent equations in the V AR to have di¤erent explanatory
+variables, we have to modify our previous notation slightly. To avoid any pos-
+sibility of confusion, we will use   as notation for V AR coe¢ cients in this
+restricted V AR model instead of . We write each equation of the V AR as:
+ymt = z0
+mtm + "mt;
+with t = 1; ::; T observations for m = 1; ::; M variables. ymt is the tth observation
+on the mth variable, zmt is a km-vector containing the tth observation of the
+vector of explanatory variables relevant for the mth variable and m is the
+accompanying km-vector of regression coe¢ cients. Note that if we had zmt =
+1; y0
+t1; ::; y0
+tp
+0
+for m = 1 ; ::; M then we would obtain the unrestricted V AR
+of the previous section. However, by allowing for zmt to vary across equations
+we are allowing for the possibility of a restricted V AR (i.e. it allows for some of
+the coe¢ cients on the lagged dependent variables to be restricted to zero).
+We can stack all equations into vectors/matrices as yt = (y1t; ::; yM t)0, "t =
+("1t; ::; "M t)0,
+11
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 12 =====
+ =
+0
+B@
+1
+...
+M
+1
+CA ;
+Zt =
+0
+BBBB@
+z0
+1t 0    0
+0 z0
+2t
+. . . ...
+... . . . . . . 0
+0    0 z0
+M t
+1
+CCCCA
+;
+where  is a k  1 vector and Zt is M  k where k =PM
+j=1 kj. As before, we
+assume "t to be i.i.d. N (0; ).
+Using this notation, we can write the (possibly restricted) V AR as:
+yt = Zt + "t. (16)
+Stacking as:
+y =
+0
+B@
+y1
+...
+yT
+1
+CA ;
+" =
+0
+B@
+"1
+...
+"T
+1
+CA ;
+Z =
+0
+B@
+Z1
+...
+ZT
+1
+CA
+we can write
+y = Z + "
+and " is N (0; I 
+ ).
+It can be seen that the restricted V AR can be written as a Normal linear
+regression model with an error covariance matrix of a particular form. A very
+general prior for this model (which does not involve the restrictions inherent in
+the natural conjugate prior) is the independent Normal-Wishart prior:
+p
+
+; 1
+= p () p
+
+1
+where
+  N
+
+; V 
+
+(17)
+and
+12
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 13 =====
+1  W
+
+S1; 
+
+: (18)
+Note that this prior allows for the prior covariance matrix, V , to be anything
+the researcher chooses, rather than the restrictive  
+ V form of the natural
+conjugate prior. For instance, the researcher could set  and V  exactly as
+in the Minnesota prior. A noninformative prior can be obtained by setting
+ = S = V 1
+ = 0.
+Using this prior, the joint posterior p
+
+; 1jy
+
+does not have a conve-
+nient form that would allow easy Bayesian analysis (e.g. posterior means and
+variances do not have analytical forms). However, the conditional posterior
+distributions p
+
+jy; 1
+and p
+
+1jy; 
+
+do have convenient forms:
+jy; 1  N
+
+; V 
+
+; (19)
+where
+V  =
+ 
+V 1
+ +
+TX
+t=1
+Z 0
+t1Zt
+!1
+and
+ = V 
+ 
+V 1
+  +
+TX
+i=1
+Z 0
+t1yt
+!
+:
+Furthermore,
+1jy;   W
+
+S
+1
+; ;
+
+(20)
+where
+ = T + 
+and
+S = S +
+TX
+t=1
+(yt  Zt) (yt  Zt)0 :
+Accordingly, a Gibbs sampler which sequentially draws from the Normal p (jy; )
+and the Wishart p
+
+1jy; 
+
+can be programmed up in a straightforward fash-
+ion. As with any Gibbs sampler, the resulting posterior simulator output can
+be used to calculate posterior properties of any function of the parameters,
+marginal likelihoods (for model comparison) and/or to do prediction.
+Note that, for the V AR, Z will contain lags of variables and, thus, contain
+information dated   1 or earlier. The one-step ahead predictive density (i.e.
+the one for predicting at time  given information through   1), conditional
+on the parameters of the model is:
+13
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 14 =====
+y jZ ; ;   N (Zt; ) :
+This result, along with a Gibbs sampler producing draws (r); (r) for r = 1; ::; R
+allows for predictive inference. 5 For instance, the predictive mean (a popular
+point forecast) could be obtained as:
+E (y jZ ) =
+PR
+r=1 Zt(r)
+R
+and other predictive moments can be calculated in a similar fashion. Alterna-
+tively, predictive simulation can be done at each Gibbs sampler draw, but this
+can be computationally demanding. For forecast horizons greater than one, the
+direct method can be used. This strategy for doing predictive analysis can be
+used with any of the priors or models discussed below.
+2.2.4 Stochastic Search V ariable Selection (SSVS) in V ARs
+SSVS as Implemented in George, Sun and Ni (2008) In the previous
+sections, we have described various priors for unrestricted and restricted V ARs
+which allow for shrinkage of V AR coe¢ cients. However, these approaches re-
+quired substantial prior input from the researcher (although this prior input can
+be of an automatic form such as in the Minnesota prior). There is another prior
+that, in a sense, does shrinkage and leads to restricted V ARs, but does so in an
+automatic fashion that requires only minimal prior input from the researcher.
+The methods associated with this prior are called SSVS and are enjoying in-
+creasing popularity and, accordingly, we describe them here in detail. SSVS can
+be done in several ways. Here we describe the implementation of George, Sun
+and Ni (2008).
+The basic idea underlying SSVS can be explained quite simply. Suppose j
+is a V AR coe¢ cient. Instead of simply using a prior for it as before (e.g. as
+in (10), SSVS speci es a hierarchical prior (i.e. a prior expressed in terms of
+parameters which in turn have a prior of their own) which is a mixture of two
+Normal distributions:
+jjj 
+
+1  j
+
+N
+
+0; 2
+0j
+
++ jN
+
+0; 2
+1j
+
+; (21)
+where j is a dummy variable. If j equals one then j is drawn from the second
+Normal and if it equals zero then j is drawn from the  rst Normal. The prior
+is hierarchical since j is treated as an unknown parameter and estimated in a
+data-based fashion. The SSVS aspect of this prior arises by choosing the  rst
+prior variance, 2
+0j, to be small (so that the coe¢ cient is constrained to be
+virtually zero) and the second prior variance, 2
+1j, to be large(implying a rela-
+tively noninformative prior for the corresponding coe¢ cient). Below we describe
+what George, Sun and Ni (2008) call a default semi-automatic approach to
+5 Typically, some initial draws are discarded as the burn in . Accordingly, r = 1 ; ::; R
+should be the post-burn in draws.
+14
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 15 =====
+choosing 2
+0j and 2
+1j which requires minimal subjective prior information from
+the researcher.
+The SSVS approach can be thought of as automatically selecting a restricted
+V AR since it can, in a data-based fashion, set j = 0 and (to all intents and
+purposes) delete the corresponding lagged dependent variable form the model.
+Alternatively, SSVS can be thought of as a way of doing shrinkage since V AR
+coe¢ cients can be shrunk to zero.
+SSVS can be used to select a single restricted model (e.g. the researcher can
+select a restricted V AR which contains only those lagged dependent variables
+whose coe¢ cients have Pr
+
+j = 1jy
+
+> a for some choice of a such as a =
+0:5). Alternatively, if the MCMC algorithm described below is simply run and
+posterior results for the V AR coe¢ cients calculated using the resulting MCMC
+output, the result will be Bayesian model averaging (BMA).
+SSVS allows us to work with the unrestricted V AR and have the algorithm
+pick out an appropriate restricted V AR. Accordingly we will return to our no-
+tation for the unrestricted V AR (see Section 2.1). The unrestricted V AR is
+written in (3) and  is the KM  1 vector of V AR coe¢ cients. SSVS can be
+interpreted as de ning a hierarchical prior for all of the elements of  and .
+The prior for  given in (21) can be written more compactly as:
+j  N (0; DD) ; (22)
+where  is a KM  1 vector of unknown parameters with typical element j 2
+f0; 1g, and D is a diagonal matrix with (j; j)th element given by dj where
+dj =
+ 0j if j = 0
+1j if j = 1 : (23)
+Note that this prior implies a mixture of two Normals as written in (21).
+George, Sun and Ni (2008) describe a default semi-automatic approachto
+selecting the prior hyperparameters 0j and 1j which involves setting 0j =
+c0
+p
+dvar(j) and 1j = c1
+p
+dvar(j) wheredvar(j) is an estimate of the variance
+of the coe¢ cient in an unrestricted V AR (e.g. the ordinary least squares quantity
+or an estimate based on a preliminary Bayesian estimation the V AR using a
+noninformative prior). The pre-selected constants c0 and c1 must have c0  c1
+(e.g. c0 = 0:1 and c1 = 10).
+For  = ( 1; ::; KM )0, the SSVS prior assumes that each element has a
+Bernoulli form (independent of the other elements of ) and, hence, for j =
+1; ::; KM , we have
+Pr
+
+j = 1
+
+= qj
+Pr
+
+j = 0
+
+= 1  qj
+: (24)
+A natural default choice is qj = 0:5 for all j, implying each coe¢ cient is a priori
+equally likely to be included as excluded.
+So far, we have said nothing about the prior for  and (for the sake of
+brevity) we will not provide details relating to it. Su¢ ce it to note here that if a
+15
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 16 =====
+Wishart prior for 1 like (18) is used, then a formula very similar to (20) can
+be used as a block in a Gibbs sampling algorithm. Alternatively, George, Sun
+and Ni (2008) use a prior for  which allows for them to do SSVS on the error
+covariance matrix. That is, although they always assume the diagonal elements
+of  are positive (so as to ensure a positive de nite error covariance matrix),
+they allow for parameters which determine the o¤-diagonal elements to have
+an SSVS prior thus allowing for restrictions to be imposed on . We refer the
+interested reader to George, Sun and Ni (2008) or the manual on the website
+associated with this monograph for details.
+Posterior computation in the V AR with SSVS prior can be carried out using
+a Gibbs sampling algorithm. For the V AR coe¢ cients we have
+jy; ;   N (; V ); (25)
+where
+V  = [ 1 
+ (X 0X) + (DD)1]1;
+ = V [(		0) 
+ (X 0X)^];
+^A = (X 0X)1X 0Y
+and
+^ = vec( ^A):
+The conditional posterior for  has j being independent Bernoulli random
+variables:
+Pr
+
+j = 1jy; 
+
+= qj;
+Pr
+
+j = 0jy; 
+
+= 1  qj; (26)
+where
+qj =
+1
+1j
+exp
+ 
+ 2
+j
+22
+1j
+!
+qj
+1
+1j
+exp
+ 
+ 2
+j
+22
+1j
+!
+qj + 1
+0j
+exp
+ 
+ 2
+j
+22
+0j
+!
+1  qj
+ :
+Thus, a Gibbs sampler involving the Normal distribution and the Bernoulli
+distribution (and the Wishart distribution if a Wishart prior is used for 1)
+allows for posterior inference in this model.
+16
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 17 =====
+SSVS as Implemented in Korobilis (2009b) The implementation of SSVS
+just described is a popular one. However, there are other similar methods for
+automatic model selection in V ARs. In particular, the approach of George, Sun
+and Ni (2008) involves selecting values for the small prior variance 0j. The
+reader may ask why not set smallexactly equal to zero? This has been done in
+regression models in papers such as Kuo and Mallick (1997) through restricting
+coe¢ cients to be precisely zero if j = 0 . There are some subtle statistical
+issues which arise when doing this. 6 Korobilis (2009b) has extended the use of
+such methods to V ARs. Since, unlike the implementation of George, Sun and
+Ni (2008), this approach leads to restricted V ARs (as opposed to unrestricted
+V ARs with very tight priors on some of the V AR coe¢ cients), we return to our
+notation for restricted V ARs and modify it slightly. In particular, replace (16)
+by
+yt = Zte + "t. (27)
+wheree = eD and eD is a diagonal matrix with the jth diagonal element being
+j (where, as before, j is a dummy variable). In words, this model allows for
+each V AR coe¢ cient to be set to zero (if j = 0) or included in an unrestricted
+fashion (if j = 1).
+Bayesian inference using the prior can be carried out in a straightforward
+fashion. For exact details on the necessary MCMC algorithm, see Korobilis
+(2009b) and the manual on the website associated with this book. However, the
+idea underlying this algorithm can be explained quite simply. Conditional on
+, this model is a restricted V AR and the MCMC algorithm of Section 2.2.2 for
+the independent Normal-Wishart prior can be used. Thus, all that is required is
+a method for taking draws from  (conditional on the parameters of the V AR).
+Korobilis (2009b) derives the necessary distribution.
+2.3 Empirical Illustration of Bayesian V AR Methods
+To illustrate Bayesian V AR methods using some of the priors and methods de-
+scribed above, we use a quarterly US data set on the in ation rate t (the
+annual percentage change in a chain-weighted GDP price index), the unemploy-
+ment rate ut (seasonally adjusted civilian unemployment rate, all workers over
+age 16) and the interest rate rt (yield on the three month Treasury bill rate).
+Thus yt = ( t; ut; rt)0. The sample runs from 1953Q1 to 2006Q3. These
+three variables are commonly used in New Keynesian V ARs. 7 Examples of pa-
+pers which use these, or similar, variables include Cogley and Sargent (2005),
+Primiceri (2005) and Koop, Leon-Gonzalaz and Strachan (2009). The data are
+plotted in Figure 1.
+6 For instance, asympotically such priors will always set j = 1 for all j.
+7 The data are obtained from the Federal Reserve Bank of St. Louis website,
+http://research.stlouisfed.org/fred2/.
+17
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 18 =====
+Figure 1: Data Used In Empirical Illustration
+To illustrate Bayesian V AR analysis using this data, we work with an unre-
+stricted V AR with an intercept and four lags of all variables included in every
+equation and consider the following six priors:
+ Noninformative: Noninformative version of natural conjugate prior (equa-
+tions 10 and 11 with  = 0 KM 1, V = 0 KK, v = 0 and S = 0 M M ).
+ Natural conjugate: Informative natural conjugate prior with subjectively
+chosen prior hyperparameters (equations 10 and 11 with  = 0 KM 1,
+V = 10IK, v = M + 1 and S1 = IM ).
+ Minnesota: Minnesota prior (equations 7 and 8, where M in is zero, ex-
+cept for the  rst own lag of each variable which is 0:9.  is diagonal
+with elements s2
+i obtained from univariate regressions of each dependent
+variable on an intercept and four lags of all variables).
+ Independent Normal-Wishart: Independent Normal-Wishart prior with
+subjectively chosen prior hyperparameters (equations 17 and 18 with  =
+0KM 1, V  = 10IKM , v = M + 1 and S1 = IM ).
+ SSVS-V AR: SSVS prior for V AR coe¢ cients (with default semi-automatic
+approach prior with c0 = 0 :1 and c1 = 10 ) and Wishart prior for 1
+(equation 18 with v = M + 1 and S1 = IM ).
+18
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 19 =====
+ SSVS: SSVS on both V AR coe¢ cients and error covariance (default semi-
+automatic approach). 8
+For the  rst three priors, analytical posterior and predictive results are avail-
+able. For the last three, posterior and predictive simulation is required. The
+results below are based on 50000 MCMC draws, for which the  rst 20000 are
+discarded as burn-in draws. For impulse responses (which are nonlinear func-
+tions of the V AR coe¢ cients and ), posterior simulation methods are required
+for all six priors.
+With regards to impulse responses, they are identi ed by assuming C0 in
+(14) is lower triangular and the dependent variables are ordered as: in ation,
+unemployment and interest rate. This is a standard identifying assumption used,
+among many others, by Bernanke and Mihov (1998), Christiano, Eichanbaum
+and Evans (1999) and Primiceri (2005). It allows for the interpretation of the
+interest rate shock as a monetary policy shock.
+With V ARs, the parameters themselves (as opposed to functions of them
+such as impulse responses) are rarely of direct interest. In addition, the fact
+that there are so many of them makes it hard for the reader to interpret tables
+of V AR coe¢ cients. Nevertheless, Table 1 presents posterior means of all the
+V AR coe¢ cients for two priors: the noninformative one and SSVS prior. Note
+that they are yielding similar results, although there is some evidence that SSVS
+is slightly shrinking the coe¢ cients towards zero.
+Table 1. Posterior mean of V AR Coe¢ cients for Two Priors
+Noninformative SSVS - V AR
+t ut rt t ut rt
+Intercept 0.2920 0.3222 -0.0138 0.2053 0.3168 0.0143
+t1 1.5087 0.0040 0.5493 1.5041 0.0044 0.3950
+ut1 -0.2664 1.2727 -0.7192 -0.142 1.2564 -0.5648
+rt1 -0.0570 -0.0211 0.7746 -0.0009 -0.0092 0.7859
+t2 -0.4678 0.1005 -0.7745 -0.5051 0.0064 -0.226
+ut2 0.1967 -0.3102 0.7883 0.0739 -0.3251 0.5368
+rt2 0.0626 -0.0229 -0.0288 0.0017 -0.0075 -0.0004
+t3 -0.0774 -0.1879 0.8170 -0.0074 0.0047 0.0017
+ut3 -0.0142 -0.1293 -0.3547 0.0229 -0.0443 -0.0076
+rt3 -0.0073 0.0967 0.0996 -0.0002 0.0562 0.1119
+t4 0.0369 0.1150 -0.4851 -0.0005 0.0028 -0.0575
+ut4 0.0372 0.0669 0.3108 0.0160 0.0140 0.0563
+rt4 -0.0013 -0.0254 0.0591 -0.0011 -0.0030 0.0007
+Remember that SSVS allows to the calculation of Pr
+
+j = 1jy
+
+for each
+V AR coe¢ cient and such posterior inclusion probabilities can be used either in
+model averaging or in model selection. Table 2 presents such posterior inclusion
+probabilities using the SSVS-V AR prior. The empirical researcher may wish to
+8 SSVS on the non-diagonal elements of  is not fully described in this monograph. See
+George, Sun and Ni (2008) for complete details.
+19
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 20 =====
+present such a table for various reasons. For instance, if the researcher wishes to
+select a single restricted V AR which only includes coe¢ cients with Pr
+
+j = 1jy
+
+> 1
+2 , then he would work with a model which restricts 25 of 39 coe¢ cients
+to zero. Table 2 shows which coe¢ cients are important. Of the 14 included
+coe¢ cients two are intercepts and three are  rst own lags in each equation.
+The researcher using SSVS to select a single model would restrict most of the
+remaining V AR coe¢ cients to be zero. The researcher using SSVS to do model
+averaging would, in e¤ect, be restricting them to be approximately zero. Note
+also that SSVS can be used to do lag length selection in an automatic fashion.
+None of the coe¢ cients on the fourth lag variables is found to be important and
+only one of nine possible coe¢ cients on third lags is found to be important.
+Table 2. Posterior Inclusion Probabilities for
+V AR Coe¢ cients: SSVS-V AR Prior
+t ut rt
+Intercept 0.7262 0.9674 0.1029
+t1 1 0.0651 0.9532
+ut1 0.7928 1 0.8746
+rt1 0.0612 0.2392 1
+t2 0.9936 0.0344 0.5129
+ut2 0.4288 0.9049 0.7808
+rt2 0.0580 0.2061 0.1038
+t3 0.0806 0.0296 0.1284
+ut3 0.2230 0.2159 0.1024
+rt3 0.0416 0.8586 0.6619
+t4 0.0645 0.0507 0.2783
+ut4 0.2125 0.1412 0.2370
+rt4 0.0556 0.1724 0.1097
+With V ARs, the researcher is often interested in forecasting. It is worth
+mentioning that often recursive forecasting exercises, which involve forecasting
+at time  =  0; ::; T, are often done. These typically involve estimating a model
+T   0 times using appropriate sub-samples of the data. If MCMC methods
+are required, this can be computationally demanding. That is, running an
+MCMC algorithm T   0 times can (depending on the model and application)
+be very slow. If this is the case, then the researcher may be tempted to work
+with methods which do not require MCMC such as the Minnesota or natural
+conjugate priors. Alternatively, sequential importance sampling methods such
+as the particle  lter (see, e.g. Doucet, Godsill and Andrieu, 2000 or Johannes
+and Polson, 2009) can be used which do not require the MCMC algorithm to
+be run at each point in time.
+Table 3 presents predictive results for an out-of-sample forecasting exercise
+based on the predictive density p (yT +1jy1::; yT ) where T = 2006 Q3. It can be
+seen that for this empirical example, which involves a moderately large data
+set, the prior is having relatively little impact. That is, predictive means and
+standard deviations are similar for all six priors, although it can be seen that the
+20
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 21 =====
+predictive standard deviations with the Minnesota prior do tend to be slightly
+smaller than the other priors.
+Table 3. Predictive mean of yT +1 (st. dev. in parentheses)
+PRIOR T +1 uT +1 rT +1
+Noninformative 3.105
+(0.315)
+4.610
+(0.318)
+4.382
+(0.776)
+Minnesota 3.124
+(0.302)
+4.628
+(0.319)
+4.350
+(0.741)
+Natural conjugate 3.106
+(0.313)
+4.611
+(0.314)
+4.380
+(0.748)
+Indep. Normal-Wishart 3.110
+(0.322)
+4.622
+(0.324)
+4.315
+(0.780)
+SSVS - V AR 3.097
+(0.323)
+4.641
+(0.323)
+4.281
+(0.787)
+SSVS 3.108
+(0.304)
+4.639
+(0.317)
+4.278
+(0.785)
+True value, yT +1 3.275 4.700 4.600
+Figures 2 and 3 present impulse responses of all three of our variables to all
+three of the shocks for two of the priors: the noninformative one and the SSVS
+prior. In these  gures the posterior median is the solid line and the dotted lines
+are the 10th and 90th percentiles. These impulse responses all have sensible
+shapes, similar to those found by other authors. The two priors are giving
+similar results, but a careful examination of them do reveal some di¤erences.
+Especially at longer horizons, there is evidence that SSVS leads to slightly more
+precise inferences (evidenced by a narrower band between the 10th and 90th
+percentiles) due to the shrinkage it provides.
+21
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 22 =====
+Figure 2: Posterior of impulse responses - Noninformative prior.
+22
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 23 =====
+Figure 3: Posterior of impulse responses - SSVS prior.
+3 Bayesian State Space Modeling and Stochas-
+tic V olatility
+3.1 Introduction and Notation
+In the section on Bayesian V AR modeling, we showed that the (possibly re-
+stricted) V AR could be written as:
+yt = Zt + "
+for appropriate de nitions of Zt and . In many macroeconomic applications,
+it is undesirable to assume  to be constant, but it is sensible to assume that 
+evolves gradually over time. A standard version of the TVP-V AR which will be
+discussed in the next section extends the V AR to:
+yt = Ztt + "t,
+where
+t+1 = t + ut:
+23
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 24 =====
+Thus, the V AR coe¢ cients are allowed to vary gradually over time. This is a
+state space model.
+Furthermore, previously we assumed "t to be i.i.d. N (0; ) and, thus, the
+model was homoskedastic. In empirical macroeconomics, it is often important
+to allow for the error covariance matrix to change over time (e.g. due to the
+Great Moderation of the business cycle) and, in such cases, it is desirable to
+assume "t to be i.i.d. N (0; t) so as to allow for heteroskedasticity. This raises
+the issue of stochastic volatility which, as we shall see, also leads us into the
+world of state space models.
+These considerations provide a motivation for why we must provide a section
+on state space models before proceeding to TVP-V ARs and other models of more
+direct relevance for empirical macroeconomics. We begin this section by  rst
+discussing Bayesian methods for the Normal linear state space model. These
+methods can be used to model evolution of the V AR coe¢ cients in the TVP-
+V AR. Unfortunately, stochastic volatility cannot be written in the form of a
+Normal linear state space model. Thus, after brie y discussing nonlinear state
+space modelling in general, we present Bayesian methods for particular nonlinear
+state space models of interest involving stochastic volatility.
+We will adopt a notational convention commonly used in the state space
+literature where, if at is a time t quantity (i.e. a vector of states or data)
+then at = ( a0
+1; ::; a0
+t)0 stacks all the ats up to time t. So, for instance, yT will
+denote the entire sample of data on the dependent variables and T the vector
+containing all the states.
+3.2 The Normal Linear State Space Model
+A general formulation for the Normal linear state space model (which contains
+the TVP-V AR de ned above as a special case) is:
+yt = Wt + Ztt + "t; (28)
+and
+t+1 = Ttt + ut, (29)
+where yt is an M  1 vector containing observations on M time series variables,
+"t is an M  1 vector of errors, Wt is a known M  p0 matrix (e.g. this
+could contain lagged dependent variables or other explanatory variables with
+constant coe¢ cients),  is a p0  1 vector of parameters. Zt is a known M  k
+matrix (e.g. this could contain lagged dependent variables or other explanatory
+variables with time varying coe¢ cients), t is a k 1 vector of parameters which
+evolve over time (these are known as states). We assume "t to be independent
+N (0; t) and ut to be a k  1 vector which is independent N (0; Qt). "t and us
+are independent of one another for all s and t. Tt is a k  k matrix which is
+typically treated as known, but occasionally Tt is treated as a matrix of unknown
+parameters.
+24
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 25 =====
+Equations (28) and (29) de ne a state space model. Equation (28) is called
+the measurement equation and (29) the state equation. Models such as this
+have been used for a wide variety of purposes in econometrics and many other
+ elds. The interested reader is referred to West and Harrison (1997) and Kim
+and Nelson (1999) for a broader Bayesian treatment of state space models than
+that provided here. Harvey (1989) and Durbin and Koopman (2001) provide
+good non-Bayesian treatments of state space models.
+For our purpose, the important thing to note is that, for given values of , Tt,
+t and Qt (for t = 1; ::; T), various algorithms have been developed which allow
+for posterior simulation of t for t = 1; ::; T. Popular and e¢ cient algorithms are
+described in Carter and Kohn (1994), Fruhwirth-Schnatter (1994), DeJong and
+Shephard (1995) and Durbin and Koopman (2002). Since these are standard
+and well-understood algorithms, we will not present complete details here. In
+the Matlab code on the website associated with this monograph, the algorithm
+of Carter and Kohn (1994) is used. These algorithms can be used as a block in
+an MCMC algorithm to provide draws from the posterior of t conditional on ,
+Tt, t and Qt (for t = 1; ::; T). The exact treatment of , Tt, t and Qt depends
+on the empirical application at hand. The standard TVP-V AR  xes some of
+these to known values (e.g.  = 0; Tt = I are common choices) and treats others
+as unknown parameters (although it usually restricts Qt = Q and, in the case
+of the homoskedastic TVP-V AR additionally restricts t =  for all t). An
+MCMC algorithm is completed by taking draws of the unknown parameters
+from their posteriors (conditional on the states). The next part of this section
+elaborates on how this MCMC algorithm works. To focus on state space model
+issues, the algorithm is for the case where  is a vector of unknown parameters,
+Qt = Q and t =  and Tt is known.
+An examination of (28) reveals that, if t for t = 1 ; ::; T were known (as
+opposed to being unobserved), then the state space model would reduce to a
+multivariate Normal linear regression model:
+y
+t = Wt + "t;
+where y
+t = yt  Ztt. Thus, standard results for the multivariate Normal linear
+regression model could be used, except the dependent variable would be y
+t
+instead of yt. This suggests that an MCMC algorithm can be set up for the state
+space model. That is, p
+
+jyT ; ; T
+
+and p
+
+1jyT ; ; T
+
+will typically have
+a simple textbook form. Below we will use the independent Normal-Wishart
+prior for  and 1. This was introduced in our earlier discussion of V AR
+models.
+Note next that a similar reasoning can be used for the covariance matrix for
+the error in the state equation. That is, if t for t = 1 ; ::; T were known, then
+the state equation, (29), is a simple variant of multivariate Normal regression
+model. This line of reasoning suggests that p
+
+Q1jyT ; ; T
+
+will have a simple
+and familiar form. 9
+9 The case where Tt contains unknown parameters would involve drawing from
+25
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 26 =====
+Combining these results for p
+
+jyT ; ; T
+
+, p
+
+1jyT ; ; T
+
+and p
+
+Q1jyT ; ; T
+
+with one of the standard methods (e.g. that of Carter and Kohn, 1994) for tak-
+ing random draws from p
+
+T jyT ; ; ; Q
+
+will completely specify an MCMC
+algorithm which allows for Bayesian inference in the state space model. In the
+following material we develop such an MCMC algorithm for a particular prior
+choice, but we stress that other priors can be used with minor modi cations.
+Here we will use an independent Normal-Wishart prior for  and 1 and
+a Wishart prior for Q1. It is worth noting that the state equation can be
+interpreted as already providing us with a prior for T . That is, (29) implies:
+t+1jt; Q  N (Ttt; Q) : (30)
+Formally, the state equation implies the prior for the states is:
+p
+
+T jQ
+
+=
+TY
+t=1
+p
+
+tjt1; Q
+
+where the terms on the right-hand side are given by (30). This is an example
+of a hierarchical prior, since the prior for T depends on the Q which, in turn,
+requires its own prior.
+One minor issue should be mentioned: that of initial conditions. The prior
+for 1 depends on 0. There are standard ways of treating this issue. For
+instance, if we assume 0 = 0, then the prior for 1 becomes:
+1jQ  N (0; Q) .
+Similarly, authors such as Carter and Kohn (1994) simply assume 0 has some
+unspeci ed distribution as its prior. Alternatively, in the TVP-V AR (or any
+TVP regression model) we can simply set 1 = 0 and Wt = Zt.10
+Combining these prior assumptions together, we have
+p
+
+; ; Q; T
+
+= p () p () p (Q) p
+
+T jQ
+
+where
+  N (; V ) ; (31)
+1  W
+
+S1; 
+
+; (32)
+and
+Q1  W
+
+Q1; Q
+
+: (33)
+p (Q; T1; ::; TT jy; 1; ::; T ) which can usually be done fairly easily. In the time-invariant case
+where T1 = :: = TT  , p (; Qjy; 1; ::; T ) has a from of the same structure as a VAR.
+1 0This result follows from the fact that yt = Ztt + "t with 1 left unrestricted and yt =
+Zt + Ztt + "t with 1 = 0 are equivalent models.
+26
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 27 =====
+The reasoning above suggests that our end goal is an MCMC algorithm which
+sequentially draws from p
+
+jyT ; ; T
+
+; p
+
+1jyT ; ; T
+
+, p
+
+Q1jyT ; ; T
+
+and p
+
+T jyT ; ; ; Q
+
+. The  rst three of these posterior conditional distrib-
+utions can be dealt with by using results for the multivariate Normal linear
+regression model. In particular,
+jyT ; ; T  N
+
+; V
+
+:
+where
+V =
+ 
+V 1 +
+TX
+t=1
+W 0
+t 1Wt
+!1
+and
+ = V
+ 
+V 1 +
+TX
+t=1
+W 0
+t 1 (yt  Ztt)
+!
+:
+Next we have
+1jyT ; ; T  W
+
+S
+1
+; 
+
+;
+where
+ = T + 
+and
+S = S +
+TX
+t=1
+(yt  Wt  Ztt) (yt  Wt  Ztt)0 :
+Next,
+Q1jyT ; ; T  W
+
+Q
+1
+; Q
+
+where
+Q = T + Q
+and
+Q = Q +
+TX
+t=1
+
+t+1  Ttt
+
+t+1  Ttt
+0
+:
+To complete our MCMC algorithm, we need a means of drawing from p
+
+T jyT ; ; ; Q
+
+.
+But, as discussed previously, there are several standard algorithms that can be
+used for doing this. Accordingly, Bayesian inference in the Normal linear state
+space model can be done in a straightforward fashion. We will draw on these
+results when we return to the TVP-V AR in a succeeding section of this mono-
+graph.
+27
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 28 =====
+3.3 Nonlinear State Space Models
+The Normal linear state space model discussed previously is used by empirical
+macroeconomists not only when working with TVP-V ARs, but also for many
+other purposes. For instance, Bayesian analysis of dynamic stochastic gen-
+eral equilibrium (DSGE) models has become increasingly popular (see, e.g., An
+and Schorfheide, 2007 or Fernandes-Villaverde, 2009). Estimation of linearized
+DSGE models involves working with the Normal linear state space model and,
+thus, the methods discussed above can be used. However, linearizing of DSGE
+models is done through  rst order approximations and, very recently, macro-
+economists have expressed an interest in using second order approximations.
+When this is done the state space model becomes nonlinear (in the sense that
+the measurement equation has yt being a nonlinear function of the states). This
+is just one example of how nonlinear state space models can arise in macro-
+economics. There are an increasing number of tools which allow for Bayesian
+computation in nonlinear state space models (e.g. the particle  lter is enjoying
+increasing popularity see, e.g., Johannes and Polson, 2009). Given the focus of
+this monograph on TVP-V ARs and related models, we will not o¤er a general
+discussion of Bayesian methods for nonlinear state space models (see Del Negro
+and Schorfheide, 2009, and Giordani, Kohn and Pitt, 2009 for further discus-
+sion). Instead we will focus on an area of particular interest for the TVP-V AR
+modeler: stochastic volatility.
+Broadly speaking, issues relating to the volatility of errors have obtained an
+increasing prominence in macroeconomics. This is due partially to the empirical
+regularities that are often referred to as the Great Moderation of the business
+cycle (i.e. that the volatilities of many macroeconomic variables dropped in the
+early 1980s and remained low until recently). But it is also partly due to the
+fact that many issues of macroeconomic policy hinge on error variances. For
+instance, the debate on why the Great Moderation occurred is often framed in
+terms of good policyversus good luckstories which involve proper modeling
+of error variances. For these reasons, volatility is important so we will spend
+some time describing Bayesian methods for handling it.
+3.3.1 Univariate Stochastic V olatility
+We begin with a discussion of stochastic volatility when yt is a scalar. Al-
+though TVP-V ARs are multivariate in nature and, thus, Bayesian methods for
+multivariate stochastic volatility are required, these use methods for univariate
+stochastic volatility as building blocks. Accordingly, a Bayesian treatment of
+univariate stochastic volatility is a useful starting point. In order to focus the
+discussion, we will assume there are no explanatory variables and, hence, adopt
+a simple univariate stochastic volatility model 11 which can be written as:
+1 1In this section we describe a method developed in Kim, Shephard and Chib (1998) which
+has become more popular than the pioneering approach of Jacquier, Polson and Rossi (1994).
+Bayesian methods for extensions of this standard stochastic volatility model (e.g. involving
+non-Normal errors or leverage e¤ects) can be found in Chib, Nardari and Shephard (2002)
+and Omori, Chib, Shephard and Nakajima (2007).
+28
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 29 =====
+yt = exp
+ ht
+2
+
+"t (34)
+and
+ht+1 =  +  (ht  ) + t; (35)
+where "t is i.i.d. N (0; 1) and t is i.i.d. N
+
+0; 2
+
+
+. "t and s are independent
+of one another for all s and t.
+Note that (34) and (35) is a state space model similar to (28) and (29) where
+ht for t = 1; ::; t can be interpreted as states. However, in contrast to (28), (34)
+is not a linear function of the states and, hence, our results for Normal linear
+state space models cannot be directly used.
+Note that this parameterization is such that ht is the log of the variance of
+yt. Since variances must be positive, in order to sensibly have Normal errors
+in the state equation (35), we must de ne the state equation as holding for
+log-volatilities. Note also that  is the unconditional mean of ht.
+With regards to initial conditions, it is common to restrict the log-volatility
+process to be stationary and impose jj < 1. Under this assumption, it is
+sensible to have:
+h0  N
+ 
+; 2
+
+1  2
+!
+(36)
+and the algorithm of Kim, Shephard and Chib (1998) described below uses this
+speci cation. However, in the TVP-V AR literature it is common to have V AR
+coe¢ cients evolving according to random walks and, by analogy, TVP-V AR
+papers such as Primiceri (2005) often work with (multivariate extensions of)
+random walk speci cations for the log-volatilities and set  = 1. This simpli es
+the model since, not only do parameters akin to  not have to be estimated,
+but also  drops out of the model. However, when  = 1 , the treatment of
+the initial condition given in (36) cannot be used. In this case, a prior such
+as h0  N (h; V h) is typically used. This requires the researcher to choose h
+and V h. This can be done subjectively or, as in Primiceri (2005), an initial
+training sample of the data can be set aside to calibrate values for the prior
+hyperparameters.
+In the development of an MCMC algorithm for the stochastic volatility
+model, the key part is working out how to draw the states. That is (in a
+similar fashion as for the parameters in the Normal linear state space model),
+p
+
+jyT ; ; 2
+; hT
+, p
+
+jyT ; ; 2
+; hT
+and p
+
+2
+jyT ; ; ; hT
+have standard forms
+derived using textbook results for the Normal linear regression model and will
+not be presented here (see, e.g., Kim, Shephard and Chib, 1998 for exact for-
+mulae). To complete an MCMC algorithm, all that we require is a method for
+taking draws from p
+
+hT jyT ; ; ; 2
+
+
+. Kim, Shephard and Chib (1998) provide
+an e¢ cient method for doing this. To explain the basic ideas underlying this
+algorithm, note that if we square both sides of the measurement equation, (34),
+and then take logs we obtain:
+29
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 30 =====
+y
+t = ht + "
+t ; (37)
+where12 y
+t = ln
+
+y2
+t
+
+and "
+t = ln
+
+"2
+t
+
+. Equations (37) and (35) de ne a state
+space model which is linear in the states. The only thing which prevents us
+from immediately using our previous results for the Normal linear state space
+model is the fact that "
+t is not Normal. However, as well shall see, it can be
+approximated by a mixture of di¤erent Normal distributions and this allows us
+to exploit our earlier results.
+Mixtures of Normal distributions are very  exible and have been used widely
+in many  elds to approximate unknown or inconvenient distributions. In the
+case of stochastic volatility, Kim, Shephard and Chib (1998) show that the
+distribution of "
+t , p ("
+t ) can be well-approximated by:
+p ("
+t ) 
+7X
+i=1
+qifN
+
+"
+t jmi; v2
+i
+
+; (38)
+where fN
+
+"
+t jmi; v2
+i
+
+is the p.d.f. of a N
+
+mi; v2
+i
+
+random variable. 13 Crucially,
+since "t is N (0; 1) it follows that "
+t involves no unknown parameters and neither
+does this approximation. Thus, qi; mi; v2
+i for i = 1 ; ::; 7 are not parameters to
+be estimated, but simply numbers given in Table 4 of Kim, Shephard and Chib
+(1998).
+An equivalent way of writing (38) is to introduce component indicator vari-
+ables, st 2 f1; 2; ::; 7g for each element in the Normal mixture and writing:
+"
+t jst = i  N
+
+mi; v2
+i
+
+Pr (st = i) = qi
+;
+for i = 1; ::; 7. This formulation provides insight into how the algorithm works.
+In particular, the MCMC algorithm does not simply draw the log-volatilities
+from p
+
+hT jyT ; ; ; 2
+
+
+, but rather draws them from p
+
+hT jyT ; ; ; 2
+; sT
+.
+This may seem awkward, but has the huge bene t that standard results from
+the Normal linear state space models such as those described previously in this
+section can be used. That is, conditional on knowing s1; ::; sT , the algorithm
+knows which of the seven Normals "
+t comes from at each t = 1 ; ::; T and the
+model becomes a Normal linear state space model. To complete the MCMC
+algorithm requires a method for drawing from p
+
+sT jyT ; ; ; 2
+; hT
+but this
+is simple to do since st is a discrete distribution with seven points of support.
+Precise details are given in Kim, Shephard and Chib (1998).
+A Digression: Marginal Likelihood Calculation in State Space Models
+Marginal likelihoods are the most popular tool for Bayesian model comparison
+1 2In practice, it is common to set y
+t = ln
+
+y2
+t + c
+
+where c is known as an o¤-set constant
+set to a small number (e.g. c = 0 :001) to avoid numerical problems associated with times
+where y2
+t is zero or nearly so.
+1 3Omori, Chib, Shephard and Nakajima (2007) recommend an even more accurate approx-
+imation using a mixture of 10 Normal distributions.
+30
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 31 =====
+(e.g. Bayes factors are ratios of marginal likelihoods). In this monograph, we
+focus on estimation and prediction as opposed to model comparison or hypoth-
+esis testing. This is partly because state space models such as TVP-V ARs are
+very  exible and can approximate a wide range of data features. Thus, many
+researchers prefer to treat them as being similar in spirit to nonparametric
+models: capable of letting the data speak and uncovering an appropriate model
+(as opposed to working with several parsimonious models and using statistical
+methods to select a single one). Furthermore, a Bayesian rule of thumb is that
+the choice of prior matters much less for estimation and prediction than it does
+for marginal likelihoods. This is particularly true for high-dimensional models
+such as TVP-V ARs where marginal likelihoods can be sensitive to the choice of
+prior. For this reason, many Bayesians avoid the use of marginal likelihoods in
+high dimensional models. Even those who wish to do model comparison often
+use other metrics (e.g. Geweke and Keane, 2007, uses cross-validation).
+However, for the researcher who wishes to use marginal likelihoods, note that
+there are many methods for calculating them that involve the evaluation of the
+likelihood function at a point. For instance, information criteria are often ap-
+proximations to marginal likelihoods and these involve calculating the maximum
+likelihood estimator. The popular methods of marginal likelihood calculation
+of Chib (1995) and Gelfand and Dey (1994) involve evaluating the likelihood
+function. In state space models, a question arises as to what likelihood func-
+tion should be used. In terms of our notation for the Normal linear state space
+model, p
+
+yT j; ; Q; T
+
+and p
+
+yT j; ; Q
+
+can both be used as likelihoods
+and either could be used in any of the methods of marginal likelihood calculation
+just cited. 14 However, using p
+
+yT j; ; Q; T
+
+to de ne the likelihood function
+could potentially lead to very ine¢ cient computation since the parameter space
+is of such high dimension. 15 Thus, it is desirable to use p
+
+yT j; ; Q
+
+to de ne
+the likelihood function. Fortunately, for the Normal linear state space model a
+formula for p
+
+yT j; ; Q
+
+is available which can be found in textbooks such as
+Harvey (1989) or Durbin and Koopman (2001).
+For the stochastic volatility model, for the same reasons either p
+
+yT j; ; 2
+; hT
+or p
+
+yT j; ; 2
+
+
+could be used to de ne the likelihood function. It is desirable
+to to use p
+
+yT j; ; 2
+
+
+but, unfortunately, an analytical expression for it does
+not exist. Several methods have been used to surmount this problem, but some
+of them can be quite complicated (e.g. involving using particle  ltering meth-
+ods to integrate out hT ). Berg, Meyer and Yu (2004) discuss these issues in
+detail and recommend a simple approximation called the Deviance Information
+Criterion.
+It is also worth noting that the MCMC algorithm for the stochastic volatility
+model is an example of an auxiliary mixture sampler. That is, it introduces an
+auxiliary set of states, sT , which results in a mixture of Normals representation.
+1 4Fruhwirth-Schnatter and Wagner (2008) refer to the former of these as the complete data
+likelihood and the latter as the integrated likelihood .
+1 5The non-Bayesian seeking to nd the maximum of this likelihood function would also
+often run into troubles optimizing in such a high dimensional parameter space.
+31
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 32 =====
+Conditional on these states, the model is a Normal linear state space model.
+Fruhwirth-Schnatter and Wagner (2008) exploit this Normality (conditional on
+the auxiliary states) result to develop methods for calculating marginal like-
+lihoods using auxiliary mixture samplers and such methods can be used with
+stochastic volatility models.
+3.3.2 Multivariate Stochastic V olatility
+Let us now return to the state space model of (28) and (29) where yt is an
+M  1 vector and "t is i.i.d. N (0; t). As we have stressed previously, in
+empirical macroeconomics it is often very important to allow for t to be time
+varying. There are many ways of doing this. Note that t is an M  M
+positive de nite matrix with M (M +1)
+2 distinct elements. Thus, the complete set
+of t for t = 1 ; ::; T contains T M(M +1)
+2 unknown parameters which is a huge
+number. In one sense, the literature on multivariate stochastic volatility can
+be thought of as mitigating this proliferation of parameters problems through
+parametric restrictions and/or priors and working in parameterizations which
+ensure that t is always positive de nite. Discussions of various approaches can
+be found in Asai, McAleer and Yu (2006), Chib, Nardari and Shephard (2006)
+and Chib, Omori and Asai (2009) and the reader is referred to these papers for
+complete treatments. In this section, we will describe two approaches popular
+in macroeconomics. The  rst was popularized by Cogley and Sargent (2005),
+the second by Primiceri (2005).
+To focus on the issues relating to multivariate stochastic volatility, we will
+consider the model:
+yt = "t (39)
+and "t is i.i.d. N (0; t). Before discussing the speci cations used by Cogley
+and Sargent (2005) and Primiceri (2005) for t we begin with a very simple
+speci cation such that
+t = Dt
+where Dt is a diagonal matrix with each diagonal element having a univariate
+stochastic volatility speci cation. That is, if dit is the ith diagonal element of
+Dt for i = 1; ::; M, then we write dit = exp (hit) and
+hi;t+1 = i + i (hit  i) + it; (40)
+where t = ( 0
+1t; ::; 0
+M t)0 is i.i.d. N (0; D) where D is a diagonal matrix (so
+the errors in the state equation are independent of one another). This model
+is simple to work with in that it simply says that each error follows its own
+univariate stochastic volatility model, independent of all the other errors. Thus,
+the Kim, Shephard and Chib (1998) MCMC algorithm can be used one equation
+at a time.
+This model is typically unsuitable for empirical macroeconomic research
+since it is not appropriate to assume t to be diagonal. Many interesting
+32
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 33 =====
+macroeconomic features (e.g. impulse responses) depend on error covariances so
+assuming them to be zero may be misleading. Some researchers such as Cogley
+and Sargent (2005) allow for non-zero covariances in a simple way by writing:
+t = L1DtL10 (41)
+where Dt is a diagonal matrix with diagonal elements being the error variances
+and L is a lower triangular matrix with ones on the diagonal. For instance, in
+the M = 3 case we have
+L =
+2
+4
+1 0 0
+L21 1 0
+L31 L32 1
+3
+5 :
+This form is particularly attractive for computation since, even through "it
+and "jt (which are the ith and jth elements of "t) are no longer independent of
+one another, we can transform (39) as
+Lyt = L"t (42)
+and "
+t = L"t will now have a diagonal covariance matrix. In the context of
+an MCMC algorithm involving p
+
+hT jyT ; L
+
+and p
+
+LjyT ; hT
+(where hT stacks
+all ht = ( h0
+1t; ::; h0
+M t)0 into a M T  1 vector) we can exploit this result to run
+the Kim, Shephard and Chib (1998) algorithm one equation at a time. The is,
+conditional on an MCMC draw of L, we can transform the model as in (42)
+and use results for the univariate stochastic volatility model one transformed
+equation at a time.
+Finally, to complete the MCMC algorithm for the Cogley-Sargent model we
+need to take draws from p
+
+LjyT ; hT
+. But this is straightforward since (42)
+shows that this model can be written as a series of M regression equations with
+Normal errors which are independent of one another. Hence, standard results for
+the Normal linear regression model can be used to draw from p
+
+LjyT ; hT
+. The
+appendix to Cogley and Sargent (2005) provides precise formulae for the MCMC
+algorithm (although their paper uses a less e¢ cient algorithm for drawing from
+p
+
+hT jyT ; L
+
+than the algorithm in Kim, Shephard and Chib, 1998, discussed in
+this section).
+It is worth stressing that the Cogley-Sargent model allows the covariance
+between the errors to change over time, but in a tightly restricted fashion related
+to the way the error variances are changing. This can be seen most clearly in the
+M = 2 case where "1t and "2t are the errors in the two equations. In this, case
+(41) implies cov ("1t; "2t) = d1tL21 which varies proportionally with the error
+variance of the  rst equation. In impulse response analysis, it can be shown
+that this restriction implies that a shock to the ith variable has an e¤ect on the
+jth variable which is constant over time. In some macroeconomic applications,
+such a speci cation might be too restrictive.
+Another popular approach (see, e.g., Primiceri, 2005) extends (41) to:
+t = L1
+t DtL10
+t (43)
+33
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 34 =====
+where Lt is de ned in the same way as L (i.e. as being a lower-triangular matrix
+with ones on the diagonal), but is now time varying. This speci cation does not
+restrict the covariances and variances in t in any way. The MCMC algorithm
+for posterior simulation from the Primiceri model is the largely same as for the
+model with constant L (with the trivial change that the transformation in (42)
+becomes Ltyt = Lt"t). The main change in the algorithm arises in the way Lt
+is drawn.
+To describe the manner in which Lt evolves, we  rst stack the unrestricted
+elements by rows into a M (M 1)
+2 vector as lt =
+
+L21;t; L31;t; L32;t; ::; Lp(p1);t
+0
+.
+These can be allowed to evolve according to the state equation:
+lt+1 = lt +  t, (44)
+where  t is i.i.d. N (0; D) and independent of the other errors in the model
+and D is a diagonal matrix.
+We have seen how the measurement equation in this model can be written
+as:
+Ltyt = "
+t ;
+and it can be shown that "
+t  N (0; Dt). We can use the structure of Lt to
+isolate yt on the left hand side and write:
+yt = Ctlt + "
+t : (45)
+Primiceri (2005), page 845 gives a general de nition of Ct. For M = 3,
+Ct =
+2
+4
+0 0 0
+y1t 0 0
+0 y1t y2t
+3
+5 ;
+where yit is the ith element of yt. But (44) and (45) is now in form of a Normal
+linear state space model of the sort we began this section with. Accordingly,
+in the context of an MCMC algorithm, we can draw Lt (conditional on hT and
+all the other model parameters) using an algorithm such as that of Carter and
+Kohn (1994) or Durbin and Koopman (2002).
+Note that we have assumed D to be a diagonal matrix. Even with this
+restriction, the resulting multivariate stochastic volatility model is very  exible.
+However, should the researcher wish to have D being non-diagonal, it is worth
+noting that if it is simply assumed to be a positive de nite matrix then the
+simplicity of the MCMC algorithm (i.e. allowing for the use of methods for
+Normal linear state space models), breaks down. Primiceri (2005) assumes D
+to have a certain block diagonal structure such that it is still possible to use
+algorithms for Normal linear state space models to draw Lt. It is also possible
+to extend this model to allow for D (the error covariance matrix in the state
+equation for ht de ned after equation 40) to be any positive de nite matrix
+(rather than the diagonal one assumed previously). Exact formulae are provided
+in Primiceri (2005) for both these extensions. The empirical illustration below
+uses these generalizations of Primiceri (2005).
+34
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 35 =====
+4 TVP-V ARs
+V ARs are excellent tools for modeling the inter-relationships between macro-
+economic variables. However, they maintain the rather strong assumption that
+parameters are constant over time. There are many reasons for thinking such an
+assumption may be too restrictive in many macroeconomic applications. Con-
+sider, for instance, U.S. monetary policy and the question of whether the high
+in ation and slow growth of the 1970s were due to bad policy or bad luck. Some
+authors (e.g. Boivin and Giannoni, 2006, Cogley and Sargent, 2001 and Lubik
+and Schorfheide, 2004) have argued that the way the Fed reacted to in ation
+has changed over time (e.g. under the Volcker and Greenspan chairmanship,
+the Fed was more aggressive in  ghting in ation pressures than under Burns).
+This is the bad policy story and is an example of a change in the monetary
+policy transmission mechanism. This story depends on having V AR coe¢ cients
+di¤erent in the 1970s than subsequently. Others (e.g. Sims and Zha, 2006) have
+emphasized that the variance of the exogenous shocks has changed over time
+and that this alone may explain many apparent changes in monetary policy.
+This is the bad luckstory (i.e. in the 1970s volatility was high, whereas later
+policymakers had the good fortune of the Great Moderation of the business cy-
+cle) which motivates the addition of multivariate stochastic volatility to V AR
+models . Yet others (e.g. Primiceri, 2005, Koop, Leon-Gonzalez and Strachan,
+2009) have found that both the transmission mechanism and the variance of the
+exogenous shocks have changed over time.
+This example is intended to motivate the basic point that an understand-
+ing of macroeconomic policy issues should be based on multivariate models
+where both the V AR coe¢ cients and the error covariance matrix can potentially
+change over time. More broadly, there is a large literature in macroeconomics
+which documents structural breaks and other sorts of parameter change in many
+time series variables (see, among many others, Stock and Watson, 1996). A
+wide range of alternative speci cations have been suggested, including Markov
+switching V ARs (e.g. Paap and van Dijk, 2003, or Sims and Zha, 2006) and
+other regime-switching V ARs (e.g. Koop and Potter, 2006). However, perhaps
+the most popular have been TVP-V ARs. A very incomplete list of references
+which use TVP-V ARs includes Canova (1993), Cogley and Sargent (2001, 2005),
+Primiceri (2005), Canova and Gambetti (2009), Canova and Ciccarelli (2009)
+and Koop, Leon-Gonzalez and Strachan (2009). In this monograph, we will not
+discuss regime-switching models, but rather focus on TVP-V ARs.
+4.1 Homoskedastic TVP-V ARs
+To discuss some basic issues with TVP-V AR modelling, we will begin with
+a homoskedastic version of the model (i.e. t =  ). We will use the same
+de nition of the dependent variables and explanatory variables as in (16) from
+Section 2. Remember that yt is an M 1 vector containing data on M dependent
+variables and Zt is an M  k matrix. In Section 2, we saw how Zt could be
+set up to either de ne an unrestricted or a restricted V AR. Zt can also contain
+35
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 36 =====
+exogenous explanatory variables. 16 The basic TVP-V AR can be written as:
+yt = Ztt + "t,
+and
+t+1 = t + ut; (46)
+where "t is i.i.d. N (0; ) and ut is i.i.d. N (0; Q). "t and us are independent of
+one another for all s and t.
+This model is similar to that used in Cogley and Sargent (2001). Bayesian
+inference in this model can be dealt with quite simply since it is a Normal linear
+state space model of the sort discussed in Section 3 of this monograph. Thus,
+the MCMC methods described in Section 3 can be used for Bayesian inference
+in the homoskedastic TVP-V AR. In many cases, this is all the researcher needs
+to know about TVP-V ARs and Bayesian TVP-V ARs work very well in practice.
+However, in some cases, this basic TVP-V AR can lead to poor results in practice.
+In the remainder of this section, we discuss how these poor results can arise and
+various extensions of the basic TVP-V AR which can help avoid them.
+The poor results just referred to typically arise because the TVP-V AR has
+so many parameters to estimate. In Section 1 we saw how, even with the V AR,
+worries about the proliferation of parameters led to the use of priors such as the
+Minnesota prior or the SSVS prior. With so many parameters and relatively
+short macroeconomic time series, it can be hard to obtain precise estimates of
+coe¢ cients. Thus, features of interest such as impulse responses can have very
+dispersed posterior distributions leading to wide credible intervals. Furthermore,
+the risk of over- tting can be serious in some applications. In practice, it has
+been found that priors which exhibit shrinkage of various sorts can help mitigate
+these problems.
+With the TVP-V AR, the proliferation of parameters problems is even more
+severe since it has T times as many parameters to estimate. In Section 3, we saw
+how the state equation in a state space model can be interpreted as a hierarchical
+prior (see equation 30). And, in many applications, this prior provides enough
+shrinkage to yield reasonable results. Although it is worth noting that it is
+often a good idea to use a fairly tight prior for Q. For instance, if (33) is used
+as a prior, then a careful choice of Q and Q1 can be important in producing
+sensible results. 17 However, in some applications, it is desirable to introduce
+more prior information and we will describe several ways of doing so.
+1 6The TVP-VAR where some of the coe¢ cients are constant over time can be dealt with
+by adding Wt as in (28) and (29).
+1 7Attempts to use  at noninformative priors on Q can go wrong since such  at priors
+actually can be quite informative, attaching large amounts of prior probability to large values
+of Q. Large values of Q are associated with a high degree of variation on the VAR coe¢ cients
+(i.e. much prior weight is attached to regions of the parameter space where the opposite of
+shrinkage occurs).
+36
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 37 =====
+4.1.1 Empirical Illustration of Bayesian Homoskedastic TVP-V AR
+Methods
+To illustrate Bayesian inference in the homoskedastic TVP-V AR, we use the
+same U.S. data set as before (see Section 2.3), which contains three variables:
+in ation, unemployment and interest rate and runs from 1953Q1 to 2006Q3.
+We set lag length to 2.
+We use a training sample prior of the type used by Primiceri (2005) where
+prior hyperparameters are set to OLS quantities calculating using a training
+sample of size  (we use  = 40). Thus, data through 1962Q4 is used to choose
+prior hyperparameter values and then estimation uses data beginning in 1963Q1.
+To be precise, the training sample prior uses OLS which is the OLS estimate
+of the V AR coe¢ cients in a constant-coe¢ cient V AR and V (OLS ) which is its
+covariance matrix.
+In this model, we need a prior for the initial state, 0, the measurement
+equation error covariance matrix  and the state equation error covariance
+matrix, Q. The  rst of these is:
+0  N (OLS ; 4  V (OLS )) ;
+whereas the latter two are based on (32) with  = M + 1; S = I and (33) with
+Q =  ; Q = 0:0001    V (OLS ).
+Since the V AR regression coe¢ cients are time-varying, there will be a dif-
+ferent set of them in every time period. This typically will lead to far too
+many parameters to present in a table or graph. Here we will focus on impulse
+responses (de ned as in Section 2.3). But even for these we have a di¤erent
+impulse response function at each point in time. 18 Accordingly, Figure 4 plots
+impulse responses for three representative times: 1975Q1, 1981Q3 and 1996Q1.
+For the sake of brevity, we only present the impulse responses of each variable
+to a monetary policy shock (i.e. a shock in the interest rate equation).
+Using the prior speci ed above, we see that there are very small di¤erences
+in these responses in three di¤erent representative periods (1975Q1, 1981Q3
+and 1996Q1). In this  gure the posterior median is the solid line and the
+dotted lines are the 10th and 90th percentiles. These impulse responses are,
+in some cases, somewhat di¤erent from the ones found in Section 2.3 for the
+V ARs without parameter variation, which indicates the potential importance of
+allowing for time variation in parameters. Note also that the impulse responses
+in the three years di¤er only slightly from one another. This is consistent with
+a common  nding by researchers using similar data sets: that much of the time
+variation in parameters occurs in the error covariance matrix rather than the
+V AR coe¢ cients. In this model we are assuming homoskedasticity, but we will
+relax this assumption shortly.
+1 8It is common practice to calculate the impulse responses at time time using t and simply
+ignoring the fact that it will change over time and we do so below. For more general treatments
+of Bayesian impulse response analysis see Koop (1996).
+37
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 38 =====
+Figure 4: Posterior of impulse responses to monetary policy shock at
+di¤erent times
+4.1.2 Combining other Priors with the TVP Prior
+The Minnesota and SSVS Priors In Section 1, we described several priors
+that are commonly used with V ARs and, when moving to TVP-V ARs, an obvi-
+ous thing to do is to try and combine them with the hierarchical prior de ned
+by the state equation. This can be done in several ways. One approach, used in
+papers such as Ballabriga, Sebastian and Valles (1999), Canova and Ciccarelli
+(2004), and Canova (2007), involves combining the prior of the TVP-V AR with
+the Minnesota prior. This can be done by replacing (46) by
+t+1 = A0t + (I  A0) 0 + ut; (47)
+where A0 is a k  k matrix and 0 a k  1 vector. The matrices A0, 0 and Q
+can either be treated as unknown parameters or speci c values of them can be
+chosen to re ect the Minnesota prior. For instance, Canova (2007, page 399)
+sets 0 and Q to have forms based on the Minnesota prior and sets A0 = cI
+where c is a scalar. The reader is referred to Canova (2007) for precise details,
+but to provide a  avor of his recommendations, note that if c = 1 , then the
+traditional TVP-V AR prior implication that E
+
+t+1
+
+= E (t) is obtained,
+but if c = 0 then we have E
+
+t+1
+
+= 0. Canova (2007) recommends setting
+38
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 39 =====
+the elements of 0 corresponding to own lags to one and all other elements to
+zero, thus leading to the same prior mean as in the Minnesota prior. Canova
+(2007) sets Q to values inspired by the prior covariance matrix of the Minnesota
+prior (similar to equation 8). The scalar c can either be treated as an unknown
+parameter or a value can be selected for it (e.g. based on a training sample).
+It is also possible to treat A0 as a matrix of unknown parameters. To carry
+out Bayesian inference in such a model is usually straightforward since it re-
+quires only the addition of another block in an MCMC algorithm. In Section
+3.2 we saw how an MCMC algorithm involving p
+
+1jyT ; T
+
+, p
+
+Q1jyT ; T
+
+and p
+
+T jyT ; ; Q
+
+could be used to carry out posterior simulation in the
+Normal linear state space model. If A0 involves unknown parameters, then
+an MCMC algorithm involving p
+
+1jyT ; T ; A0
+
+, p
+
+Q1jyT ; T ; A0
+
+and
+p
+
+T jyT ; ; Q; A0
+
+proceeds in exactly the same manner. Using the notation
+of Section 3.2, we can simply set Tt = A0 and the methods of that section
+can be directly used. To complete an MCMC algorithm requires draws from
+p
+
+A0jyT ; ; Q; T
+
+. This will depend on the speci cation used for A0, but typ-
+ically this posterior conditional distribution is easy to derive using results for
+the V AR. That is, p
+
+A0jyT ; ; Q; T
+
+is a distribution which conditions on T ,
+and (47) can be written in V AR form
+t+1  0 = A0
+
+t  0
+
++ ut;
+with dependent variablest+1  0 and lagged dependent variables t  0.
+In the context of the MCMC algorithm, these dependent variablesand lagged
+dependent variables would be replaced with the drawn values.
+Any prior can be used for a0 = vec (A0) including any of the V AR priors
+described in Section 2. We will not provide exact formulae here, but note that
+they will be exactly as in Section 2 but with yt replaced by t+1  0 and xt
+(or Zt) replaced by t  0.
+One prior for a0 of empirical interest is the SSVS prior of Section 2.2.3. It is
+interesting to consider what happens if we use the prior given in (22) and (23)
+for a0 and set 0 = 0 .19 This implies that a0j (the jth element of a0) has a
+prior of the form:
+a0jjj 
+
+1  j
+
+N
+
+0; 2
+0j
+
++ jN
+
+0; 2
+1j
+
+;
+where j is a dummy variable and 2
+0j is very small (so that a0j is constrained
+to be virtually zero), but 2
+1j is large (so that a0j is relatively unconstrained).
+The implication of combining the SSVS prior with the TVP prior is that we
+have a model which (with probability j) says that a0j is evolving according
+1 9If the variables in the VAR are in levels, then the researcher may wish to set the elements
+of 0 corresponding to own rst lags to one, to re ect the common Minnesota prior belief in
+random walk behavior.
+39
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 40 =====
+to a random walk in the usual TVP fashion, but with probability
+
+1  j
+
+is
+set to zero. Such a model is a useful one since it allows for change in V AR
+coe¢ cients over time (which is potentially of great empirical importance), but
+also helps avoid over-parameterization problems by allowing for some lagged
+dependent variables to be deleted from the V AR. Another interesting approach
+with a similar methodology is given in Groen, Paap and Ravazzolo (2008).
+Adding Another Layer to the Prior Hierarchy Another way to combine
+the TVP model with prior information from another source is by adding another
+state equation to the TVP-V AR (i.e. another layer in the prior hierarchy). The
+framework that follows is taken from Chib and Greenberg (1995) and has been
+used in macroeconomics by, among others, Ciccarelli and Rebucci (2002).
+This involves writing the TVP-V AR as:
+yt = Ztt + "t (48)
+t+1 = A0t+1 + ut;
+t+1 = t + t:
+where all assumptions are as for the standard TVP-V AR, but we add the as-
+sumption that t is i.i.d. N (0; R) and t is independent of the other errors in
+the model.
+Note  rst that there is a sense in which this speci cation retains random
+walk evolution of the V AR coe¢ cients since it can be written as:
+yt = Ztt + "t
+t+1 = t + vt;
+where vt = A0t + ut  ut1. In this sense, it is a TVP-V AR with random
+walk state equation but, unlike (46), the state equation errors have a particular
+MA(1) structure.
+Another way of interpreting this model is by noting that it expresses the
+conditional prior belief that
+E
+
+t+1jt
+
+= A0t
+and, thus, is a combination of the random walk prior belief of the conventional
+TVP model with the prior beliefs contained in A0. A0 is typically treated as
+known.
+Note that it is possible for t to be of lower dimension than t and this
+can be a useful way of making the model more parsimonious. For instance, Cic-
+carelli and Rebucci (2002) is a panel V AR application involving G countries and,
+for each country, kG explanatory variables exist with time-varying coe¢ cients.
+They specify
+A0 = G 
+ IkG
+40
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 41 =====
+which implies that there is a time-varying component in each coe¢ cient which
+is common to all countries (rather than having G di¤erent time-varying compo-
+nents in each country). Thus, t is kG  1 whereas t kGG  1.
+Posterior computation in this model is described in Chib and Greenberg
+(1995). Alternatively, the posterior simulation methods for state space models
+described in Section 3 can be used, but with a more general speci cation for
+the state equation than that given there. Just as in the preceding section, if
+A0 is to be treated as a matrix of unknown parameters any prior can be used
+and another block added to the MCMC algorithm. The form of this block will
+typically be simple since, conditional on the states, we have t+1 = A0t+1 + ut
+which has the same structure as a multivariate regression model.
+As one empirically-useful example, suppose we use the SSVS prior of Sec-
+tion 2.2.3 for A0. Then we obtain a model where some V AR coe¢ cients evolve
+according to random walks in the standard TVP fashion while others are (ap-
+proximately) omitted from the model.
+4.1.3 Imposing Inequality Restrictions on the V AR Coe¢ cients
+Empirical macroeconomists typically work with multivariate time series models
+that they believe to be non-explosive. Thus, in TVP-V AR models it can be
+desirable to impose stability on the TVP-V AR at each point in time. This has
+lead papers such as Cogley and Sargent (2001, 2005) to restrict t to satisfy the
+usual stability conditions for V ARs for t = 1 ; ::; T. This involves imposing the
+inequality restriction that the roots of the V AR polynomial de ned by t lie
+outside the unit circle. Indeed, in the absence of such a stability restriction (or
+a very tight prior), Bayesian TVP-V ARs will place a large amount of a priori
+weight on explosive values for t (e.g. the Minnesota prior is centered over a
+random walk which means it allocates prior weight to the explosive region of the
+parameter space). This can cause problems for empirical work. For instance,
+even a small amount of posterior probability in explosive regions for t can lead
+to impulse responses or forecasts which have counter-intuitively large posterior
+means or standard deviations. Given that TVP-V ARs have many parameters
+to estimate and the researcher often has relatively small data sets, the posterior
+standard deviation of t can often be large. Thus, even if t truly is stable
+and its posterior mean indicates stability, it is not unusual for large posterior
+variances to imply that appreciable posterior probability is allocated to the
+explosive region.
+The preceding paragraph motivates one case where the researcher might
+wish to impose inequality restrictions on t in order to surmount potential over-
+parameterization problems which might arise in the TVP-V AR. Other inequality
+restrictions are also possible. In theory, imposing inequality restrictions is a
+good way of reducing over-parameterization problems. In practice, there is one
+problem with this strategy. This problem is that standard state space methods
+for the Normal linear state space models (see Section 3) cannot be used without
+some modi cation. Remember that MCMC methods for this model involved
+taking draws from p
+
+T jyT ; ; Q
+
+and that there are many e¢ cient algorithms
+41
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 42 =====
+for doing so (e.g. Carter and Kohn, 1994, Fruhwirth-Schnatter, 1994, DeJong
+and Shephard, 1995 and Durbin and Koopman, 2002). However, all of these
+algorithms are derived using properties of the multivariate Normal distribution
+which do not carry over to the multivariate Normal distribution subject to
+inequality constraints.
+Two methods have been proposed to impose stability restrictions (or other
+inequality restrictions) on TVP-V ARs. These are discussed and compared in
+Koop and Potter (2009). The  rst of these involves using a standard algorithm
+such as that of Carter and Kohn (1994) for drawing T in the unrestricted
+V AR. If any drawn t violates the inequality restriction then the entire vector
+T is rejected. 20 If every element of T satis es the inequality restriction then
+T is accepted with a certain probability (the formula for this probability is
+given in Koop and Potter, 2009). A potential problem with this algorithm is
+that it is possible for it to get stuck, rejecting virtually every T . In theory,
+if enough draws are taken this MCMC algorithm can be highly accurate, in
+practice enough draws can be so many that the algorithm simply cannot
+produce accurate results in a feasible amount of computer time.
+In the case where no inequality restrictions are imposed, the advantage of
+algorithms such as that of Carter and Kohn (1994) is that they are multi-move
+algorithms. This means that they provide a draw for the entire vector T from
+p
+
+T jyT ; ; Q
+
+directly. The logic of MCMC suggests that it would also be
+valid to draw t for t = 1 ; ::; T one at a time from p
+
+tjyT ; ; Q; t
+
+where
+t =
+
+0
+1; ::; t1; t+1; ::; 0
+T
+0
+. It is indeed the case that this is also valid thing
+to do. However, it is rarely done in practice since such single-move algorithms
+will be slow to mix. That is, they will tend to produce a highly correlated series
+of draws which means that, relative to multi-move algorithms, more draws must
+be taken to achieve a desired level of accuracy. The second algorithm proposed
+for the TVP-V AR subject to inequality restrictions is a single-move algorithm.
+This algorithm does have the disadvantage just noted  that it is slow mixing.
+But it is possible that this disadvantage is outweighed by the advantage that
+the single-move algorithm does not run into the problem noted above for the
+multi-move algorithm (i.e. that the multi-move algorithm can get stuck and
+reject every draw).
+Koop and Potter (2009) provide full details of both these algorithms and
+weigh their advantages and disadvantages in a macroeconomic application.
+4.1.4 Dynamic Mixture Models
+Another way of tightening the parameterization of the TVP-V AR is through the
+dynamic mixture model approach of Gerlach, Carter and Kohn (2000). This
+has recently been used in models of relevance for empirical macroeconomics in
+Giordani, Kohn and van Dijk (2007) and Giordani and Kohn (2008) and applied
+to TVP-V ARs in Koop, Leon-Gonzalez and Strachan (2009).
+2 0It can be shown that the strategy of rejecting only individual t which violate the in-
+equality restriction is not a valid one.
+42
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 43 =====
+To explain the usefulness of dynamic mixture modelling for TVP-V AR analy-
+sis, return to the general form for the Normal linear state space model given
+in (28) and (29) and remember that this model depended on so-called system
+matrices, Zt, Qt, Tt, Wt and t. Dynamic mixture models allow for any or
+all of these system matrices to depend on an s  1 vector eKt. Gerlach, Carter
+and Kohn (2000) discuss how this speci cation results in a mixtures of Normals
+representation for yt and, hence, the terminology dynamic mixture (or mix-
+ture innovation) model arises. The contribution of Gerlach, Carter and Kohn
+(2000) is to develop an e¢ cient algorithm for posterior simulation for this class
+of models. The e¢ ciency gains occur since the states are integrated out and
+eK =
+
+eK1; ::;eKT
+0
+is drawn unconditionally (i.e. not conditional on the states).
+A simple alternative algorithm would involve drawing from the posterior for eK
+conditional on T (and the posterior for T conditional on eK). Such a strat-
+egy can be shown to produce a chain of draws which is very slow to mix. The
+Gerlach, Carter and Kohn (2000) algorithm requires only that eKt be Markov
+(i.e. p
+
+eKtjeKt1; ::;eK1
+
+= p
+
+eKtjeKt1
+
+) and is particularly simple if eKt is a
+discrete random variable. We will not provide details of their algorithm here,
+but refer the reader to Gerlach, Carter and Kohn (2000) or Giordani and Kohn
+(2008). This algorithm is available on the Matlab website associated with this
+monograph.
+The dynamic mixture framework can be used in many ways in empirical
+macroeconomics, here we illustrate one useful way. Consider the following TVP-
+V AR:
+yt = Ztt + "t,
+and
+t+1 = t + ut;
+where "t is i.i.d. N (0; ) and ut is i.i.d. N
+
+0; eKtQ
+
+. This model is exactly the
+same as the TVP-V AR of Section 4.1, except for the error covariance matrix in
+the state equation. Let eKt 2 f0; 1g and assume a hierarchical prior for it of the
+following form:
+p
+
+eKt = 1
+
+= q:
+p
+
+eKt = 0
+
+= 1  q
+where q is an unknown parameter. 21
+This is a simple example of a dynamic mixture model. It has the property
+that:
+2 1This specication for eKt is Markov in the degenerate sense that an independent process
+is a special case of Markov process.
+43
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 44 =====
+t+1 = t + ut if eKt = 1
+t+1 = t if eKt = 0 :
+In words, the V AR coe¢ cients can change at time t (if eKt = 1 ), but can also
+remain constant (if eKt = 0) and q is the probability that the coe¢ cients change.
+eKt and q are estimated in a data-based fashion. Thus, this model can have the
+full  exibility of the TVP-V AR if the data warrant it (in the sense that it can
+select eKt = 1 for t = 1; ::; T). But it can also select a much more parsimonious
+representation. In the extreme, if eKt = 0 for t = 1; ::; T then we have the V AR
+without time-varying parameters.
+This simple example allows either for all the V AR coe¢ cients to change at
+time t (if eKt = 1) or none (if eKt = 0). More sophisticated models can allow for
+some parameters to change but not others. For instance, eKt could be a vector
+of M elements, each being applied to one of the equations in the V AR. Such a
+model would allow the V AR coe¢ cients in some equations to change, but remain
+constant in other equations. In models with multivariate stochastic volatility,
+eKt could contain elements which control the variation in the measurement error
+covariance matrix, t. This avenue is pursued in Koop, Leon-Gonzalez and
+Strachan (2009). Many other possibilities exist and the advantage of the dy-
+namic mixture framework is that there exists a well-developed, well-understood
+set of MCMC algorithms that make Bayesian inference straightforward.
+4.2 TVP-V ARs with Stochastic V olatility
+Thus far, we have focussed on the homoskedastic TVP-V AR, assuming the er-
+ror covariance matrix,  to be constant. However, we have argued above (see
+Section 3.3) that volatility issues are often very important in empirical macro-
+economics. Thus, in most cases, it is important to allow for multivariate stochas-
+tic volatility in the TVP-V AR. Section 3.3.2 discusses multivariate stochastic
+volatility, noting that there are many possible speci cations for t. Particu-
+lar approaches used in Cogley and Sargent (2005) and Primiceri (2005) are de-
+scribed in detail. All that we have to note here is that either of these approaches
+(or any other alternative) can be added to the homoskedastic TVP-V AR.
+With regards to Bayesian inference using MCMC methods, we need only
+add another block to our algorithm to draw t for t = 1 ; ::; T. That is,
+with the homoskedastic TVP-V AR we saw how an MCMC algorithm involv-
+ing p
+
+Q1jyT ; T
+
+, p
+
+T jyT ; ; Q
+
+and p
+
+1jyT ; T
+
+could be used. When
+adding multivariate stochastic volatility, the  rst of these densities is unchanged.
+The second, p
+
+T jyT ; ; Q
+
+, becomes p
+
+T jyT ; 1; ::; T ; Q
+
+which can be
+drawn from using any of the algorithms (e.g. Carter and Kohn, 1994) for the
+Normal linear state space model mentioned previously. Finally, p
+
+1jyT ; T
+
+is replaced by p
+
+1
+1 ; ::; 1
+T jyT ; T
+
+. Draws from this posterior conditional
+can be taken as described in Section 3.3.2.
+44
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 45 =====
+4.3 Empirical Illustration of Bayesian Inference in TVP-
+V ARs with Stochastic V olatility
+We continue our empirical illustration of Section 4.1.1 which involved a ho-
+moskedastic TVP-V AR. All details of the empirical are as in Section 4.1.1 ex-
+cept we additionally allow for multivariate stochastic volatility as in Primiceri
+(2005). The prior for the parameters relating to the multivariate stochastic
+volatility are speci ed as in Primiceri (2005).
+For the sake of brevity, we do not present impulse responses (these are similar
+to those presented in Primiceri, 2005). Instead we present information relating
+to the multivariate stochastic volatility. Figure 6 presents the time-varying
+standard deviations of the errors in the three equations of our TVP-V AR (i.e.
+the posterior means of the square roots of the diagonal element of t). Figure
+5 shows that there is substantial time variation in the error variances in all
+equations. In particular, it can be seen that 1970s was a very volatile period
+for the US economy, while the monetarist experiment of the early 1980s is also
+with instability. However, after the early 1980s volatility is greatly reduced in
+all equations. This latter period has come to be known as the Great Moderation
+of the business cycle.
+Figure 5: Time-varying volatilities of errors in the three equations of
+the TVP-V AR
+45
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 46 =====
+5 F actor Methods
+The V AR and TVP-V AR methods we have discussed so far are typically used
+when the number of variables in the model is relatively small (e.g. three or four
+and rarely more than ten). 22 However, in most modern economies, the macro-
+economist will potentially have dozens or hundreds of time series variables to
+work with. Especially when forecasting, the researcher wants to include as much
+information as possible, and it can be desirable to work with as many variables
+as possible. This can lead to models with a large number of variables and a pro-
+liferation of parameters. Accordingly, researchers have sought ways of extract-
+ing the information in data sets with many variables while, at the same time,
+keeping the model parsimonious. Beginning with Geweke (1977) factor models
+have been the most common way of achieving this goal (see Stock and Wat-
+son 2006 for a recent survey). Applications such as Forni and Reichlin (1998),
+Stock and Watson (1999, 2002), Bernanke and Boivin (2003), have popularized
+factor methods among macroeconomists and Geweke and Zhou (1996), Otrok
+and Whiteman (1998) and Kose, Otrok and Whiteman (2003), among many
+others, stimulated the interest of Bayesians. Papers such as Bernanke, Boivin
+and Eliasz (2005) and Stock and Watson (2005) have combined factor methods
+with V AR methods. More recently, papers such as Del Negro and Otrok (2008)
+and Korobilis (2009a) provide further TVP extensions to these models. In this
+section, we will describe dynamic factor models and their extensions to factor
+augmented V ARs (F A V ARs) and TVP-F A V ARs. As we shall see, these models
+can be interpreted as state space models and Bayesian MCMC algorithms that
+use our previously-discussed algorithms for state space models can be used.
+5.1 Introduction
+We will retain our notation where yt is an M  1 vector of time series variables,
+but now M will be very large and let yit denote a particular variable. A simple
+static factor model is (see Lopes and West, 2004):
+yt = 0 + ft + "t; (49)
+The key aspect of the factor model is the introduction of ft which is a q  1
+vector of unobserved latent factors (where q << M ) which contains information
+extracted from all the M variables. The factors are common to every dependent
+variable (i.e. the same ft occurs in every equation for yit for i = 1 ; :::; M), but
+they may have di¤erent coe¢ cients (  which is a M q matrix of so-called factor
+loadings). Also, the equation for every dependent variable has its own intercept
+(i.e. 0 is M  1 vector of parameters). "t is i.i.d. N (0; ). Di¤erent factor
+models arise from the assumptions about the factors. For example, the simplest
+case would be to assume that the factors come from a standard Normal density,
+ft  N (0; I). This implies that the covariance matrix of the observed data can
+2 2An important exception is Banbura, Giannone and Reichlin (2008) which uses Bayesian
+VARs (with time-invariant coe¢ cients) with up to 130 variables
+46
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 47 =====
+be written as:
+var(y) = 0 + :
+Alternatively, if we assume that the factors have a (not necessarily diagonal)
+covariance matrix f , the decomposition becomes
+var(y) = f 0 + :
+Even in this simple static framework, many extensions are possible. For
+example, Pitt and Shephard (1999) assume a factor stochastic volatility speci -
+cation (i.e. a diagonal factor covariance matrix f
+t which varies over time, with
+diagonal elements following a geometric random walk). West (2003) uses SSVS
+on the parameters (0; ).
+We write out these covariance matrices to illustrate the identi cation issues
+which arise in factor models. In general, var(y) will have M (M +1)
+2 elements
+which can be estimated. However, without further restrictions,  and  (or
+; f and ) will have many more elements than this. It is common to restrict
+ to be a diagonal matrix. This restriction implies that all the commonalities
+across variables occur through the factors and that the individual elements of "t
+are purely shocks which are idiosyncratic to each variable. But additional iden-
+tifying restrictions are typically required. Lopes and West (2004) and Geweke
+and Zhou (1996) give a clear explanation of why identi cation is not achieved
+in the simple factor model. Below we will discuss more  exible factor models,
+but we stress that this added  exibility requires the imposition of more identi-
+ cation restrictions. There is not a single, universally agreed-upon method for
+achieving identi cation in these models. Below, we make particular choices that
+have been used in the literature, but note that others are possible.
+5.2 The Dynamic F actor Model
+In macroeconomics, it is common to extend the static factor model to allow for
+the dynamic properties which characterize macroeconomic variables. This leads
+us to dynamic factor models (DFMs). A popular DFM is:
+yit = 0i + ift + "it
+ft =  1ft1 + :: + pftp + "f
+t
+"it = i1"it1 + :: + ipi"itpi + uit
+; (50)
+where ft is de ned as in (49), i which is a 1  q vector of factor loadings. Also,
+the equation for every dependent variable has its own intercept, 0i. The error
+in each equation, "it, may be autocorrelated, as speci ed in the third equation in
+(50) which assumes uit to be i.i.d. N
+
+0; 2
+i
+
+. The vector of factors is assumed
+to follow a V AR process with "f
+t being i.i.d. N
+
+0; f
+. The errors, uit are
+independent over i; t and of "f
+t .
+Many slight modi cations of the DFM given in (50) have been used in the
+literature. But this speci cation is a popular one so we will discuss factor models
+using this framework. Note that it incorporates many identifying assumptions
+47
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 48 =====
+and other assumptions to ensure parsimony. In particular, the assumption that
+f = I is a common identifying assumption. 23 If f is left unrestricted, then
+it is impossible to separately identify i and f . Similarly, the identifying
+assumption that uit is uncorrelated with ujt (for i 6= j) and "f
+t is a standard
+one which assures that the co-movements in the di¤erent variables in yt arises
+from the factors. Even with these assumptions, there is a lack of identi cation
+since the  rst equation of (50) can be replaced by:
+yit = 0i + iC 0Cf t + "it;
+where C is any orthonormal matrix. 24 Thus, (50) is observationally equivalent
+to a model with factors Cf t and factor loadings iC 0. One way of surmounting
+this issue is to impose restrictions on i (as is done below in our empirical
+example). A further discussion of various DFMs and identi cation is provided,
+e.g., in Stock and Watson (2005). See also Sentana and Fiorentini (2001) for a
+deeper discussion of identi cation issues.
+To simplify the following discussion, we will assume the errors in the mea-
+surement equation are not autocorrelated (i.e. "it are i.i.d. N
+
+0; 2
+i
+
+and,
+thus,i1 = :: = ipi = 0 ). We do this not because the extension to autocorre-
+lated errors is empirically unimportant (it may be important), but because it
+involves a straightforward addition of other blocks to the MCMC algorithm of
+a standard form. That is, adding AR (or ARMA) errors to a regression model
+such as the  rst equation of (50) involves standard methods (see, e.g., Chib
+and Greenberg, 1994). To be precise, the Chib and Greenberg (1994) algorithm
+will produce draws of i1; ::; ip and these can be plugged into the usual quasi-
+di¤erencing operator for AR models and this operator can be applied to the
+ rst equation in (50). The methods described below can then be used to draw
+all the other parameters of this model, except that yit and ft will be replaced
+by quasi-di¤erenced versions.
+5.2.1 Replacing F actors by Estimates: Principal Components
+Before discussing a full Bayesian analysis of the DFM which (correctly) treats
+ft as a vector of unobserved latent variables, it is worth noting a simple approx-
+imation that may be convenient in practice. This approximation is used, e.g.,
+in Koop and Potter (2004). It involves noting that the DFM has approximately
+the same structure as the regression model:
+yit = 0i +e0ift + :: +epiftp +e"it: (51)
+Thus, if ft were known we could use Bayesian methods for the multivariate
+Normal regression model to estimate or forecast with the DFM.
+2 3However, if (as below and in Pitt and Shephard, 1999) the researcher wishes to allow for
+factor stochastic volatility then this identifying assumption cannot be made and an alternative
+one is necessary.
+2 4An orthonormal matrix has the property that C0C = I.
+48
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 49 =====
+However, it is common to use principal components methods to approximate
+ft.25 Hence, approximate methods for Bayesian analysis of the DFM can be
+carried out by simply replacing ft (51) by a principal components estimate and
+using regression methods.
+5.2.2 T reating F actors as Unobserved Latent V ariables
+It is also not di¢ cult to treat the factors as unobserved latent variables using
+Bayesian methods for state space models that were discussed in Section 3. This
+is particularly easy to see if we ignore the AR structure of the errors in the
+measurement equation and write the DFM as
+yit = 0i + ift + "it
+ft =  1ft1 + :: + pftp + "f
+t
+(52)
+for i = 1 ; ::; M where "it is i.i.d. N
+
+0; 2
+i
+
+and "f
+t is i.i.d. N
+
+0; f
+: In this
+form it can be seen clearly that the DFM is a Normal linear state space model of
+the form given in (28) and (29). Thus all the methods for posterior simulation
+introduced in Section 3 can be used to carry out Bayesian inference. In the
+following we provide some additional detail about the steps involved.
+Note  rst that, conditional on the model s parameters,f ; 1; ::; p; 0i; i; 2
+i
+for i = 1 ; ::; M, any of the standard algorithms for state space models such as
+that of Carter and Kohn (1994) can be used to draw the factors. But conditional
+on the factors, the measurement equations are just M Normal linear regression
+models. Note that the assumption that "it is independent of "jt for i 6= j means
+that the posteriors for 0i; i; 2
+i in the M equations are independent over i and,
+hence, the parameters for each equation can be drawn one at a time. Finally,
+conditional on the factors, the state equation becomes a V AR and the methods
+for Bayesian analysis in V ARs of Section 2 can be used. Details on the deriva-
+tions for this or related models can be found in many places, including Geweke
+and Zhou (1996), Kim and Nelson (1999), Lopes and West (2004) or Del Negro
+and Schorfheide (2009). Lopes and West (2004) discusses the choice of q, the
+number of factors.
+5.2.3 Impulse Response Analysis in the DFM
+In our discussion of impulse response analysis in V AR models, we emphasized
+how it is typically done based on a structural V AR:
+C0yt = c0 +
+pX
+j=1
+Cjytj + ut
+2 5If Y is the T  M matrix containing all the variables and W is a M  q matrix containing
+the eigenvectors corresponding to the q largest eigenvalues of Y 0Y , then F = Y W produces
+an estimate of the matrix of the factors.
+49
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 50 =====
+or C (L) yt = c0 + ut where ut is i.i.d. N (0; I), C (L) = C0 Pp
+j=1 CjLp and
+L is the lag operator. In fact, impulse responses are coe¢ cients in the vector
+moving averaging (VMA) representation:
+yt =ec0 + C (L)1 ut;
+whereec0 is an intercept ( ec0 = C (L)1 c0). To be precise, the response of the
+ith variable to the jth structural error h periods in the future, will be the (ij)th
+element of the VMA coe¢ cient matrix on uth. This makes clear that what is
+required for impulse response analysis is a VMA representation and a method
+for structurally identifying shocks through a choice of C0.
+With the DFM, we can obtain the VMA representation for yt. By substi-
+tuting the state equation in (52) into the measurement equation we can obtain:
+yt = "t +  (L)1 "f
+t
+= B (L) t
+where  (L) = I  1L  ::  pLp and, for notational simplicity, we have
+suppressed the intercept and are still assuming "t to be serially uncorrelated.
+Adding such extensions is conceptually straightforward (e.g. implying "t1; ::; "tp
+would be included in the VMA representation).
+In the VMA form it can be seen that standard approaches to impulse re-
+sponse analysis run into trouble when the DFM is used since the errors in the
+VMA are a combination of the measurement equation errors, "t, and the state
+equation errors, "f
+t . For instance, in the V AR it is common to identify the struc-
+tural shocks by assuming C0 to be a lower-triangular matrix. If the interest rate
+were the last element of yt this would ensure that the error in the interest rate
+equation had no immediate e¤ect on the other variables thus identifying it as a
+monetary policy shock under control of the central bank (i.e. the shock will be
+proportional to the change in interest rates). With the DFM, a monetary policy
+shock de ned by assuming C0 to be lower triangular will not purely re ect the
+interest rate change, but will re ect the change in the interest rate and relevant
+element of "f
+t . Thus, impulse response analysis in DFMs is problematic: it is dif-
+ cult to identify an economically-sensible structural shock to measure impulse
+responses to. This motivates the use of F A V ARs. In one sense, these are simply
+a di¤erent form for writing the DFM but implicitly involve a restriction which
+allows for economically-sensible impulse response analysis. 26
+5.3 The F actor Augmented V AR (F A V AR)
+DFMs are commonly used for forecasting. However, interest in combining the
+theoretical insights provided by V ARs with factor methods ability to extract
+information in large data sets motivates the development of factor augmented
+2 6This is the interpretation of the FAVAR given by Stock and Watson (2005) who begin by
+writing the FAVAR as simply being a DFM written in VAR form.
+50
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 51 =====
+V ARs or F A V ARs. For instance, a V AR with an identifying assumption which
+isolates a monetary policy shock can be used to calculate impulse responses
+which measure the e¤ect of monetary policy. As we have seen, such theoretical
+insights are hard to obtain in the DFM. However, V ARs typically involve only a
+few variables and it is possible that this means important economic information
+is excluded. 27 This suggests that combining factor methods, which extract the
+information in hundreds of variables, with V AR methods might be productive.
+This is done in papers such as Bernanke, Boivin and Eliasz (2005) and Belviso
+and Milani (2006).
+The F A V AR modi es a DFM such as (52) by adding other explanatory vari-
+ables to the M measurement equations:
+yit = 0i + ift + irt + "it; (53)
+where rt is a kr  1 vector of observed variables. For instance, Bernanke, Boivin
+and Eliasz (2005) set rt to be the Fed Funds rate (a monetary policy instrument)
+and, thus, kr = 1 . All other assumptions about the measurement equation are
+the same as for the DFM.
+The F A V AR extends the state equation for the factors to also allow for rt to
+have a V AR form. In particular, the state equation becomes:
+ ft
+rt
+
+=e1
+ ft1
+rt1
+
++ :: +ep
+ ftp
+rtp
+
++e"f
+t (54)
+where all state equation assumptions are the same as for the DFM with the
+extension that e"f
+t is i.i.d. N
+
+0;ef
+
+:
+We will not describe the MCMC algorithm for carrying out Bayesian infer-
+ence in the F A V AR since it is very similar to that for the DFM. 28 That is, (53)
+and (54) is a Normal linear state space model and, thus, standard methods (e.g.
+from Carter and Kohn, 1994) described in Section 3 can be used to draw the
+latent factors (conditional on all other model parameters). Conditional on the
+factors, the measurement equations are simply univariate Normal linear regres-
+sion models for which Bayesian inference is standard. Finally, conditional on
+the factors, (54) is a V AR for which Bayesian methods have been discussed in
+this monograph.
+5.3.1 Impulse Response Analysis in the F A V AR
+With the F A V AR, impulse responses of all the variables in yt to the shocks
+associated with rt can be calculated using standard methods. For instance, if
+rt is the interest rate and, thus, the error in its equation is the monetary policy
+2 7As an example, VARs with a small number of variables sometimes lead to counter-intuitive
+impulse responses such as the commonly noted price puzzle (e.g. where increases in interest
+rates seem to increase in ation). Such puzzles often vanish when more variables are included
+in the VAR suggesting that VARs with small numbers of variables may be mis-specied.
+2 8The working paper version of Bernanke, Boivin and Eliasz (2005) has an appendix which
+provides complete details. See also the Matlab manual on the website associated with this
+monograph.
+51
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 52 =====
+shock, then the response of any of the variables in yt to the monetary policy
+shock can be calculated using similar methods as for the V AR. To see this note
+that the F A V AR model can be written as:
+ yt
+rt
+
+=
+  
+0 1
+ ft
+rt
+
++e"t;
+ ft
+rt
+
+= e1
+ ft1
+rt1
+
++ :: +ep
+ ftp
+rtp
+
++e"f
+t
+wheree"t = ("0
+t; 0)0 and  is an M kr matrix containing the is. As for the DFM
+model, for notational simplicity, we have suppressed the intercept and assumed
+"t to be serially uncorrelated. Adding such extensions is straightforward.
+If we write the second equation in VMA form as
+ ft
+rt
+
+= e (L)1e"f
+t
+(where e (L) = I e1L  :: eLp) and substitute into the  rst equation, we
+obtain:
+ yt
+rt
+
+=
+  
+0 1
+
+e (L)1e"f
+t +e"t
+= eB (L) t:
+Thus, we have a VMA form which can be used for impulse response analysis. But
+consider the last kr elements of t which will be associated with the equations
+for rt. Unlike with the DFM, these VMA errors are purely the errors associated
+with the V AR for rt. This can be seen by noting that the last kr elements ofe"t
+are zero and thus the corresponding elements of t will only re ect corresponding
+elements of e"f
+t which are errors in equations having rt as dependent variables.
+Unlike in the DFM, they do not combine state equation errors with measurement
+equation errors. For instance, if rt is an interest rate and structural identi cation
+is achieved by assuming C0 (see equation 14) to be lower-triangular, then the
+structural shock to the interest rate equation is truly proportional to a change
+in the interest rate and the response to such a monetary policy shock has an
+economically-sensible interpretation.
+Remember that, as with any factor model, we require identi cation restric-
+tions (e.g. principal components methods implicitly involve an identi cation
+restriction that the factors are orthogonal, but other restrictions are possible).
+In order to do structural impulse response analysis, additional identi cation re-
+strictions are required (e.g. that C0 is lower-triangular). Note also that the
+restrictions such as C0 being lower triangular are timing restrictions and must
+be thought about carefully. For instance, Bernanke, Boivin and Eliasz (2005)
+divide the elements of yt into blocks of slow variables (i.e. those which are
+slow to respond to a monetary policy shock) and fast variablesas part of their
+identi cation scheme.
+52
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 53 =====
+5.4 The TVP-F A V AR
+In this monograph, we began by discussing Bayesian V AR modelling, before
+arguing that it might be desirable to allow the V AR coe¢ cients to vary over
+time. This led us to the homoskedastic TVP-V AR. Next, we argued that it is
+usually empirically important to allow for multivariate stochastic volatility. We
+can go through exactly the same steps with the F A V AR resulting in a TVP-
+F A V AR. Several speci cations have been proposed, including Del Negro and
+Otrok (2008) and Korobilis (2009a). However, just as with TVP-V ARs, it is
+worth stressing that TVP-F A V ARs can be over-parameterized and that care-
+ful incorporation of prior information or the imposing of restrictions (e.g. only
+allowing some parameters to vary over time) can be important in obtaining
+sensible results. Completely unrestricted versions of them can be di¢ cult to
+estimate using MCMC methods since they involve so many di¤erent state equa-
+tions (i.e. one set for the factors and others to model the evolution of the
+parameters).
+A very general speci cation for the TVP-F A V AR is given in Korobilis (2009a)29
+who replaces (53) and (54) by
+yit = 0it + itft + itrt + "it; (55)
+and
+ ft
+rt
+
+=e1t
+ ft1
+rt1
+
++ :: +ept
+ ftp
+rtp
+
++e"f
+t (56)
+and assumes each "it follows a univariate stochastic volatility process and var
+
+e"f
+t
+
+=
+ef
+t has a multivariate stochastic volatility process of the form used in Primiceri
+(2005). Finally, the coe¢ cients (for i = 1 ; ::; M) 0it; it; it;e1t; ::;ept are al-
+lowed to evolve according to random walks (i.e. state equations of the same
+form as 46 complete the model). All other assumptions are the same as for the
+F A V AR.
+We will not describe the MCMC algorithm for this model other than to note
+that it simply adds more blocks to the MCMC algorithm for the F A V AR. These
+blocks are all of forms previously discussed in this monograph. For instance,
+the error variances in the measurement equations are drawn using the univariate
+stochastic volatility algorithm of Section 3.3.1. The algorithm of Section 3.3.2
+can be used to draw ef
+t . The coe¢ cients 0it; it; it;e1t; ::;ept are all drawn
+using the algorithm of Section 3.2, implemented in a very similar fashion as in
+the TVP-V AR. In short, as with so many models in empirical macroeconomics,
+Bayesian inference in the TVP-F A V AR proceeds by putting together an MCMC
+algorithm involving blocks from several simple and familiar algorithms.
+2 9The model of Korobilis (2009a) is actually a slight extension of this since it includes a
+dynamic mixture aspect similar to that presented in Section 4.1.3.
+53
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 54 =====
+5.5 Empirical Illustration of F actor Methods
+To illustrate Bayesian inference in F A V ARs and TVP-F A V AR models, we use a
+data set of 115 quarterly US macroeconomic variables spanning 1959Q1 though
+2006Q3. Following common practice in this literature, we transform all variables
+to be stationary. For brevity, we do not list these variables here nor describe the
+required stationarity transformations. These details are provided in the manual
+on the website associated with this monograph.
+The F A V AR is given in (53) and (54). It requires the choice of variables
+to isolate in rt and we use the same variables as in our previous V AR and
+TVP-V AR empirical illustrations: in ation, unemployment and the interest rate.
+Consequently, our F A V AR is the same tri-variate V AR used in previous empirical
+illustrations, augmented with factors, ft, which are extracted from a large set
+of macroeconomic and  nancial variables.
+We use principal components methods to extract the  rst two factors which
+are used in the F A V AR (q = 2) and two lags in the factor equation ( p = 2).30 The
+use of principal components methods ensures identi cation of the model since it
+normalizes all factors to have mean zero and variance one. For the F A V AR we
+require a prior for the parameters f ; 1; ::; p; 0i; i; 2
+i for i = 1 ; ::; M. Full
+details of this (relatively noninformative) prior are provided in the manual on
+the website associated with this monograph.
+To carry out impulse response analysis we require additional identifying
+assumptions. With regards to the equations for rt, we adopt the same identifying
+assumptions as in our previous empirical illustrations. These allow us to identify
+a monetary policy shock. With regards to the variables in yt, su¢ ce it to note
+here is that we adopt the same assumptions as Bernanke, Boivin and Eliasz
+(2005). The basic idea of their identifying scheme is described in Section 5.2.3
+above.
+Figures 6 and 7 plot impulse responses to the monetary policy shock for
+the F A V AR. Figure 6 plots impulse responses for the main variables which are
+included in rt. The patterns in Figure 6 are broadly similar as those obtained in
+our empirical illustration using V ARs (compare Figure 6 to Figure 4). However,
+the magnitudes of the impulse responses are somewhat di¤erent. Here we are
+ nding more evidence that a monetary policy shock will decrease in ation. Fig-
+ure 7 plots the response of a few randomly selected variables to the monetary
+policy shock. 31
+3 0These choices are only illustrative. In a substantive empirical exercise, the researcher
+would select these more carefully (e.g. using model selection methods such discussed previously
+in this monograph).
+3 1See the manual on the website associated with this monograph for a denition of the
+abbreviations used in Figures 7 and 10. Brie y GDPC96 is GDP, GSAVE is savings, PRFI is
+private residential xed investment, MANEMP is employment in manufacturing, AHEMAN is
+earnings in manufacturing, HOUST is housing starts, GS10 is a 10 year interest rate, EXJPUS
+is the Japanese-US exchange rate, PPIACO is a producer price index, OILPRICE is the oil
+price, HHSNTN is an index of consumer expectations and PMNO is the NAPM orders index.
+All impulse responses are to the original untransformed versions of these variables.
+54
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 55 =====
+Figure 6: Posterior of impulse responses of main variables to monetary
+policy shock
+55
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 56 =====
+Figure 7: Posterior of impulse responses of selected variables to monetary
+policy shock
+We now present results for a TVP-F A V AR de ned in (55) and (56), but with
+the restriction that the parameters in the measurement equation are constant
+over time. 32 The (relatively noninformative) prior we use is described in the
+manual on the website associated with this monograph.
+Figure 8 plots the posterior means of the standard deviations of the errors
+in the two equations where the factors are the dependent variable and the three
+equations where rt are the dependent variables. It can be seen that there is
+substantive evidence of variation in volatilities (in particular, for equation for
+the  rst factor). The bottom three panels of Figure 8 look similar to Figure 5
+and indicate the substantial increase in volatility associated with the 1970s and
+early 1980s preceding the Great Moderation of the business cycle. However,
+this pattern is somewhat muted relative to Figure 5 since the inclusion of the
+factors means that the standard deviation of the errors becomes smaller.
+3 2We do this since it is di¢ cult to estimate time variation in coe¢ cients in both the mea-
+surement and state equation without additional restrictions or very strong prior information.
+56
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 57 =====
+Figure 8: Time-varying volatilities of errors in  ve key equations of the
+TVP-F A V AR
+Figures 9 and 10 plot impulse responses in the same format as Figures 6
+and 7. With the TVP-F A V AR these will be time varying so we plot them
+for three di¤erent time periods. A comparison of Figure 9 to Figure 4 (which
+presents the same impulse responses using a TVP-V AR) indicate that broad
+patterns are roughly similar, but there are some important di¤erences between
+the two  gures. Similarly, a comparison of Figure 10 to Figure 8 indicates broad
+similarities, but in some speci c cases important di¤erences can be found.
+57
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 58 =====
+Figure 9: Posterior of impulse responses of main variables to monetary policy
+shock at di¤erent times
+58
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 59 =====
+Figure 10: Posterior means impulse responses of selected variables to
+monetary policy shock at di¤erent times
+6 Conclusion
+In this monograph, we have discussed V ARs, TVP-V AR, F A V ARs and TVP-
+F A V ARs, including versions of these models with multivariate stochastic volatil-
+ity. These classes of models have become very popular with empirical macro-
+economists since they allow for insight into the relationships between macroeco-
+nomic variables in a manner which lets the data speak in a relatively uncon-
+strained manner. However, the cost of working with such unconstrained models
+is that they risk being over-parameterized. Accordingly, researchers have found
+it desirable to impose soft or hard restrictions on these models. Soft restrictions
+typically involve shrinking coe¢ cients towards a particular value (usually zero)
+whereas hard ones involve the imposition of exact restrictions. Bayesian meth-
+ods have been found to be an attractive and logically consistent way of handling
+such restrictions.
+We have shown have Bayesian inference can be implemented in a variety of
+ways in these models, with emphasis on speci cations that are of interest to the
+practitioner. Apart from the simplest of V ARs, MCMC algorithms are required.
+This monograph describes these algorithms in a varying degree of detail. We
+59
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 60 =====
+draw the reader s attention to the website associated with this monograph which
+contains Matlab code for most of the models described above. A manual on
+this website provides a complete listing of all formulae used in each MCMC
+algorithm. Thus, our aim has been to provide a complete set of Bayesian tools
+for the practitioner interested in a wide variety of models commonly used in
+empirical macroeconomics.
+60
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 61 =====
+References
+An, S. and Schorfheide, F. (2007). Bayesian analysis of DSGE models,
+Econometric Reviews, 26, 113-172.
+Asai, M., McAleer, M. and Yu, J. (2006). Multivariate stochastic volatility:
+A review, Econometric Reviews, 25, 145-175.
+Ballabriga, F., Sebastian, M. and Valles, J. (1999). European asymme-
+tries, Journal of International Economics , 48, 233-253.
+Banbura, M., Giannone, D. and Reichlin, L. (2008). Large Bayesian V ARs,
+Journal of Applied Econometrics , forthcoming.
+Belviso, F. and Milani, F. (2006). Structural factor augmented V ARs
+(SF A V ARs) and the e¤ects of monetary policy, Topics in Macroeconomics ,
+6, 2.
+Berg, A., Meyer, R. and Yu, J. (2004). Deviance information criterion
+for comparing stochastic volatility models, Journal of Business and Economic
+Statistics, 22, 107-120.
+Bernanke, B. and Boivin, J. (2003). Monetary policy in a data-rich envi-
+ronment,Journal of Monetary Economics , 50, 525-546.
+Bernanke, B., Boivin, J. and Eliasz, P. (2005). Measuring monetary pol-
+icy: A Factor augmented vector autoregressive (F A V AR) approach, Quarterly
+Journal of Economics , 120, 387-422.
+Bernanke, B. and Mihov, I. (1998). Measuring monetary policy, Quarterly
+Journal of Economics , 113, 869-902.
+Boivin, J. and Giannoni, M. (2006) Has monetary policy become more ef-
+fective? Review of Economics and Statistics , 88, 445-462.
+Canova, F. (2007). Methods for Applied Macroeconomic Research published
+by Princeton University Press.
+Canova, F. (1993). Modelling and forecasting exchange rates using a Bayesian
+time varying coe¢ cient model, Journal of Economic Dynamics and Control ,
+17, 233-262.
+Canova, F. and Ciccarelli, M. (2009). Estimating multi-country V AR mod-
+els, International Economic Review , 50, 929-959.
+Canova, F. and Ciccarelli, M. (2004). Forecasting and turning point predic-
+tions in a Bayesian panel V AR model, Journal of Econometrics , 120, 327-359.
+Canova, F. and Gambetti, L. (2009). Structural changes in the US econ-
+omy: Is there a role for monetary policy? Journal of Economic Dynamics and
+Control, 33, 477-490.
+Carter, C. and Kohn, R. (1994). On Gibbs sampling for state space mod-
+els, Biometrika, 81, 541 553.
+Chib, S. and Greenberg, E. (1994). Bayes inference in regression models
+with ARMA(p,q) errors, Journal of Econometrics , 64, 183-206.
+Chib, S. and Greenberg, E. (1995). Hierarchical analysis of SUR models
+with extensions to correlated serial errors and time-varying parameter models,
+Journal of Econometrics , 68, 339-360.
+Chib, S., Nardari, F. and Shephard, N. (2002). Markov chain Monte Carlo
+methods for stochastic volatility models, Journal of Econometrics , 108, 281-
+316.
+61
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 62 =====
+Chib, S., Nardari, F. and Shephard, N. (2006). Analysis of high dimensional
+multivariate stochastic volatility models, Journal of Econometrics , 134, 341-
+371.
+Chib, S., Omori, Y. and Asai, M. (2009). Multivariate stochastic volatility,
+pages 365-400 in Handbook of Financial Time Series , edited by T. Andersen,
+R. David, J. Kreiss and T. Mikosch. Berlin: Springer-Verlag.
+Christiano, L., Eichenbaum, M. and Evans, C. (1999). Monetary shocks:
+What have we learned and to what end? , pages 65-148 in Handbook of Macro-
+economics, vol. 1A, edited by J. Taylor and M. Woodford. New York: Elsevier.
+Ciccarelli, M. and Rebucci, A., (2002). The transmission mechanism of
+European monetary policy: Is there heterogeneity? Is it changing over time?,
+International Monetary Fund working paper, WP 02/54.
+Cogley, T. and Sargent, T. (2001). Evolving post-World War II in ation
+dynamics, NBER Macroeconomic Annual, 16, 331-373.
+Cogley, T. and Sargent, T. (2005). Drifts and volatilities: Monetary policies
+and outcomes in the post WWII U.S, Review of Economic Dynamics , 8, 262-
+302.
+DeJong, P. and Shephard, N. (1995). The simulation smoother for time
+series models, Biometrika, 82, 339-350.
+Del Negro, M. and Otrok, C. (2008). Dynamic factor models with time
+varying parameters: Measuring changes in international business cycles, Fed-
+eral Reserve Bank of New York Sta¤ Report no. 326.
+Del Negro, M. and Schorfheide, F. (2004). Priors from general equilibrium
+models for V ARs,International Economic Review , 45, 643-673.
+Del Negro, M. and Schorfheide, F. (2009). Bayesian macroeconometrics,
+to appear in the Handbook of Bayesian Econometrics , edited by J. Geweke, G.
+Koop and H. van Dijk. Oxford: Oxford University Press.
+Doan, T., Litterman, R. and Sims, C. (1984). Forecasting and conditional
+projection using realistic prior distributions, Econometric Reviews, 3, 1-144.
+Doucet, A., Godsill, S. and Andrieu, C. (2000). On sequential Monte Carlo
+sampling methods for Bayesian  ltering,Statistics and Computing , 10, 197-208.
+Durbin, J. and Koopman, S. (2001). Time Series Analysis by State Space
+Methods. Oxford: Oxford University Press.
+Durbin, J. and Koopman, S. (2002). A simple and e¢ cient simulation
+smoother for state space time series analysis, Biometrika, 89, 603-616.
+Fernandes-Villaverde, J. (2009). The econometrics of DSGE models,Penn
+Institute for Economic Research working paper 09-008.
+Forni, M. and Reichlin, L. (1998). Let s get real: A factor analytic approach
+to disaggregated business cycle dynamics, Review of Economic Studies, 65, 453-
+473.
+Fruhwirth-Schnatter, S. (1994). Data augmentation and dynamic linear
+models, Journal of Time Series Analysis , 15, 183 202.
+Fruhwirth-Schnatter, S. and Wagner, H. (2008). Marginal likelihoods for
+non-Gaussian models using auxiliary mixture sampling, Computational Statis-
+tics and Data Analysis , 52, 4608-4624.
+62
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 63 =====
+Gelfand, A. and Dey, D. (1994). Bayesian model choice: Asymptotics and
+exact calculations, Journal of the Royal Statistical Society Series B , 56, 501-
+514.
+George, E., Sun, D. and Ni, S. (2008). Bayesian stochastic search for V AR
+model restrictions, Journal of Econometrics , 142, 553-580.
+Geweke, J. (1977). The dynamic factor analysis of economic time series,
+in Latent Variables in Socio-economic Models, edited by D. Aigner and A. Gold-
+berger, Amsterdam: North Holland.
+Geweke, J. and Keane, M. (2007). Smoothly mixing regressions, Journal
+of Econometrics , 138, 252-291.
+Geweke, J. and Zhou, G. (1996). Measuring the pricing error of the arbi-
+trage pricing theory, Review of Financial Studies , 9, 557-587.
+Giordani, P. and Kohn, R. (2008) E¢ cient Bayesian inference for multiple
+change-point and mixture innovation models, Journal of Business and Eco-
+nomic Statistics , 26, 66-77.
+Giordani, P., Kohn, R. and Pitt, M. (2009). Time series state space mod-
+els,to appear in the Handbook of Bayesian Econometrics , edited by J. Geweke,
+G. Koop and H. van Dijk. Oxford: Oxford University Press.
+Giordani, P., Kohn, R. and van Dijk, D. (2007). A uni ed approach to
+nonlinearity, structural change and outliers,Journal of Econometrics, 137, 112-
+133.
+Groen, J., Paap, R. and Ravazzolo, F. (2008). Real-time in ation forecast-
+ing in a changing world, Erasmus University manuscript, 2008.
+Harvey, A. (1989). Forecasting, Structural Time Series Models and the
+Kalman Filter , Cambridge University Press: Cambridge.
+Ingram, B. and Whiteman, C. (1994). Supplanting the Minnesota prior -
+Forecasting macroeconomic time series using real business cycle model priors,
+Journal of Monetary Economics , 49, 1131-1159.
+Jacquier, E., Polson, N. and Rossi, P. (1994). Bayesian analysis of stochas-
+tic volatility, Journal of Business and Economic Statistics , 12, 371-417.
+Johannes, M. and Polson, N. (2009). Particle  ltering,pages 1015-1030 in
+Handbook of Financial Time Series , edited by T. Andersen, R. David, J. Kreiss
+and T. Mikosch. Berlin: Springer-Verlag.
+Kadiyala, K. and Karlsson, S. (1997). Numerical methods for estimation
+and inference in Bayesian V AR models, Journal of Applied Econometrics , 12,
+99-132.
+Kim, C. and Nelson, C. (1999). State Space Models with Regime Switching .
+Cambridge: MIT Press.
+Kim, S., Shephard, N. and Chib, S. (1998). Stochastic volatility: likelihood
+inference and comparison with ARCH models, Review of Economic Studies , 65,
+361-93.
+Koop, G. (1992). Aggregate shocks and macroeconomic  uctuations: A
+Bayesian approach, Journal of Applied Econometrics , 7, 395-411.
+Koop, G. (1996). Parameter uncertainty and impulse response analysis,
+Journal of Econometrics , 72, 135-149.
+63
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 64 =====
+Koop, G., Leon-Gonzalez, R. and Strachan, R. (2009). On the evolution of
+the monetary policy transmission mechanism, Journal of Economic Dynamics
+and Control , 33, 997 1017.
+Koop, G., Poirier, D. and Tobias, J. (2007). Bayesian Econometric Methods.
+Cambridge: Cambridge University Press.
+Koop, G. and Potter, S. (2004). Forecasting in dynamic factor models using
+Bayesian model averaging, The Econometrics Journal , 7, 550-565.
+Koop, G. and Potter, S. (2006). The Vector  oor and ceiling model,
+Chapter 4 in Nonlinear Time Series Analysis of the Business Cycle , edited by
+C. Milas, P. Rothman and D. van Dijk in Elsevier s Contributions to Economic
+Analysis series.
+Koop, G. and Potter, S. (2009). Time varying V ARs with inequality restric-
+tions,manuscript available at http://personal.strath.ac.uk/gary.koop/koop_potter14.pdf.
+Korobilis, D. (2009a). Assessing the transmission of monetary policy shocks
+using dynamic factor models, University of Strathclyde, Discussion Papers in
+Economics, No. 09-14.
+Korobilis, D. (2009b). V AR forecasting using Bayesian variable selection,
+manuscript.
+Kose, A., Otrok, C. and Whiteman, C. (2003). International business cy-
+cles: World, region and country-speci c factors, American Economic Review ,
+93, 1216-1239.
+Kuo, L. and B. Mallick. (1997). Variable selection for regression models,
+Shankya: The Indian Journal of Statistics (Series B), 60, 65-81.
+Litterman, R. (1986). Forecasting with Bayesian vector autoregressions 
+Five years of experience, Journal of Business and Economic Statistics , 4, 25-38.
+Lopes, H. and West, M. (2004). Bayesian model assessment in factor analy-
+sis, Statistica Sinica, 14, 41-67.
+Lubik, T. and Schorfheide, F. (2004). Testing for indeterminacy: An appli-
+cation to U.S. monetary policy, American Economic Review , 94, 190-217.
+Omori, Y., Chib, S., Shephard, N. and Nakajima, J. (2007). Stochas-
+tic volatility with leverage: Fast and e¢ cient likelihood inference, Journal of
+Econometrics, 140, 425-449.
+Otrok, C. and Whiteman, C. (1998). Bayesian leading indicators: Mea-
+suring and predicting economic conditions in Iowa, International Economic
+Review, 39, 997-1014.
+Paap, R. and van Dijk, H. (2003). Bayes estimates of Markov trends in
+possibly cointegrated series: An application to US consumption and income,
+Journal of Business and Economic Statistics , 21, 547-563.
+Pitt, M. and Shephard, N. (1999). Time varying covariances: a factor
+stochastic volatility approach,pages 547 570 in Bayesian Statistics , Volume 6,
+edited by J.M Bernardo, J.O. Berger, A.P. Dawid and A.F.M. Smith, Oxford:
+Oxford University Press.
+Primiceri. G., (2005). Time varying structural vector autoregressions and
+monetary policy, Review of Economic Studies , 72, 821-852.
+Sentana, E. and Fiorentini, G. (2001). Identi cation, estimation and testing
+of conditionally heteroskedastic factor models, Journal of Econometrics , 102,
+64
+Electronic copy available at: https://ssrn.com/abstract=1514412
+
+
+===== PAGE 65 =====
+143-164.
+Sims, C. (1993). A nine variable probabilistic macroeconomic forecasting
+model,pp. 179-204 in J. Stock and M. Watson, eds., Business Cycles Indicators
+and Forecasting. University of Chicago Press for the NBER).
+Sims, C. (1980). Macroeconomics and reality, Econometrica, 48, 1 48.
+Sims, C. and Zha, T. (1998). Bayesian methods for dynamic multivariate
+models, International Economic Review , 39, 949-968.
+Sims, C. and Zha, T. (2006). Were there regime switches in macroeconomic
+policy? American Economic Review , 96, 54-81.
+Stock, J. and Watson, M., (1996). Evidence on Structural Instability in
+Macroeconomic Time Series Relations, Journal of Business and Economic Sta-
+tistics, 14, 11-30.
+Stock, J. and Watson, M., (1999). Forecasting in ation, Journal of Mon-
+etary Economics, 44, 293-335.
+Stock, J. and Watson, M., (2002). Macroeconomic forecasting using di¤u-
+sion indexes, Journal of Business and Economic Statistics, 20, 147-162.
+Stock, J. and Watson, M., (2005). Implications of dynamic factor models
+for V AR analysis,National Bureau of Economic Research working paper 11467.
+Stock, J. and Watson, M., (2006). Forecasting using many predictors,pp.
+515-554 in Handbook of Economic Forecasting , Volume 1, edited by G. Elliott,
+C. Granger and A. Timmerman, Amsterdam: North Holland.
+Villani, M. (2009). Steady-state prior for vector autoregressions, Journal
+of Applied Econometrics , 24, 630-650.
+West, M. (2003). Bayesian factor regression models in the  large p, small
+n paradigm, pages 723-732 in Bayesian Statistics , Volume 7, edited by J.M.
+Bernardo, M. Bayarri, J.O. Berger, A.P. Dawid, D. Heckerman, A.F.M. Smith,
+and M. West, Oxford: Oxford University Press.
+West, M. and Harrison, P. (1997). Bayesian Forecasting and Dynamic Mod-
+els. Second edition. Berlin: Springer.
+65
+Electronic copy available at: https://ssrn.com/abstract=1514412

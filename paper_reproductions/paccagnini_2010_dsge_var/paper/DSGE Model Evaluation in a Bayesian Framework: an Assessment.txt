@@ -1,0 +1,3041 @@
+
+
+===== PAGE 1 =====
+Munich Personal RePEc Archive
+DSGE Model Evaluation in a Bayesian
+Framework: an Assessment
+Paccagnini, Alessia
+Bocconi University
+1 May 2010
+Online at https://mpra.ub.uni-muenchen.de/24639/
+MPRA Paper No. 24639, posted 27 Aug 2010 00:31 UTC
+
+
+===== PAGE 2 =====
+DSGE Model Evaluation in a Bayesian F ramework: an
+Assessment
+Alessia Paccagnini1
+1 E-mail : alessia.paccagnini@unibocconi.it, address: Uni versità Bocconi - Department of Economics -
+Via Roentgen, 1 - 20136 Milano phone number: +39.02.5836.54 43. I am grateful to the invaluable support
+and guidance from my Ph.D. supervisor Carlo A. Favero. I than k Marco Del Negro for his comments
+and for having kindly provided me with the Matlab programs us ed in Del Negro and Schorfheide (2004).
+Its earliest versions were presented at SMYE 2009 in Istanbu l and RES 2010 at University of Surrey . I
+would also thank for their valuable comments Elena Besedina , Paolo Bianchi, Barbara Chizzolini, Agostino
+Consolo, Claudia Foroni, Riccardo Masolo, Giulio Nicolett i, Marcella Nicolini, Matthias Paustian, Mario
+Porqueddu and Giorgio Primiceri.
+
+
+===== PAGE 3 =====
+Abstract
+This paper presents the concept of Model Validation applied to a Dynamic Stochastic General
+equilibrium Model (DSGE). The main problem discussed is the approximation of the statistical
+representation for a DSGE model when not all endogenous variables are observable. MonteCarlo
+experiments in articial world are implemented to assess this problem by using the DSGE-V AR.
+Two Data Generating Processes are compared: a forward-looking and a backward-looking model.
+These experiments are followed by an empirical analysis with real world data for the US economy.
+JEL CODES: C11, C15, C32
+KEYWORDS: Bayesian Analysis, DSGE Models, Vector Autoregressions, MonteCarlo experi-
+ments
+
+
+===== PAGE 4 =====
+1 Introduction
+Over the last few years, there has been a growing interest in Academia and in Central Banks in using
+Dynamic Stochastic General Equilibrium Models (DSGE) to explain macroeconomic uctuations
+and conduct quantitative policy analysis.
+Under an econometric point of view, the performance of a DSGE model is often tested against
+estimated a Vector Autoregressive model (V AR). This procedure requires that the Data Generating
+Process (DGP) consistent with the theoretical economic model has a nite-order V AR represen-
+tation. However, the statistical representation of a DSGE model can be an exact V AR when all
+the endogenous variables are observable; otherwise a more complex Vector Autoregressive Moving
+Average (V ARMA) is needed. As far as the V ARMA representation is concerned, several papers
+(see Cooley and Dwyer (1998), Chari, Kehoe and McGrattan (2005), Christiano, Eichenbaum and
+Vigfusson (2006), Ravenna (2007) and Fernandez-Villaverde, Rubio-Ramirez, Sargent and Watson
+(2007)) have discussed in general terms the conditions to nd an innite-order V AR representation
+and a nite-order V AR truncation for a V ARMA model.
+Two main questions are raised in this paper: can we apply the concept of model validation
+to DSGE models? What happens to model validation when the DSGE model is represented by a
+V ARMA format?
+To answer the rst question, we introduce the DSGE-V AR (Del Negro and Schorfheide, 2004
+and Del Negro, Schorfheide, Smets and Wouters, 2007a) as a new macroeconometric tool for model
+validation. This mixture model is a hybrid form obtained combining an Unrestricted V AR (UV AR)
+for actual data and a Bayesian V AR (BV AR) model with dummy observation priors obtained from
+the statistical representation of the DSGE model. As far as the model validation 1 is concerned, it
+consists in rst giving a statistical representation of the macroeconomic model, then in using this
+representation to explain the actual data.
+The main contribution of this article is the answer to the second question. Two MonteCarlo
+experiments on articial data have been designed and performed to check if the DSGE-V AR can
+be used as a valid instrument for model validation. The rst experiment has as DGP the forward-
+looking model candidate to explain the data in the mixture DSGE-V AR. This model is the same
+used to generate the restrictions in the BV AR for the theoretical model. The aim of this exercise
+is to check if the approximation of a V ARMA representation can a¤ect the DSGE-V AR use. In
+the proposed example, the forward-looking model is represented by a V ARMA(3,3) which can be
+restricted by a V AR(2) (see Appendix 2 and Ravenna (2007)). In the second experiment, the
+DGP is a backward-looking model (Rudebusch and Svensson (1998), Lindé (2001)) with an exact
+statistical format given by a V AR(3). The aim of this exercise is to check if the hybrid model can
+recognize the misspecication of the DGP.
+1 See Consolo, Favero and Paccagnini (2009), Canova and Sala ( 2009), Komunjer and Ng (2009a, 2009b) and
+Iskrev (2010) for more details about the issue of the statist ical identication of DSGE models.
+1
+
+
+===== PAGE 5 =====
+The DSGE-V AR model validation procedure is then carried out in the two cases: the expected
+results are that the null hypothesis of the correct DGP to explain data is not rejected in the rst
+MonteCarlo experiment, while it is rejected in the second.
+To complicate matters, the DSGE-V AR was estimated with V AR lag-lengths from 1 to 8, to
+allow for misspecication also in the number of lags over the DGP.
+The quantitative analysis generates the following ndings. First, if the DGP is a forward-looking
+model, the DSGE-V AR recognizes the DGP, not rejecting the null hypothesis as expected. Second,
+if the DGP is a backward-looking model, the DSGE-V AR does not recognize the DGP when more
+lags are added. The null hypothesis is not rejected. Consequently, a DSGE-V AR( 1) tends to
+be the DSGE model and the data are explain very well, even if there are misspecications in the
+DGP. The most important message from these ndings is to be careful to approximate a V ARMA
+representation using a nite-order V AR. The experiments are followed by an empirical analysis
+with the US economy real data. These exercises compare a DSGE-V AR(1) (the most parsimonious
+representation as suggested by classical Information Criteria) with a DSGE-V AR(4). More lags in
+the V AR component allow the DSGE-V AR to explain the data better.
+The remainder of the paper is organized as follows. In Section 2, the concept of Model Validation
+applied to DSGE model is introduced. Section 3, the DSGE-V AR approach proposed by Del Negro
+and Schorfheide (2004) is discussed as a general assessment and a simple example is presented.
+In Section 4, results from MonteCarlo experiments in the articial world are discussed. Section 5
+shows the empirical analysis in the real world. Concluding remarks are in Section 6.
+2 Model V alidation and DSGE
+Over the past decade DSGE models have become increasingly popular for their behavioral structure
+and microfoundations. The DSGE-V AR introduced by Del Negro and Schorfheide (2004) and
+Del Negro, Schorfheide, Smets and Wouters (2007a) is the main instrument to implement model
+validation applied to DSGE models. In this mixture model, the DSGE model is treated as a
+mechanism for generating prior distributions of the parameters. This approach is the nal result of
+a long tradition in macroeconometrics research to estimate and evaluate the economic models.
+In the classical macroeconometrics literature (Canova, 1994), two main approaches have been
+proposed to compare general equilibrium rational expectations models with real data. The rst is
+the estimation approach which is the descendant of the econometric methodology introduced by
+Haavelmo (1944). The second is the calibration approach introduced by Frisch (1933) and became
+famous in the macroeconomic literature by Kydland and Prescott (1982).
+The two methodologies have several common features (the same strategy in terms of the model
+specication and solution), but also several di¤erences.
+On one side, the estimation attempts to nd the parameters of the decision rule that best t
+2
+
+
+===== PAGE 6 =====
+the data either by the marginal likelihood (ML) or Generalized Method of Moments (GMM). The
+validity of the specication is implemented by testing restrictions by general goodness of t tests or
+by comparing the t of the two nested models. Besides these two estimation methods, the Vector
+Autoregression model (V AR) becomes very popular to estimate DSGE models. This technique
+consists of representing the theoretical model by a pure statistical representation. An example has
+been introduced by Sims (1980) and is the Unrestricted V AR model, in which a reduced form for
+the data is used to perform statistical hypothesis. V AR can be taken directly to the data, they are
+easy to estimate and to generate out-of-sample forecasts.
+On the other side, the calibration sets parameters using alternative rules which includes matching
+long-run averages, using previous microevidence or a priori selection. The most important exercise
+in the calibrated models is the evaluation of the t of these models. The concept of model evaluation
+concerns in selecting a loss function which measures the distance between the set of economic
+statistics and the set of statistics obtained from the simulated data. Canova (2005) explains that
+there are essentially four groups of approaches to evaluate DSGE models.
+1. Approaches based on R2-type measure. In Watson (1993), the economic model is viewed as
+an approximation to the stochastic process which is the data generating process, considering
+that in the statistical sense the model is not true. The Goodness-of-t ( R2-type) measure is
+introduced to provide an assessment evaluation of the approximation. The key ingredient of
+the measure is the amount of the error needed to be added to the data generated by the model
+so that the autocovariance implied by the model plus the error match the autocovariance of
+the observed data.
+2. Approaches which measure distance by using the sampling variability of the actual data. For
+example, the GMM based approach of Christiano and Eichenbaum (1992) or Fève and Langot
+(1994), the indirect approach of Cecchetti et al. (1993) and the frequency domain approach
+of Diebold, Ohanian and Berkowitz (1998). This last paper can be considered as an extension
+of Watson (1993), using a spectral analysis framework.
+3. Approaches which measure distance by using the sampling variability of the simulated data,
+such as the calibration as testing which provides a simple way to judge the distance between
+population moments or statistics of a simulated macroeconomic model, as in Gregory and
+Smith (1991). This method has been used by Soderlind (1994) and Cogley and Nason (1994)
+to evaluate their DSGE models. All these examples take the driving forces as stochastic
+and the parameters are given. Canova (1994, 1995) and Ma¤ezzoli (2000) allow parameter
+uncertainty.
+4. Approaches which measure distance by using the sampling variability of both actual and
+simulated data. It is possible to distinguish approaches which allow for variability in the
+3
+
+
+===== PAGE 7 =====
+parameters but not in the exogenous processes, such as DeJong et al. (1996, 2000), Geweke
+(1999) and Schorfheide (2000), or allow both to vary.
+Canova (1994) explains that the main di¤erence between the estimation and the calibration is
+given by the questions the two methodologies ask.
+The estimation approach tries to reply to the question: "Given that the model is true, how false
+is it?", instead the calibration tries to reply to the question: "Given that the model is false, how
+true is it? ". In the testing model process, an econometrician takes the model seriously as a DGP
+and analyzes if and what features of the specication are at variance with the data. A calibrationist
+takes the opposite view: the model, as a DGP for the data, is false. As the sample size grows, the
+data are generated by the model will have more variance with the observed data. The statistical
+models rely on the economy theory so loosely, for example, V AR can fail to uncover parameters
+that are truly structural. This disadvantage may be crucial in policy evaluation exercises, since
+V AR can exhibit instability across periods when monetary and scal policies change. Despite of
+the popularity in their use, V AR models are subject to multicollinearity problems and can fail to
+take into account non-linearities in the economy.
+The calibrated DSGE models are typically too stylized to be taken directly to the data and
+often yield fragile results, using traditional econometric methods for estimation (hypothesis testing,
+forecasting evaluation) (Smets and Wouters, 2003 and Ireland, 2004).
+However, these two approaches have several critical points, a third method becomes very popular
+in the recent literature: the hybrid model. This methodology tries to discipline the concept of model
+validation applied to DSGE, combining the statistical properties (of the econometrics approach)
+with information from the economic model (such as the calibration).
+The rst attempt to combine these two approaches has been introduced by Sargent (1989) and
+Altug (1989). In these two papers, they propose augmenting a DSGE model with measurement
+error terms following a rst autoregressive process. Ireland (2004) proposed a method similar to
+Sargent (1989) and Altug (1989), the di¤erences are in imposing no restriction in the measurement
+errors and the assumption of rst-order vector autoregressive for the residuals. Del Negro and
+Schorfheide (2004) followed this idea of hybrid model proposed by Ireland (2004) presenting the
+DSGE-V AR. However, the use of a theoretical model to generate a prior for V AR parameters is
+not new. Theil and Goldberg (1961) introduced the use of dummy observation priors which have
+been applied to macroeconomics by Litterman (1981), Doan, Litterman and Sims (1984), Ingram
+and Whiteman (1994), DeJong, Ingram and Whiteman (1996 and 2000), Sims (1996). In these
+papers, the Bayesian estimation (for V AR or in general for classical regressions) is interpreted as an
+estimation based on a sample in which the actual data are augmented by an hypothetical sample
+in which observations are generated by the DSGE model, the so-called dummy observation priors.
+The basic idea of the use of the dummy observation priors is to express prior beliefs about the
+parameters. The parameter space can be shrunk by imposing a set of restrictions, which could be
+4
+
+
+===== PAGE 8 =====
+for instance obtained from a theoretical structural model, directly on the parameters. Litterman
+(1981) and Doan, Litterman and Sims (1984) introduced the so-called Minnesota Prior, where all
+equations are centered around a random walk with drift. Ingram and Whiteman (1994) was the
+rst contribution which shows that shrinking the V AR estimates towards the restrictions implied
+by a theoretical model (in this case, a neoclassical Real Business Cycle (RBC) model, see King,
+Plosser and Rebelo (1988)) produced better forecasting performance than one produced using a
+Minnesota prior (see Doan, Litterman and Sims (1984)).
+In the DSGE-V AR, the theoretical model is used to generate a prior distribution (as theoretical
+second-order moments) for a structural time-series model that relates the theoretical restrictions
+of the DSGE. Sims (2007) evidences that one of main advantages of the DSGE-V AR is to dene a
+continuum of models from the theoretical DSGE model to the V AR rather than comparing models
+at two extremes: the pure statistical V AR and the theoretical DSGE.
+In this paper the concept of model validation is applied using the DSGE-V AR, considering
+its properties to represent an economic model with a statistical representation, taking into account
+features of the economic model. For its properties, the DSGE-V AR can be used as a valid instrument
+to implement the model validation concept in the DSGE literature. In the remain Sections, I will
+illustrate the DSGE-V AR using a simple example in which not all the endogenous variables are
+observed and I try to understand if the DSGE-V AR can be used as a valid instrument for model
+validation in this specic case.
+3 DSGE-V AR
+In Section 3, the DSGE-V AR approach is discussed in a general assessment and by a macroeconomic
+example.
+3.1 DSGE-V AR: A General Assessment
+3.1.1 The Likelihood function
+The real data are described by the statistical benchmark (proposed by Del Negro and Schorfheide
+(2004)), an Unrestricted Vector Autoregressive Model (UV AR) of order p:
+Yt = 0 + 1Yt1 +::: + pYtp + ut (1)
+In compact format:
+Y =X +U (2)
+5
+
+
+===== PAGE 9 =====
+Y is (T n) matrix with rows Y 0
+t; Xis a (T k) matrix (k = 1 +np;p =number of lags ) with
+rowsX 0
+t = [1;Y 0
+t1;:::;Y 0
+tp],U is a (T n) matrix with rows u0
+t and  is a (k n) = [ 0;1;:::; p]0:
+The one step ahead forecast errors ut have a multivariate normal distribution N (0; u) condi-
+tional on past observations of Y:
+The log-likelihood function of the data is function of  and u:
+L(Y j; u) / juj T
+2x exp
+
+ 1
+2tr
+
+1
+u (Y 0Y  0X 0Y Y 0X + 0X 0X)
+
+(3)
+3.1.2 Priors from the Model
+The theoretical model, for example a DSGE model, can be represented by using the state-space
+form solution. Adopting the notation in Fernandez-Villaverde, Rubio-Ramirez, Sargent and Watson
+(2007):
+xt+1 = A()xt +B()"t+1 (4)
+yt+1 = C()xt +D()"t+1
+where"t is an k 1 vector of structural shocks satisfying E ["t] = 0;E ["t"0
+t] = I andE ["t"tj] =
+0 forj 6= 0,xt is ann1 vector of state variables and yt is ak 1 vector of variables observed by the
+econometrician. The matrices A;B;C and D are non-linear functions of the structural parameters
+in the DSGE model as represented by the vector : Estimation and identication can be complicated
+by the fact that there are more variables than shocks in the system. For simplicity, it is possible
+to overcome this problem of stochastic singularity, taking the matrix D as a square and invertible
+matrix, i.e. the number of shocks is equal to the number of observable variables. Komunjer and
+Ng (2009a , 2009b) provide an identication analysis, generalizing the results shown by Ravenna
+(2007) to allow the number of shocks to be di¤erent from the number of endogenous variables in
+the model.
+In the DSGE-V AR, one of the most important aspects is the nite-order V AR approximation to
+the DSGE model. Fernandez-Villaverde, Rubio-Ramirez, Sargent and Watson (2007) evidence the
+necessity to have the eigenvalues of A BD 1C to be strictly less than one in modulus in order to
+haveyt with a innite-order V AR representation given by:
+yt =
+1X
+j=1
+C
+
+A BD 1C
+j1
+BD 1ytj +D"t (5)
+However, as argued in Ravenna (2007), the nite order representation will only be exact if all
+the endogenous state variables are observable and included in the V AR. If the largest eigenvalue is
+6
+
+
+===== PAGE 10 =====
+close to the unity, a V AR with few lags is a poor approximation to the innite-order V AR implied
+by the DSGE model.
+The nite approximate V AR representation of the solved DSGE model is written as the following
+V AR in which the number of shocks is equal to the number of the observable variables Yt:
+Yt = 
+0 () + 
+1 () Yt1 +::: + 
+p () Ytp + u
+t (6)
+u
+t  N (0; 
+u ())
+Y = X () + u
+u
+T xn
+=
+
+u
+1
+T x1
+::: u
+n
+T x1
+
+(7)
+Y
+T xn
+=
+h
+Y1
+T x1
+::: Yn
+T x1
+i
+(8)
+X
+T x(np+1)
+=
+2
+6
+4
+X0
+1
+:::
+X0
+T
+3
+7
+5;
+X0
+t
+1x(np+1)
+=
+"
+1; Y0
+t1
+1xn
+:::Y0
+tp
+1xn
+#
+(9)
+ ()
+(np+1)xn
+=
+"
+
+0 ()
+nx1
+; 
+1 ()
+nxn
+;:::; 
+p ()
+nxn
+#0
+;
+where all coe¢cients are convolutions of the structural parameters in the model included in
+the vector : Of course the theoretical model imposes some restrictions on the V AR, that can
+be tested by evaluating them against the unrestricted V AR. In a series of papers Del Negro and
+Schorfheide (2004 and 2006) and Del Negro, Schorfheide, Smets and Wouters (2007a) propose a
+Bayesian framework for model evaluation. This method tilts coe¢cient estimates of an unrestricted
+V AR toward the restriction implied by a DSGE model. The weight placed on the DSGE model is
+controlled by an hyperparameter called . This parameter takes values ranging from 0 (no-weight on
+the DSGE model) to 1 (no weight on the unrestricted V AR). Therefore, the posterior distribution
+of  provides an overall assessment of the validity of the DSGE model restrictions.
+The DSGE restrictions are imposed on the V AR by dening:
+
+xx () = ED
+ [XtX0
+t]
+
+xy () = ED
+ [XtY0
+t]
+where ED
+ denes the expectation with respect to the distribution generated by the DSGE
+7
+
+
+===== PAGE 11 =====
+model, that of course have to be well dened.
+Let 
+xx; 
+yy; 
+xy and 
+yx be the theoretical second-order moments of the variables in Y and X
+implied by the DSGE model, where:
+ () =  1
+xx () 
+xy () (10)
+ () =  
+yy ()  
+yx () 1
+xx () 
+xy ()
+The moments are the dummy observation priors used in the mixture model. These vectors
+can be interpreted as the probability limits of the coe¢cients in a V AR estimated on the ar ticial
+observations generated by the DSGE model.
+Conditional on the vector of structural parameters in the DSGE model , the prior distribution
+for the V AR parameters p(; uj); is of the Inverted-Wishart (IW) and Normal form:
+u j  IW (T 
+u ();T k;n ) (11)
+ ju;  N
+
+ (); 1
+T
+
+1
+u 
+ XX ()
+1
+
+where the parameter  controls the degree of model misspecication with respect to the V AR:
+for small values of  the discrepancy between the V AR and the DSGE-V AR is large and a sizeable
+distance is generated between unrestricted V AR and DSGE estimators, large values of  correspond
+to small model misspecication and for  = 1 beliefs about DSGE mis-specication degenerate
+to a point mass at zero. Bayesian estimation could be interpreted as estimation based a sample
+in which data are augmented by an hypothetical sample in which observations are generated by
+the DSGE model, the so-called dummy prior observations, within this framework  determines the
+length of the hypothetical sample.
+3.1.3 Posterior Distribution and Marginal Likelihood F unction
+The posterior distribution of the V AR parameters is also of the Inverted-Wishart and Normal form.
+Given the prior distribution, posterior are derived by the Bayes theorem:
+8
+
+
+===== PAGE 12 =====
+u j;Y  IW
+
+( + 1)T
+^
+u;b (); ( + 1)T k;n
+
+(12)
+ ju;;Y  N
+ ^
+b (); u 
+ [T XX () + X0X]1
+
+(13)
+^
+b () = ( T XX () + X0X)1 (T XY () + X0Y)
+^
+u;b () = 1
+( + 1)T
+
+(T Y Y () + Y0Y)  (T XY () + X0Y)
+^
+b ()
+
+where the matrices
+^
+b () and
+^
+u;b () have the interpretation of maximum likelihood estimates of
+the V AR parameters based on the combined sample of actual observations and articial observations
+generated by the DSGE. The equations (12) and (13) show that the smaller ; the closer the
+estimates are to the OLS estimates of an unrestricted V AR. Instead, the higher  the closer the
+V AR estimates will be tilted towards the parameters in the V AR approximation of the DSGE model
+(
+^
+b () and
+^
+u;b ())
+In order to have proper prior distribution (11),  has to be greater than min:
+M IN  n +k
+T ;k = 1 +p n
+p = lags
+n = endogenous variables
+This lambda is considered the minimum lambda. The optimal lambda must be greater or equal
+than the minimum lambda
+
+b M IN
+
+to get a non-degenerate prior density, which is a necessary
+condition for computing meaningful marginal likelihoods.
+Adolfson, Laséen, Lindé and Villani (2008) show that M IN depends on the model and sample
+size, hence the marginal likelihood must be reported as a function of the ratio of the number of
+post-training articial observations to the number of actual observations, b M IN:
+In this paper, the ratio
+bM IN
+M IN
+can be considered as a measure to understand if the DSGE-
+V AR tends to be well approximated by the DSGE model. If the ratio is high, the distance between
+the b and M IN is high, it means the DSGE model can explain the data well. Consequently, this
+ratio can be conceived as how much the DSGE model explains the actual data over the statistical
+representation (the V AR) in the hybrid DSGE-V AR.
+The posterior simulator used by Del Negro and Schorfheide (2004) is Markov Chain MonteCarlo
+Method and the used algorithm is the Metropolis-Hastings acceptance method. This procedure
+generates a Markov Chain from the posterior distribution of ; Monte Carlo experiments are realized.
+9
+
+
+===== PAGE 13 =====
+See Appendix 1 and Del Negro and Schorfheide (2004) for more details.
+The optimal  is given by maximizing the marginal data density:
+b = arg max
+>0
+L(Y; )
+To the optimal b, a corresponding optimal mixture model is chosen. This hybrid model is called
+DSGE-V AR
+
+b
+
+and b is the weight of the priors and it can be also interpreted as the restriction
+of the theoretical model on actual data.
+3.2 DSGE-V AR: An Example
+A simple economic model, a DSGE model with forward-looking features, is chosen as candidate
+model to explain actual data. This small-scale New- Keynesian represents the actual U.S. time
+series for real GDP, CPI and Federal Funds Rate over the period 1981:1-2001:4 2. This forward-
+looking model is used in one of MonteCarlo experiments in the articial world.
+After the trivariate V AR representation for the real data, the rst step consists of dening the
+likelihood function given by:
+L(Y j; u) (14)
+In the next step, dummy observation priors are generated from the theoretical model.
+This economy is made of a representative household with habit persistence. This household
+maximizes an utility function additive separable in consumption, real money balances and hours
+worked over innite lifetime. The household gains utility from consumption relative to the level of
+technology, real balances of money and disutility from hours worked. The household earns interest
+from holding government bonds and real prots from the rms. Moreover, the representative
+household pays lump-sum taxes to the government.
+In this economy, a perfectly competitive, representative nal goods producer is supposed to
+use a continuum of intermediate goods as inputs and the prices for these inputs are given. The
+intermediate good producers are monopolistic rms which uses labour as the only input. The
+production technology is the same for all the monopolistic rms and uctuates around the steady-
+state growth rate. Nominal rigidities are introduced in terms of price adjustment costs for the
+2 Del Negro and Schorfheide (2004) consider U.S. quarterly da ta from 1955:III to 2001:III (1981-2001 is the chosen
+sample for the estimation).
+The data for real output growth come from the Bureau of Econom ic Analysis (Gross Domestic Product-SAAR,
+Billions Chained 1996$). The data for ination come from the Bureau of Labor Statistics (CPI-U: All Items,
+seasonally adjusted, 1982-1984=100).
+GDP and CPI are taken in rst di¤erence of logarithmic transf ormation.
+The interest rate series are constructed as in Clarida, Galì and Gertler (2000), for each quarter the interest rate is
+computed as the average federal funds rate (source: Haver An alytics) during the rst month of the quarter, including
+business days only.
+10
+
+
+===== PAGE 14 =====
+monopolistic rms. Each rm maximizes the prots over innite lifetime by choosing labour input
+and its price.
+The third component in this economy is the government which spends each period a fraction of
+the total output which uctuates exogenously. The government issues bonds and levies lump-sum
+taxes which are the main part in the governments budget constraint.
+The last component is the monetary authority which follows the standard Taylor-rule with the
+ination target and the output gap.
+There are three exogenous economic shocks: the monetary policy shock (in the monetary policy
+rule), two autoregressive processes, AR(1) which are the government spending and the technology
+shocks. To solve the model, optimality conditions are derived for the maximization problems.
+After linearization around the steady-state, the economy is described by the following system
+of equations:
+ext = Et[ gxt+1]  1
+ (fRt Et[ gt+1]) + (1 g) egt +Z
+1
+ ezt (15)
+et = Et[ gt+1] +[ ext  egt] (16)
+fRt = R ]Rt1 + (1 R)( 1 et + 2 ext) +R;t (17)
+egt = g ggt1 +g;t (18)
+ezt = z gzt1 +z;t (19)
+where x is the detrended output (divided by the non-stationary technology process),  is the
+gross ination rate, and R is the gross nominal interest rate. The tilde denotes percentage deviations
+from a steady state or, in the case of output, from a trend path. See details in King (2000) and
+Woodford (2003).
+The rational expectations solution of the linearized model is then computed using the algorithm
+implemented by Sims (2002) (see Appendix 2, for more details).
+The solution of this linearized model is the following policy function that represents the transition
+equation:
+s
+Zt = T ()
+s
+Zt1 + R ()"t (20)
+ = [ ;; 1; 2; R; g; z; R; g; Z]0 (21)
+A numerical solution is computed by using the priors reported in Table A1 (see Appendix 2).
+11
+
+
+===== PAGE 15 =====
+T () =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0 0 3:293 0 0 :7251 0 :0476 0 0
+0 0 0:1551 0 0:0932 0 :0169 0 0
+0 0 0 :3631 0 0:0246 0 :0157 0 0
+0 0 0:2738 0 0:0492 0 :0313 0 0
+0 0 0 0 0 :8000 0 0 0
+0 0 0 0 0 0 :3000 0 0
+0 0 0:1196 0 0 :5882 0 :0091 0 0
+0 0 0:0563 0 0:0708 0 :0026 0 0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+R () =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0:6585 0 :9064 0 :1587
+0:3102 0:1166 0 :0564
+0:7262 0:0308 0 :0522
+0:5476 0:0615 0 :1045
+0 0 :63 0
+0 0 0 :8750
+0:2391 0 :7352 0 :0304
+0:1126 0:0885 0 :0088
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+Taking into account the system (4), the matrix A BD 1C is stable since its eigenvalues are
+strictly less than one in modulus (the largest is 0.9742). See Appendix 2 for more details.
+In this example, not all the endogenous variables are observable and the statistical representation
+of the DSGE model is a V ARMA. In Appendix 2, there is an explanation why the statistical
+representation is a V ARMA(3,3). This representation can be restricted using a nite-order V AR:
+Y  =X  () +U 
+where Y ;X  and U  derive from the V AR representation for the theoretical model and coef-
+cients matrix () is a function of the parameters used in the model. From this representation,
+dummy observation priors are computed and added to the sample data. Taking into account Bayes
+Theorem, the posterior is derived, given the prior distribution. After, we maximize the posterior
+by numerical methods (as described in the general assessment).
+To the optimal b, a corresponding optimal mixture model is chosen. For example, in Del Negro
+and Schorfheide (2004), they use the above discussed simple DSGE model as candidate model to
+explain the real data. US economy time-series for real GDP, CPI and Federal Funds Rate are
+considered as actual data for 80 observations (from 1981 to 2001). In Del Negro and Schorfheide
+(2004), the V ARMA representation of the DSGE model is reduced by a V AR(4). The found optimal
+lambda, b, is 0:6:
+12
+
+
+===== PAGE 16 =====
+4 MonteCarlo Experiments
+The issue concerns the approximation of a V ARMA statistical representation by a nite-order
+V AR is discussed using MonteCarlo experiments. These exercises are implemented in the arti-
+cial world, with two di¤erent data-generating processes. In the rst experiment, the DGP is the
+forward-looking model used to generate the dummy observation priors, hence the candidate model
+to explain the data. Since the forward-looking model has not all the endogenous variables observed,
+the statistical representation is a V ARMA. In the second experiment, the DGP is a di¤erent macro-
+economic model, a backward-looking model (Rudebusch and Svensson (1998), Lindé (2001)) which
+has an exact V AR(3) as statistical representation.
+The DSGE-V AR model is implemented in each MonteCarlo exercise to validate the DSGE
+model.
+The MonteCarlo experiments are carried out under the null and alternative hypothesis. Under
+the null hypothesis, the DGP is the forward-looking model used in the DSGE-V AR to generate
+priors. Instead, under alternative hypothesis, the DGP is a di¤erent model, not the forward-looking
+model. In the rst experiment, we expect not to reject the null hypothesis, since the forward-looking
+model candidate to generate priors and to explain the data. While, in the second experiment, we
+expect to reject the null hypothesis since the DGP is a backward-looking model.
+How is the DSGE-V AR used to asses these MonteCarlo experiments?
+We focus attention on the b and the min: If the b is greater than the min with an high
+percentage, the forward-looking model explains the data well. The null hypothesis is not rejected.
+Otherwise, if the b is equal to min, the forward-looking model is weak to explain the data, the null
+hypothesis is rejected. The main nding from the articial world is to be careful to approximate
+the V ARMA representation of the DSGE model, mispecifying the lag-order in the V AR component
+of the DSGE-V AR. Otherwise, the DSGE can be considered the best representation for the data,
+even if the DGP is a di¤erent model.
+4.1 F orward-Looking Data Generating Process
+In the rst MonteCarlo experiment, the DGP is the forward-looking model explained in Section 3.
+Since not all the endogenous variables are observable, the statistical representation of the forward-
+looking model is a V ARMA(3,3). Three articial series 3 are generated and correspond to the three
+series for Real GDP, CPI and Federal Funds Rate. For each series, 80 observations are generated
+representing the sample from 1981 to 2001 (the same used in Del Negro and Schorfheide (2004)).
+The MonteCarlo experiment is carried out and DSGE-V AR approach to compute the optimal 
+3 The articial data are generated by taking into considerati on mean priors for the parameters and for the standard
+deviations of the shocks reported in Table A1.
+13
+
+
+===== PAGE 17 =====
+is applied. The hybrid model is implemented with a lag-length from 1 to 8. The lambda grid 4
+includes the minimum lambda 5 for each V AR representation in the DSGE-V AR. Articial data are
+generated by a MonteCarlo experiment with 100 replications 6. Table 1 summarizes the frequency
+of the optimal  for each DSGE-V AR representation (between the brackets (DSGE-V AR()) the
+number of lags is indicated):
+T ABLE 1. MonteCarlo experiment with forward-looking data
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 10 0.13 47 0.17 23 0.2 7
+0.1 66 0.17 27 0.2 48 0.24 37
+0.13 15 0.2 14 0.24 8 0.25 27
+0.17 4 0.24 1 0.25 7 0.28 17
+0.2 2 0.25 4 0.28 3 0.3 3
+0.25 2 0.28 1 0.3 4 0.31 4
+0.31 1 0.3 3 0.31 3 0.35 2
+0.31 2 0.35 3 0.4 2
+0.35 1 0.45 1 0.5 1
+4  = [0 0.09 0.10 0.13 0.17 0.2 0.24 0.25 0.28 0.3 0.31 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.8 0.9 1 5 10 ]. In this
+set, the bigger lambda is 10. However, in this MonteCarlo exp eriment, lambda greater than 0.9 are not chosen as
+optimal lambda.
+5 0.09 is the minimum lambda in case of VAR(1); 0.13 is the minim um lambda in case of VAR(2); 0.17 is the
+minimum lambda in case of VAR(3); 0.20 is the minimum lambda i n case of VAR(4); 0.24 is the minimum lambda
+in case of VAR(5); 0.28 is the minimum lambda in case of VAR(6) ; 0.31 is the minimum lambda in case of VAR(7)
+and 0.35 is the minimum lambda in case of VAR(8).
+6 In this case, the number of replications in the algorithm to c ompute the posterior density is 1000. In this exercise,
+drawing a complete shape for the marginal likelihood functi on is not the key aim, hence considering less replications
+could not be a problem. This choice is lead by the fact that rea lizing a MonteCarlo experiment 100 times needs a
+great amount of time.
+In this experiment, 100 repetitions in the MonteCarlo exper iment with 1000 replications in MCMC require around
+36 hours with a PC Pentium(R) D CPU 3.00GHz, 0.98 GB for RAM.
+14
+
+
+===== PAGE 18 =====
+T ABLE 1. MonteCarlo experiment with forward-looking data
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.24 9 0.28 1 0.31 2 0.35 1
+0.25 10 0.3 3 0.35 33 0.4 19
+0.28 8 0.31 26 0.4 31 0.45 17
+0.3 28 0.35 46 0.45 18 0.5 28
+0.31 16 0.4 18 0.5 4 0.55 23
+0.35 21 0.5 1 0.55 2 0.6 3
+0.4 2 0.55 2 0.6 3 0.65 6
+0.5 1 0.60 1 0.65 3 0.7 2
+0.55 1 0.65 1 0.7 1 0.8 1
+0.6 1 0.7 1 0.8 1
+0.65 2 0.9 2
+0.7 1
+Table 1 evidences that when lags are added to the V AR component of the DSGE-V AR, the
+optimal lambda is increasing and becomes bigger than the minimum lambda. The DGP is a
+V ARMA, as shown by Fernandez-Villaverde et al. (2007) and Ravenna (2007), which can be
+represented by an innite-order V AR. Since more lags in the V AR, the DSGE-V AR tends to be
+approximated by a DSGE model. Hence, the candidate model explains the data very well, if we
+implement a DSGE-V AR(1). But can we nd a restricted nite-order V AR format of the V ARMA
+used as DGP? Table 3 shows the Information Criteria (Akaike (AIC), Schwarz (SIC) and Hannan-
+Quinn (HQ)). Moreover, Table 2 considers two other relevant informations: what is the optimal
+lambda across lags for the same MonteCarlo replication and when the ratio
+bM IN
+M IN
+is decreasing
+at the rst time.
+15
+
+
+===== PAGE 19 =====
+T ABLE 2. Summary Table
+AIC SIC HQ opt lambda Ratio
+Lag Frequency Lag Frequency Lag Frequency Lag Frequency Lag Frequency
+2 9 2 95 2 41 1 7 1 52
+3 51 3 3 57 2 18 2 34
+4 21 4 2 3 12 3 11
+5 11 4 1 4 3
+6 2 5 11
+7 2 6 11
+8 2 7 16
+9 1 8 24
+10 1
+Information Criteria suggest as a possible reduced form for the V ARMA representation a nite-
+order V AR(2). In Appendix 2, following Ravenna (2007), there is a proof that in this example the
+V ARMA(3,3) can be represented by a V AR(2). The optimal lambda is increasing across lags for the
+same MonteCarlo replication and it is equal to the maximum lag-order in the 24% of the cases. The
+ratio is decreasing after the rst lag in 52% of cases, since at the second lag the di¤erence between
+the optimal lambda and the minimum lambda is very small. Notice in Table 1, with a DSGE-
+V AR(2) the optimal lambda is equal to the minimum lambda in 47% of cases. This result depends
+on the fact that a V AR(2) can be considered as a possible nite-form of the V ARMA representation.
+Moreover in Table 1, when the DSGE-V AR has a V AR with a lag-length greater than 2, the optimal
+lambda is increasing and we can conrm that adding more lags, the forward-looking model explains
+the data better.
+The same exercise is repeated taking into account the articial data generated using the DSGE
+model represented by a V AR(1). In Appendix 3, Tables A2 and Table A3 show that adding more
+than one lag in the V AR component of the DSGE-V AR, the optimal lambda is increasing and the
+economic model explains very well the data mispecifying the lag-length.
+4.2 Backward-Looking Data Generating Process
+In the second MonteCarlo experiment, the null hypothesis is that the DGP is given by the forward-
+looking model, but under the alternative hypothesis, the DGP is given by a backward-looking model
+(Rudebusch and Svensson (1998), Lindé (2001)). This backward-looking model is not the candidate
+model to explain the data, since the dummy observation priors are generated by the forward-looking
+model. The aim of this exercise is to understand if the DGSE-V AR can discover this misspecication
+16
+
+
+===== PAGE 20 =====
+in the DGP. However, two MonteCarlo exercises are implemented, calibrating the model by using
+two di¤erent parameter sets. In this kind of experiment with a backward-looking model, the DGP
+is given by an exact V AR with 3 lags, there is not a truncated V ARMA representation problem.
+The Rudebusch and Svensson model (which is based on the theoretical model presented by
+Svensson (1997)) has been chosen since it can be considered a good approximation of real data.
+This model presents a richer dynamic than a simple Svensson model by allowing for four lags of
+ination in Phillips Curve (Aggregate Supply, AS) and two lags of output in Aggregate Demand
+(AD) curve.
+The Rudebusch and Svensson model consists of AS and AD equations which explain the output
+gap (y) (the percentage deviation of output from its steady state level), the ination rate ( ) and
+the monetary policy (i). A third equation concerns the monetary policy instrument, the short-term
+interest rate (i) is considered.
+The economy is described by the AS and AD equations and an interest rate equation which
+follows an autoregressive process:
+t =1t1 +2t2 +3t3 +4t4 +yyt1 +"
+t (22)
+yt =y1yt1 +y2yt2 +r
+4X
+j=1
+1
+4 (i )tj +"y
+t (23)
+it =
+it1 +"i
+t (24)
+In the AS equation, (22), the annualized ination rate  depends: on past ination rates, on
+the output gap in the previous period and on an exogenous supply shock "
+t (i.i.d. with zero mean
+and constant variance 2
+).
+In the AD equation, (23), output gap yt is related to past output gaps yt1 and yt2, to the
+average ex post real interest rate in the four previous periods, P4
+j=1
+1
+4 (i )tj and to an exogenous
+demand shock "y
+t (i.i.d. with zero mean and constant variance 2
+y).
+The monetary transmission mechanism is via output to ination rate. In Rudebusch and Svens-
+son model, the sum of the estimated j s is restricted to be 1 in order to have an acceleration
+Phillips curve, where long-run monetary neutrality holds.
+The interest rate, (24), follows an autoregressive process with an exogenous monetary shock, "i
+t
+(i.i.d with zero mean and constant variance 2
+i ).
+Rudebusch and Svensson (1998) estimate each equation of the model by using OLS on quarterly
+US data over the sample period 1961Q1 to 1996Q2.
+Lindé (2001) considers the same model, but the parameters estimated for AS-AD come from a
+MonteCarlo experiment. Lindé estimates the backward-looking model with OLS on the simulated
+17
+
+
+===== PAGE 21 =====
+data from the equilibrium model calibrated with the estimated monetary policy rules.
+This last approach is preferred since it is possible to catch signicant parameter changes due to
+the monetary regime shift and Chairman of FED changes (Burns, Volcker, Greenspan).
+For generating articial data, Lindés estimation for coe¢cients is used since this calibration
+provides a stationary V AR representation.
+In Appendix 3, Table A4 presents the estimated coe¢cients proposed by Rudebusch and Svens-
+son and Lindé (see Appendix 3).
+In the MonteCarlo experiments of this paper, Lindés estimation is considered for two samples,
+the whole sample and the Greenspan sample.
+In the rst exercise, the estimation of coe¢cients calibrated for the whole sample is used,
+generating 80 quarters. In the second exercise, the estimation of coe¢cients calibrated for the
+sample in which Greenspan has been Chairman of FED is used. Greenspan sample is around the
+same period of 80 quarters as considered in Del Negro and Schorfheide (2004) empirical example.
+As far as the monetary policy process is concerned, there is no indication about the calibration
+of the autoregressive coe¢cient ( 
+). This coe¢cient has been estimated on the Federal Funds Rate
+time series around 0.9 for both the whole sample and the Greenspan sample. Instead, the standard
+error of the monetary policy shock has been estimated 1.34 for the whole sample and 0.69 for the
+Greenspan sample.
+In this MonteCarlo experiment, we expect to reject the hypothesis that the DGP is given by
+the candidate forward-looking model. The DSGE-V AR is the instrument used to detect the DGP
+misspecication.
+The backward-looking model has an exact V AR format with 3 lags. The convenient state-space
+representation is (see Appendix 4, for more details):
+Xt =AXt1 +t (25)
+The set-up of these experiments is the same of the forward-looking model. We generate 80
+observations, the chosen lambda grid 7 considers the minimum lambda for each DSGE-V AR with
+lag-length from 1 to 8. The articial data are generated by a MonteCarlo experiment with 100
+replications8.
+In the rst MonteCarlo, the Whole sample estimation for the parameter is taken into account.
+Table 3 shows the frequency of b in MonteCarlo experiments.
+7  = f0; 0:09; 0:10; 0:13; 0:17; 0:2; 0:24; 0:25; 0:3; 0:31; 0:35; 0:4; 0:45; 0:5; 0:55; 0:6; 0:65; 0:7; 0:8; 0:9; 1g
+8 In this case, the number of replications in the Metropolis-H astings algorithm to compute the posterior density
+is 1000. In this exercise, drawing a complete shape for the ma rginal likelihood function is not the key aim, hence
+considering less replications could not be a problem. This c hoice is lead by the fact that realizing a MonteCarlo
+experiment 100 times a great amount of time is necessary.
+In this experiment, 100 repetitions in the MonteCarlo exper iment with 1000 replications in MCMC require around
+36 hours with a PC Pentium(R) D CPU 3.00GHz, 0.98 GB for RAM.
+18
+
+
+===== PAGE 22 =====
+T ABLE 3. MonteCarlo experiment with backward-looking data (Whole Sample)
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 68 0.13 97 0.17 71 0.2 89
+0.1 32 0.17 2 0.2 29 0.24 5
+0.2 1 0.28 6
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.24 16 0.28 47 0.31 84 0.35 84
+0.25 23 0.3 15 0.35 16 0.4 16
+0.28 41 0.31 38
+0.3 6
+0.31 14
+In this experiment, we expect to reject the null hypothesis, since the DGP is the backward-
+looking model. The way to check the null hypothesis is to compare the optimal and the minimum
+lambda. In Table 3, the minimum lambda is also among the possible b and in any case the
+percentage of the minimum lambda which is equal to the optimal lambda is very high and impressive.
+Only in case of DSGE-V AR with 5 lags, the optimal lambda is equal to the minimum lambda with
+a percentage of 16%. In this exercise, the DSGE-V AR recognizes the misspecication of the DGP.
+Table 4 evidences that the classical Information Criteria suggest a V AR(3) as statistical repre-
+sentation for the data. The optimal lambda is increasing across lags and equals to the maximum
+lag-order in the 94% of the cases. In the majority of the cases, the ratio is decreasing after the fth
+lag. These two results about the optimal lambda and the ratio suggest that for small lag-order, the
+optimal lambda is very near to the minimum lambda
+19
+
+
+===== PAGE 23 =====
+T ABLE 4. Summary Table
+AIC SIC HQ opt lambda Ratio
+Lag Frequency Lag Frequency Lag Frequency Lag Frequency Lag Frequency
+3 54 2 2 3 94 7 6 1 31
+4 11 3 98 4 5 8 94 2 3
+5 2 5 1 3 18
+6 5 4 8
+8 1 5 40
+9 10
+10 17
+However, the articial data have been generated taking estimation for parameters and variance of
+shocks for a long sample from 1970 to 1997. In this long period, the U.S. economy has faced several
+monetary policy regimes and crises. The estimation can be a¤ected by these changes in regime,
+hence an estimation with a small sample can be better. The same procedure is implemented by
+considering the estimation of coe¢cients for the period when Greenspan has been the Chairman of
+FED (1987Q3 to 1997Q2). Moreover, the sample period used to generate the dummy observation
+priors is from 1981 to 2001, around the Greenspan sample. Results are in Table 5 and 6.
+20
+
+
+===== PAGE 24 =====
+T ABLE 5. MonteCarlo experiment with backward-looking data (Greenspan Sample)
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 57 0.13 65 0.17 33 0.2 24
+0.1 43 0.17 29 0.2 53 0.24 6
+0.2 6 0.24 3 0.25 10
+0.25 3 0.28 40
+0.28 7 0.3 8
+0.3 1 0.31 12
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.24 1 0.28 14 0.31 38 0.35 19
+0.25 9 0.3 12 0.35 45 0.4 77
+0.28 46 0.31 69 0.4 17 0.5 2
+0.3 20 0.35 5 0.6 2
+0.31 23
+0.35 1
+Table 5 shows that, in every DSGE-V AR exercise, the minimum lambda is also among the
+possible optimal lambda. In case of DSGE-V AR with only one lag, the possible b is 0.09 or 0.1,
+since it is always very close to the minimum lambda. The null hypothesis is rejected, the data do
+not come from the forward-looking model. In case of DSGE-V AR with 2 lags, the optimal lambda
+is equal to the minimum is 65% cases. The DGP is a V AR(3) and in case of DSGE-V AR with 3
+lags, only in 33% cases the minimum lambda is equal to the optimal lambda. Adding lags makes
+the b bigger than the minimum lambda. Consequently, the DSGE-V AR with more lags tends to
+be represented by the DSGE model. Misspecifying the lag-order, the DSGE-V AR is not able to
+recognize the DGP misspecication.
+21
+
+
+===== PAGE 25 =====
+T ABLE 6. Summary Table
+AIC SIC HQ opt lambda Ratio
+Lag Frequency Lag Frequency Lag Frequency Lag Frequency Lag Frequency
+3 52 3 100 3 96 2 1 1 31
+4 13 4 2 3 4 2 30
+5 3 5 2 4 17 3 12
+6 3 5 5 4 27
+7 4 7 7
+8 6 8 70
+9 1
+10 18
+Table 6 shows as a statistical representation for the data a V AR with 3 lags, suggested by the
+three Information Criteria. The optimal value for lambda is reached at lag 8 in 70% of cases, it
+means that b is increasing across the lags for the same articial data. As far as the rst fall in the
+ratio
+bM IN
+M IN
+is concerned, with a percentage of 31%, the ratio falls after the rst lag. However, as
+pointed out in Table 4, the ratio is zero in the most of cases.
+This second MonteCarlo experiment with a backward-looking model evidences that the DSGE-
+V AR does not help the economist to reject the null hypothesis that DGP is a forward-looking model.
+In this exercise, there are two sources of misspecication, the DGP and the number of lags in V AR
+representation. Adding more lags, the optimal lambda is increasing as the power of the economic
+model to explain the data.
+However, the use of the Classical Information Criteria can help the economist to overcome these
+problems. Since the priors matter, it could be possible to apply a specic information criterion for
+mixture models to take into account the weight of the priors of the parameter space of the model.
+4.3 Comments on Results
+The MonteCarlo experiments generate the following ndings. First, the DSGE-V AR model tends to
+be approximate by the DSGE model when adding more lags in the V AR component. In this sense,
+the DSGE model always explains the data. Second, in case of the forward-looking DGP represented
+by a V ARMA, the DSGE-V AR recognizes that the data-generating process is the same model used
+for dummy observation priors and a DSGE-V AR( 1) can represent the data better. This result is
+expected.
+Third, in case of the backward-looking DGP, the DSGE-V AR is not always able to recognize
+that the dummy observation priors are generated by a di¤erent model. In this exercise, the DGP
+22
+
+
+===== PAGE 26 =====
+is an exact V AR(3), adding lags more than 3 in the V AR component of the mixture model, the
+optimal lambda is increasing. This result is not expected and shows how the econometrician should
+be careful in using the DSGE-V AR. The misspecication of the DGP is not recognized because of
+the misspecication of the lag-length. Adding more lags in the DSGE-V AR, the theoretical model
+explains the data better regardless the DGP is the candidate model in the hybrid composition.
+In the light of these results, the approximation problem becomes considerable in model validation
+applied to the DSGE. Suppose to consider a forward-looking model as your candidate model to
+explain your data. In this model not all the endogenous variables are observable, the statistical
+representation is a V ARMA model that can be truncated by a nite-order V AR (for example a
+V AR(2)). Another forward-looking model is the DGP. The econometrician implements a DSGE-
+V AR (5). The outcome is that the economic model explains the data, even if there are several
+misspecications.
+In this example, a simple New-Keynesian model has been chosen with a V ARMA representation
+which can be reduced using a nite-order V AR(2). With this simple model we get a powerful result:
+the lag length matters in the DSGE model statistical representation. It is obvious that in case of
+a more complex model with a V ARMA format, a nite-order V AR truncation is needed and the
+result can become more powerful.
+In the DSGE-V AR procedure, additional lags are not penalized in the marginal likelihood which
+increases with the misspecication of the number of lags. This issue is important for economists
+which work with the real data and they do not know the DGP. These results depend on the number
+of replications in the Metropolis-Hastings algorithm used to solve the posterior. It is possible to
+get a more accurate result, increasing the number of the replications, but this exercise is very
+time-consuming. Moreover, we can change the variance shocks in the backward-looking model.
+Actually, when the econometrician takes into consideration a unit variance for shock, the result
+changes dramatically. The economic model becomes more important in both samples of calibration
+for the parameters and it seems the articial data come from the forward-looking model instead of
+the backward-looking model. See Tables A12-A13 in Appendix 6.
+In Appendix 5, forecasting evaluation tables are reported. In these MonteCarlo experiments, the
+forecasting exercises are useless to choice the best model when a di¤erent lag-length is considered.
+5 F rom the MonteCarlo Experiments to the Empirical Analy-
+sis
+In Section 5, exercises in the US economy real data are implements, in the light of results in the
+articial world. As discussed in MonteCarlo experiments, the lambda grid depends on the number
+of endogenous variables, the number of lags and the number of the observations in the sample size.
+23
+
+
+===== PAGE 27 =====
+In these exercises, we replicate the DSGE-V AR approach with the same forward-looking model
+presented in Section 3 and the real data used are real GDP, CPI and Federal Funds Rate for the
+sample 1981-2001. Three exercises are implemented.
+The rst one is a mere replication of the DSGE-V AR discussed by Del Negro and Schorfheide
+(2004), with the same features, but the lambda grid. This new lambda set has more values for the
+hyperparameter lambda, hence it is more precise,  = f0; 0:2; 0:4; 0:5; 0:6; 0:7; 1; 1:4; 1:8; 10g9. The
+found optimal lambda is 0.6 (as in Del Negro and Schorfheide, 2004), considering a V AR(4) in the
+hybrid DSGE-V AR. Table 7 shows the marginal data density with a DSGE-V AR(4).
+T ABLE 7. DSGE-V AR(4) Sample 1981-200110
+GRID MDD
+0 NaN
+0.2 -230.98
+0.4 -216.94
+0.5 -215.79
+0.6 -215.52
+0.7 -313.72
+1 -216.99
+1.4 -219.59
+1.8 -221.71
+10 -335.31
+Inf -242.86
+The second exercise consists of increasing the sample size. A large sample from 1961:1 to
+2001:4 (160 observations) is taken into account instead of a small sample of 80 observations.
+The lambda grid changes. The minimum  is 0.1, instead of 0.2. The new lambda grid is
+ = f0; 0:10; 0:15; 0:2; 0:4; 0:5; 0:6; 0:7; 1; 1:4; 1:8; 10g. In this exercise, the optimal  is 0.3, instead
+of 0.6. Table 8 shows the marginal data density with a DSGE-V AR(4) implemented with a large
+sample.
+9 In this case, the innite lambda representing the case in whi ch restrictions from DSGE model are extremely
+tight is not considered since in this experiment the analysi s of the shape of the marginal likelihood function is not
+interesting.
+1 025,000 replications are implemented in the Metropolis-Has tings algorithm.
+24
+
+
+===== PAGE 28 =====
+T ABLE 8. DSGE-V AR(4) Sample 1961-200111
+GRID MDD
+0 NaN
+0.1 -561.36
+0.15 -549.46
+0.2 -545.72
+0.3 -543.86
+0.4 -544.71
+0.5 -545.91
+0.6 -547.36
+0.7 -549.37
+1 -554.10
+1.4 -561.16
+1.8 -564.20
+10 -585.64
+We can compare these two results using the ratio
+bM IN
+M IN
+: Whatever the dimension of sample
+(large or small) is , the ratio is always equal to 2. Consequently, the sample size inuences only the
+minimum and the optimal lambda. The increase of the number of observations does not a¤ect how
+much the DSGE model can explain the data and how is much the distance between the DSGE-V AR
+and the two opposite representations: the DSGE model and the pure statistical V AR.
+The third exercise consists of changing the lag-length in the V AR component of the hybrid
+model. MonteCarlo experiments suggest to be careful in approximating a V ARMA representation.
+However, we need to approximate the V ARMA by using a nite-order V AR to implement the
+DSGE-V AR. We can use two alternative methods to assess the lag-length. The rst way is to check
+the lag-order for US real data by calculating classical Information Criteria 12 . Schwarz and Hannan-
+Quinn criteria suggest the use of only one lag, while Likelihood Ratio, Final Prediction Error and
+Akaike criteria suggest six lags. The second way is to maximize the marginal data density associated
+with the DSGE-V AR (b), as suggested by Del Negro, Schorfheide, Smets and Wouters (2007b). In
+this last option, we can evaluate the lag-order, considering into the mixture model, not only the real
+data, but also the information from the economic model given by priors and the cross-moments. In
+Table 9, there is the description of the b13 and its marginal data density, considering lags from 1
+1 125,000 replications are implemented in the Metropolis-Has tings algorithm.
+1 2Likelihood Ratio, Final Prediction Error, Akaike, Schwarz and Hannan-Quinn. It could be interesting Chari,
+Kehoe, McGrattan (2007) exercise related to Akaike and Schw artz criteria with Structural VAR.
+1 3In this case the lambda grid takes into consideration the min imum lambda for each lag,  =
+f0; 0:09; 0:10; 0:13; 0:17; 0:2; 0:24; 0:25; 0:3; 0:31; 0:35; 0:4; 0:5; 0:6; 0:7; 0:8; 0:9; 1g and 100,000 replications are imple-
+mented in the Metropolis-Hastings algorithm.
+25
+
+
+===== PAGE 29 =====
+to 8.
+T ABLE 9. Maximizing Marginal Data Density
+ min  opt MDD
+DSGE-V AR(1),T=80 0.09 0.13 -68.185
+DSGE-V AR(2), T=80 0.13 0.24 -79.161
+DSGE-V AR(3), T=80 0.17 0.24 -81.240
+DSGE-V AR(4), T=80 0.2 0.24 -89.956
+DSGE-V AR(5), T=80 0.24 0.35 -97.151
+DSGE-V AR(6), T=80 0.28 0.9 -112.440
+DSGE-V AR(7), T=80 0.31 0.6 -106.029
+DSGE-V AR(8), T=80 0.35 0.6 -99.786
+These results evidence that the marginal data density is maximized with only one lag. Conse-
+quently, both using Information Criteria on real data and maximizing the marginal data density, a
+more parsimonious representation is suggested 14 .
+Table 10 compares the marginal data density of a DSGE-V AR with a V AR(1) representation
+for the small and the large sample 15 .
+1 4It is true that considering AIC and SIC on the real data, we for get the total aspect of the DSGE-VAR, supposing
+that the model is approximated with the same number of the lag s of the real data. But the previous results help to
+use standard model selection criteria as an approximation t o choose the number of lags. In this context, it could be
+very useful to analyze further information criteria, ad hoc in order to recover the prior inuence in the DSGE-VAR
+combination.
+1 5In case of small sample with 80 quarters, the new lambda grid i s
+ = f0; 0:09; 0:10; 0:15; 0:2; 0:3; 0:4; 0:5; 0:6; 0:7; 1; 1:4; 1:8; 10g :
+The optimal lambda is 0.15.
+In case of large sample with 160 quarters, the new lambda grid is
+ = f0; 0:05; 0:09; 0:10; 0:15; 0:2; 0:3; ; 0:4; 0:5; 0:6; 0:7; 1; 1:4; 1:8; 10g.
+The optimal lambda is 0.1.
+26
+
+
+===== PAGE 30 =====
+T ABLE 10. V AR(1) Two Samples16
+GRID MDD (T=80) MDD (T=160)
+0 NaN NaN
+0.05 -557.52
+0.09 -210.96 -554.70
+0.1 -209.61 -554.06
+0.15 -208.03 -554.13
+0.2 -208.04 -555.01
+0.3 -209.17 -557.36
+0.4 -210.51 -559.73
+0.5 -212.11 -562.16
+0.6 -213.64 -564.22
+0.7 -214.85 -565.52
+1 -218.42 -570.46
+1.4 -223.53 -574.91
+1.8 -225.76 -577.25
+10 -260.15 -587.35
+Table 11 shows a sum-up comparing the DSGE-V AR with one and four lags in the V AR part,
+for the small and the large sample.
+T ABLE 11. Summary Table
+ min  opt opt-min (opt min)= min
+DSGE-V AR(4), T=80 0.2 0.6 0.4 2
+DSGE-V AR(4), T=160 0.1 0.3 0.2 2
+DSGE-V AR(1), T=80 0.09 0.15 0.06 0.6667
+DSGE-V AR(1), T=160 0.05 0.1 0.05 1
+When we implement the DSGE-V AR with one lag, the ratio suggests that the DSGE model
+explains the data weakly. Adding more lags, the DSGE-V AR can be approximated by the DSGE
+model. This problem concerns the use of the forward-looking model with not all the endogenous
+variables observable. The V ARMA representation can be approximated by a V AR( 1). The imple-
+mented DSGE-V AR is inuenced by the V ARMA approximation problem. Increasing the lag-order,
+the DSGE model explains the data better.
+In Appendix 5, forecast evaluation tables compare forecasting performance among V AR, DSGE
+1 625,000 replications are implemented in Metropolis-Hastin gs algorithm.
+27
+
+
+===== PAGE 31 =====
+and a DSGE-V AR models. The best performances in terms of forecasting are given by both V AR(1)
+and V AR(4) with a small sample.
+6 Concluding Remarks and Comments
+This paper discusses the concept of model validation applied to a DSGE model. When not all the
+endogenous variables are observable, the statistical representation of a DSGE model is a V ARMA
+format. A bunch of papers (see Cooley and Dwyer (1998), Chari, Kehoe and McGrattan (2005),
+Christiano, Eichenbaum and Vigfusson (2006), Ravenna (2007) and Fernandez-Villaverde, Rubio-
+Ramirez, Sargent and Watson (2007)) argued about the conditions to nd an innite-order V AR
+representation and a nite-order V AR truncation for a V ARMA model.
+The main instrument used in the model validation is the DSGE-V AR proposed by Del Negro
+and Schorfheide (2004). In the DSGE-V AR, we need a nite-order V AR.
+In this paper two MonteCarlo experiments are implemented. The rst exercise has as DGP the
+forward-looking model candidate to explain the data in the hybrid model, DSGE-V AR. The second
+exercise has a backward-looking model as DGP.
+The rst experiment shows how implementing a DSGE-V AR with an increasing lag-length, the
+DSGE-V AR can be approximated by the DSGE model. Hence, the DSGE explains data better. No
+surprising result.
+The second experiment shows how the DSGE-V AR is not always able to recognize the misspeci-
+cation in the DGP. Moreover, when a DSGE-V AR with an increasing number of lags is implemented.
+The main message of this Montecarlo experiment is that mispecifying the lag-length the DSGE-
+V AR tends to be the DSGE model even if the DGP is a backward-looking model. This result is
+surprising and not expected.
+Articial world suggests the econometrician to be careful in adding lags in the DSGE-V AR. In
+the light of these results, exercises in the US economy real data are implemented. This empirical
+analysis shows how comparing the most parsimonious DSGE-V AR with a DSGE-V AR with four
+lags, for example, the DSGE model explains the data di¤erently. More explanation of the data if
+the DSGE-V AR with more lags is implemented. This problem is given by the fact that the DSGE
+model can be represented by an innite V AR.
+How can we decide the lag-order? The use of classical Information Criteria can be helpful but
+they ignore the priors from the DSGE model. Eventually, we can maximize the marginal data
+density.
+The above results contribute to the current discussion on the usefulness of the estimation meth-
+ods for the DSGE and the application of these models in policy oriented exercises. The DSGE-V AR
+can be consider a valid instrument for model validation with a careful attention about the statistical
+representation of the DSGE model.
+28
+
+
+===== PAGE 32 =====
+The next steps in the research agenda can be focused analyzing the marginal likelihood function.
+In this way, we can understand what happens in the DSGE-V AR, adding more lags and we can build
+a suitable Information Criteria which takes into account the real data and the dummy observation
+priors.
+References
+[1] Adolfson Malin, Stefan Laséen, Jesper Lindé and Mattias Villani (2008): "Evaluating an Esti-
+mated New Keynesian Small Open Economy Model", Journal of Economic Dynamics and
+Control Elsevier, vol. 32(8), pages 2690-2721.
+[2] Altug, Sumru (1989): "Time-to-build and Aggregate Fluctuations: Some New Evidence",
+International Economic Review , 30 (4), pp. 889-920.
+[3] Canova, Fabio (1994): "Statistical Inference in Calibrated Models", Journal of Applied Econo-
+metrics, 9, S123-S144.
+[4] Canova, Fabio (1995): "Sensitivity Analysis and Model Evaluation in Simulated Dynamic
+General Equilibrium Economies", International Economic Review , 36, 477-501.
+[5] Canova, Fabio (2005): "Methods for Applied Macroeconomic Research ", Princeton University
+Press, Princeton.
+[6] Canova, Fabio and Sala, Luca (2009): "Back to Square One: Identication issues in DSGE
+models", Journal of Monetary Economics , vol. 56(4), pages 431-449.
+[7] Cecchetti, Stephen G., Pok-Sang Lam and Nelson C. Mark (1993): "The Equity Premium
+and the Risk-Free Rate : Matching the Moments", Journal of Monetary Economics , vol.
+31(1), pages 21-45.
+[8] Chari, V.V., Patrick Kehoe and Ellen R. McGrattan (2005): " A Critique of Structural V ARs
+Using Real Business Cycle Theory", Federal Reserve Bank of Minneapolis, Working Paper
+631.
+[9] Christiano, Lawrence J. and Martin Eichenbaum (1992): "Current Real Business Cycle The-
+ories and Aggregate labor Market Fluctuation", American Economic Review , 82, 430-450.
+[10] Christiano, Lawrence J., Martin Eichenbaum and Robert Vigfusson (2006): "Assessing Struc-
+tural V ARs", in: Acemoglu, D., Rogo¤, K. and Woodford, M. (Eds.), NBER Macroeco-
+nomics Annual 2006, Cambridge: The MIT Press.
+[11] Clarida, Richard, Jordi Galì and Mark Gertler (2000): "Monetary Policy Rules and Macroeco-
+nomics Stability: Evidence and some Theory", Quarterly Journal of Economics , 115, pp
+147-180.
+29
+
+
+===== PAGE 33 =====
+[12] Consolo, Agostino, Carlo A. Favero and Alessia Paccagnini (2009): "On the Statistical Identi-
+cation of DSGE Models", Journal of Econometrics, 150, 99-115.
+[13] Cogley, Timothy and James M. Nason (1994): "Testing the Implications of Long-Run Neu-
+trality for Monetary Business Cycle Models," Journal of Applied Econometrics , vol. 9(S),
+pages S37-70, Suppl. De.
+[14] Cooley, Thomas F and Mark Dwyer (1998): "Business Cycle Analysis Without Much Theory.
+A Look at Structural V ARs", Journal of Econometrics 83(1-2), 57-88.
+[15] Diebold, Francis, Lee Ohanian and Jeremy Berkowitz (1998): "Dynamic Equilibrium
+Economies: A Framework for Comparing Models and Data", Review of Economic Studies ,
+65, 433-452.
+[16] Doan, Thomas, Robert Litterman and Christopher Sims (1984): "Forecasting and Conditional
+Projections Using Realistic Prior Distributions", Econometric Reviews, 3, pp 1-100.
+[17] DeJong, David, Beth Ingram and Charles Whiteman (1996):"A Bayesian Approach to Cali-
+bration", Journal of Business Economics and Statistics , 14, pp 1-9.
+[18] DeJong, David, Beth Ingram and Charles Whiteman (2000): "A Bayesian Approach to Dy-
+namic Macroeconomics", Journal of Econometrics , 98, pp 203-223.
+[19] Del Negro, Marco and Frank Schorfheide (2004): "Priors from General equilibrium Models for
+V ARs",International Economic Review , 45, pp 643-673.
+[20] Del Negro, Marco and Frank Schorfheide (2006): "How Good Is What Youve Got? DSGE-
+V AR as a Toolkit for Evaluating DSGE Models", Federal Reserve Bank of Atlanta Economic
+Review 91, Second Quarter 2006.
+[21] Del Negro, Marco, Frank Schorfheide, Frank Smets and Raf Wouters (2007a): "On the Fit of
+New-Keynesian Models", Journal of Business and Economic Statistics , Volume 25, Number
+2 April 2007, pp123-143 .
+[22] Del Negro, Marco, Frank Schorfheide, Frank Smets and Raf Wouters (2007b): "On the Fit of
+New-Keynesian Models: Rejoinder", Journal of Business and Economic Statistics , Volume
+25, Number 2 April 2007, pp159-162 .
+[23] Fève, Patrick and Francois Langot (1994): "The RBC Models Through Statistical Inference:
+An Application with French Data", Journal of Applied Econometrics , 9, S11-S37.
+[24] Fernandez-Villaverde, Jesus, Juan Francisco Rubio-Ramirez , Thomas Sargent and Mark Wat-
+son (2007): "A, B, Cs (and Ds) for understanding V ARs", the American Economic Review,
+97, 3, pp 10211026 .
+[25] Frisch, Ragnar (1933): "Propagation Problems and Impulse Problems in Dynamics Economies
+", in Economic Essays in Honor of Gustav Cassel , London.
+30
+
+
+===== PAGE 34 =====
+[26] Geweke, John (1989): "Bayesian Inference in Econometric Models using MonteCarlo Integra-
+tion", Econometrics, 57, 1317-1339.
+[27] Gregory, Allan W. and Gregory Smith (1991): "Calibration as Testing: Inference in Simulated
+Macro Models", Journal of Business and Economic Statistics , 9, 293-303.
+[28] Haavelmo, Trigve (1944): "The Probability Approach in Econometrics ", Econometrica, 12,
+Supplement.
+[29] Ingram, Beth and Charles Whiteman (1994): "Supplanting the Minnesota Prior - Forecasting
+Macroeconomics Time Series using Real Business Cycle Model Priors", Journal of Monetary
+Economics, 34,pp 497-510.
+[30] Ireland, Peter (2004): "A Method for Taking Models to the Data", Journal of Economic
+Dynamics and Control , 28, pp 1205-1226.
+[31] Iskrev, Nikolay (2010): "Local identication in DSGE models", Journal of Monetary Eco-
+nomics, vol. 57(2), pages 189-202.
+[32] King, Robert G., Charles I. Plosser and Sergio T. Rebelo (1988): "Production, Growth and
+Business Cycles", Journal of Monetary Economics , 21, pp 195-232.
+[33] King, Robert G. (2000): "The New IS-LM Model: Language, Logic, and Limits", Federal
+Reserve Bank of Richmond Economic Quarterly , 86, pp 45-103.
+[34] Komunjer, Ivana and Serena Ng (2009a): "Issues in the Static Identication of DSGE Models",
+mimeo.
+[35] Komunjer, Ivana and Serena Ng (2009b): "Dynamic Identication of DSGE Models", mimeo.
+[36] Kydland, Finn E. and Edward C. Prescott (1982): Time to build and aggregate uctuations,
+Econometrica, 50: 1345-13.
+[37] Lindé, Jesper (2001): "The Empirical Relevance of Simple Forward- and Backward-Looking
+Models: A View from a Dynamic General Equilibrium Model", Sveriges Riksbank Working
+Paper Series , December 2001, No 130.
+[38] Litterman, Robert B. (1981): "A Bayesian Procedure for Forecasting with Vector Autoregres-
+sions", Working Paper, Federal Reserve Bank of Minneapolis.
+[39] Ma¤ezzoli, Marco (2000): "Human Capital and International Business Cycle ", Review of
+Economic Dynamics , 3, 137-165.
+[40] Ravenna, Federico (2007): "Vector Autoregressions and Reduced Form Representations of
+DSGE Models", Journal of Monetary Economics, 54, pp. 2048-2064.
+[41] Rudebusch, Glenn D.R. and Lars E.O. Svensson (1998): "Policy rules for Ination Targeting,",
+NBER Working Paper 6512.
+31
+
+
+===== PAGE 35 =====
+[42] Sargent, Thomas (1989): "Two Models of Measurements and the Investment Accelerator",
+Journal of Political Economy , 97 (2), pp. 251-287.
+[43] Schorfheide, Frank (2000): "Loss function-based evaluation of DSGE models", Journal of
+Applied Econometrics, 15 (6), pp. 645-670.
+[44] Sims, Christopher A. (1980): "Macroeconomics and Reality", Econometrica, 48: pp 1-48.
+[45] Sims, Christopher A. (1996): "Macroeconomics and Methodology", Journal of Economic Per-
+spectives, 10, Winter 1996, 105-120.
+[46] Sims, Chistopher. A. (2002): "Solving Linear Rational Expectations Models", Computational
+Economics, 20 (1-2), pp 1-20.
+[47] Sims, Christopher A. (2005): "Dummy Observation Priors Revisited", Manuscript, Princeton
+University.
+[48] Sims, Christopher A. (2007): "On the Fit of New-Keynesian Models: Comment", Journal of
+Business and Economic Statistics , Volume 25, Number 2 April 2007.
+[49] Smets, Frank and Raf Wouters (2003): "An Estimated Stochastic Dynamic General Equi-
+librium Model of the Euro Area", Journal of the European Economic Association , 1, pp
+1123-75.
+[50] Soderlind, Paul (1994): "Cyclical Properties of a Real Business Cycle Model ", Journal of
+Applied Econometrics, 9, S113-S122.
+[51] Svensson, Lars E.O. (1997): "Ination Forecast Targeting: Implementing and Monitoring
+Ination Targets", European Economic Review, Vol.41, No. 6, pp. pp 1111-1146.
+[52] Theil Henry and Goldberg Arthur S (1961): "On Pure and Mixed Estimation in Economics",
+International Economic Review , 2, pp 65-78.
+[53] Watson, Mark (1993): "Measures of Fit for Calibrated Models", Journal o¤ Political Economy ,
+101, 1011-1041.
+[54] Woodford, Michael (2003): " Interest and Prices ", Princeton University Press.
+32
+
+
+===== PAGE 36 =====
+Appendix
+Appendix 1: How to generate draws from the posterior
+distribution of (; u; )
+Here we provide the full derivation of the results reported in Section 2 on the DSGE-V AR
+approach to obtain draws from the posterior distribution of (; u; ). The analysis will be con-
+ditional to a value for  which establishes the relevance of the information between the V AR and
+DSGE in order to estimate the structural parameter : We can think of  as generating a particu-
+lar model which can support, with a certain degree, the observed data: the marginal data density
+represents such a measure of goodness and it would help us to discriminate among di¤erent models
+(i.e. di¤erent ).
+This appendix describes i) how to compute moments from DSGE models, ii) how to compute
+a proper prior distribution given such a set of moments conditions, iii) how to derive the marginal
+data density in case of conjugate prior.
+The Bayesian Approach
+We follow the Bayesian approach to draw all the relevant inference for the problem at hand.
+We consider as a good approximation for the vector of observables, Yt = ( lnyt;  lnpt;R t)0, an
+unrestricted Gaussian V AR(p) model for the data.
+Together with the likelihood function for the V AR(p) we have to specify a prior distribution
+for the V AR coe¢cients. According to Theil and Goldberg (1961) and following the application
+by Sims (1996), we can recover a prior distribution by using a set of dummy observations. Such a
+procedure could be seen as a set of restrictions on the V AR(p) coe¢cients as well. A novelty of the
+DS approach is to use the DSGE model to derive articial data,
+
+~Y; ~X
+
+, which can be used to set
+up the prior.
+The V AR model for the data is
+Yt = Xt +Et; (26)
+where Xt =
+
+;Y 0
+t1;:::;Y 0
+tp
+0
+is a vector of dimension k  1, k =mp + 1, which concatenates the
+constant and p lags of Yt, and  = [ 0 j 1 j::: p] :
+The DSGE model can be described by the following state-space representation
+~Yt =  0 () + 1 () ~Zt +Vt; (27)
+~Zt = T () ~Zt1 +R ()Ut; (28)
+which groups the policy function from the RE equilibrium and the mapping between observables,
+33
+
+
+===== PAGE 37 =====
+~Yt, and simulated data, ~Zt. The vector ~Yt can be computed by simulation methods with respect to
+(27) and (28) or analytically since the DSGE model is stationary.
+Given the pair of simulated data
+
+~Yt; ~Xt
+
+17 we can write a similar specication as in (26)
+~Yt =  ~Xt +Et; (29)
+that indirectly imposes restrictions on  driven from the theoretical model; to derive the DSGE-
+based prior we will construct the likelihood function of the process in (29).
+Compute DSGE Moments
+Given the state-space representation in (27) and (28), the unconditional variance for ~Yt and ~Zt
+are
+z;z = T z;zT 0 +Ru;uR0 (30)
+y;y =  00
+0 + 1z;z 0
+1 + v;v + 1Ru;v + 0
+u;vR00
+1 (31)
+while the unconditional autocorrelation of order k for ~Yt reads
+z;z (k) = T kz;z (k  1) (32)
+y;y (k) =  00
+0 + 1z;z (k) 0
+1 + 1
+
+T k
+Ru;v: (33)
+These high-order second moments matrices will be necessary to construct x;x which is a function
+of the lags of ~Yt. Here we have omitted the dependence over .
+Getting a Proper Prior Distribution out of the DSGE model: 1
+The likelihood function for the articial data reads
+L
+
+~Y ; ; e
+
+= (2)mT =2 jejT =2 exp
+
+ 1
+2tr
+
+  ~
+ 
+~X 0 ~X
+ 
+  ~
+
++ ~S
+
+1
+e
+
+; (34)
+where the su¢cient statistics are ;
+~ =
+
+~X 0 ~X
+1
+~X 0 ~Y (35)
+~S = ~Y 0 ~Y  ~Y 0 ~X
+
+~X 0 ~X
+1
+~X 0 ~Y (36)
+which can be also specied in terms of population moments
+~ =  1
+x;xx;y (37)
+~S =  y;y  0
+x;y1
+x;xx;y (38)
+1 7 ~Xt collects lags of ~Yt.
+34
+
+
+===== PAGE 38 =====
+where, for instance, x;y =E
+
+~Xt ~Yt
+
+.
+We thus use a at prior to construct a proper distribution based on the DSGE model: the
+Je¤reys prior for the multivariate case reads
+0 = jej m+1
+2 : (39)
+By combining (34) and (39) we get the kernel of the distribution
+1 / L
+
+~Y j ; e
+
+0; (40)
+and by integrating with respect to (; e) we derive the constant of integration
+P ~Y
+
+~Y j
+
+= (2)m~v=2 
+
+
+ ~S
+
+
+
+ ~v
+2 
+
+
+ ~H
+
+
+
+ m
+2 
+h
+2m~v=2 m(m1)=4  m (~v)
+i
+; (41)
+which is needed to have the DSGE-based prior distribution
+1
+
+; e j ~Y;
+
+=
+L
+
+~Y j ; e;
+
+0
+P ~Y
+
+~Y j
+ (42)
+= (2)mT =2
+(2)m~v=2 
+
+
+ ~S
+
+
+
+~v=2
+
+
+
+ ~H
+
+
+
+m=2
+ jej(T +m+1)=2
+2m~v=2 m(m1)=4  m (~v) 
+exp
+
+ 1
+2tr
+
+~S1
+e
+
+ exp
+
+ 1
+2tr
+
+  ~
+0
+(x;x)
+
+  ~
+
+1
+e
+
+;
+given x;x non-singular and ~v  ~T k>k +m.
+Hence, 1
+
+; e j ~Y;
+
+is distribution from the Normal N
+
+~; e 
+H 1
+
+, Inverse-Wishart
+IW
+
+~S; ~v
+
+family.
+The Marginal Data Density given: P (Y j)
+With a proper prior at hand, 1; we can now combine data and model-based information to
+fully specify the posterior conditional on the structural parameter : By combining the likelihood
+and the conjugate prior, we get the posterior kernel
+P (; e jY; ) / L (Y j ; e) 1
+
+; e j ~Y;
+
+; (43)
+35
+
+
+===== PAGE 39 =====
+which can be integrated to obtain the marginal data density 18
+PY (Y j) = (2)T m=2 
+
+
+ ~S
+
+
+
+~v=2
+
+ S
+
+v=2
+
+
+ ~H
+
+
+
+m=2
+
+ H
+
+m=2  m (v)
+m (~v)  2m(^v+k)=2 (44)
+The proper posterior reads
+P (; e jY; ) = (2 )mk=2  jejk=2  exp
+
+ 1
+2tr
+
+  
+0 H
+
+  
+
+1
+e
+
+:::
+
+
+ S
+
+v=2 
+ H
+
+m=2
+ jej(^v+T +m+1)=2
+2mv=2 m(m1)=4m (v)  exp
+
+ 1
+2tr
+ S1
+e
+
+(45)
+or equivalently
+p ( j e;Y;X ) = N
+ ; e 
+ H 1
+(46)
+p (e jY;X ) = IW
+ S; v
+
+(47)
+where the posterior estimates are as follows
+ H =X 0X + ~T x;x
+  = H 1
+
+X 0Y + ~T x;y
+
+ Q = ^0 ^H ^ + ~0 ~H ~  0 H 
+ S = ^S + ~S +Q
+ e =
+S
+v
+Metropolis-Hasting Algorithm
+We have obtained the posterior distribution of the V AR coe¢cients given the structural para-
+meters
+P (; ; jY ) = P (;  jY; ) P ( jY ): (48)
+We also need to derive the posterior distribution with respect to : We use the fact that
+P ( jY ) / K ( jY ) = PY (Y j) 2 () (49)
+1 8where
+~H =
+
+~X 0 ~X
+
+v = T + ~T  k
+36
+
+
+===== PAGE 40 =====
+wherePY (Y j) has been computed above and 2 () is a set of independent prior distributions over
+each element of the vector of parameters ; K ( jY ) is the kernel of the posterior. By combining
+the likelihood and the prior we dont have a closed form solution. We thus need to simulate draws
+out of the posterior distribution which is unknown. We follow Schorfheide (2000) and Del Negro
+and Schorfheide (2004) and we implement a Gaussian random walk Metropolis-Hasting algorithm
+to generate from P ( jY ). We set as a scale factor the inverse of the Hessian matrix, H (); with
+respect to K ( jY ) evaluated at the mode, . For each candidate draw, ~,
+~ =s1 + (H ())1=2N (0;I ); (50)
+we construct an acceptance probability threshold
+
+
+~; s1
+
+= min
+0
+@1;
+K
+
+~ jY
+
+K (s1 jY )
+1
+A: (51)
+If 
+
+~; s1
+
+is higher than a certain probability (varying for each draw) we accept the draw as
+coming from the posterior distribution P ( jY ) and update the Markov chain s = ~, otherwise
+we discard ~ and draw another candidate from (50).
+In doing so and by controlling for convergence of the chain, we are able to draw from the
+posterior distribution of . Given the full set of draws, we can thus make inference on any function
+of the parameters.
+Gelfand-Dey Method for P (Y )
+We compute the marginal data density which consists of integrating out parameters from the
+posterior distribution to evaluate the set of models: they basically di¤er from each other from the
+weight implied by the parameter . However, in this case the functional form of the posterior,
+P ( jY ), is not known and therefore we have to rely on simulation methods. To compute P (Y )
+we use the Gelfand and Dey (1994) method with the correction suggested by Geweke (1999) to
+avoid problems in the tails of P (Y ) which, given the way it is computed, could be not nite.
+Once we have a measure of the marginal data density for each model which, in our setup,
+depends on the choice of ; we can then compare di¤erent models. The idea of comparing di¤erent
+models based on  claries the contribution of the information from the DSGE model in shaping
+inference. If the maximal of P (Y ) is attained for values of  close to zero, the DSGE model is not
+strongly supported by the data.
+37
+
+
+===== PAGE 41 =====
+Appendix 2: The Sims (2002) representation of the F orward-
+Looking model
+After linearization around the steady-state, the economy represented by the forward-looking
+model can be described by the following system of equations:
+ext = Et[ gxt+1]  1
+ (fRt Et[ gt+1]) + (1 g) egt +Z
+1
+ ezt (52)
+et = Et[ gt+1] +[ ext  egt] (53)
+fRt = R ]Rt1 + (1 R)( 1 et + 2 ext) +R;t (54)
+egt = g ggt1 +g;t (55)
+ezt = z gzt1 +z;t (56)
+where x is the detrended output (divided by the non-stationary technology process),  is the
+gross ination rate, and R is the gross nominal interest rate. The tilde denotes percentage deviations
+from a steady state or, in the case of output, from a trend path. See details in King (2000) and
+Woodford (2003).
+The equation (52) is an intertemporal Euler equation obtained from the households optimal
+choice of consumption and bond holdings. There is no investment in the model and so output is
+proportional to consumption and it depends on an exogenous process that can be interpreted as
+time-varying government spending. The net e¤ects of these exogenous shifts on the Euler equation
+are captured in the process gt, which is dened as 1
+1t
+, where t is the fraction of output consumed
+by the government: The parameter  >0 can be interpreted as the inverse intertemporal elasticity
+of substitution.
+As in Del Negro and Schorfheide (2004), gt andzt are assumed to evolve according to univariate
+AR(1) processes with coe¢cients g andz. The associated iid normal idiosyncratic shocks are g;t
+and z;t. The standard deviations of these shocks are denoted as g and z:
+The equation (53) represents the ination dynamics determined by the expectional Phillips curve
+with slope . The parameter 0< < 1 is the households discount factor, this parameter could be
+represented as 
+r , where 
+ is the steady-state growth rate of technology and ris the steady-state
+real interest rate.
+The equation (54) describes the behavior of the monetary authority. The central bank follows
+a nominal interest rate rule by adjusting its instrument to deviations of ination and output from
+their respective target levels. The iid normal idiosyncratic shock R;t can be interpreted as the
+unanticipated deviation from the policy rule or as the policy implementation error and R measures
+the degree of the central banks interest rate smoothing. Its standard deviation is denoted by R.
+The parameters  1 and 2 are the long-run feedback coe¢cients from the target values of ination
+38
+
+
+===== PAGE 42 =====
+and output respectively.
+In this linearized model, there are three observed endogenous variables ( xt; t and Rt), three
+shocks (R
+t ; G
+t ; Z
+t ), but there are also two unobserved endogenous variables, gt and zt. Following
+Ravenna (2007), if not all the endogenous state variables are observable, it is not possible to nd
+a nite order representation. A V ARMA representation is needed when there are unobserved
+variables.
+The solution to the system is the recursive equilibrium law of motion (see Ravenna, 2007 and
+Fernandez-Villaverde, Rubio-Ramirez, Sargent and Watson, 2007):
+yt = Cx t1 +Dzt
+xt = Axt1 +Bzt
+Z(L)zt = "t
+wherext1 is an n  1 vector of endogenous state variables (in this example is xt = [ eRt, egt,ezt]0,so
+n = 3 ), zt is an m  1 vector of exogenous state variables (monetary, government spending and
+technology shocks) ( m = 3 ), yt is an r  1 vector of endogenous variables ( yt =
+h
+ext; et; eRt
+i0
+)
+(r = 3 ), "t is a vector stochastic process of dimension m  1 ("t = [R;t; g;t; z;t]0) (m = 3 ) such
+that E ("t) = 0;E ("t"0
+t) = ;E ("t"0
+s) = 0 for s 6=t and  is a diagonal matrix. Z(L) is the matrix
+polynomial [I Z1L:::ZpLp] in the lag operator L dening a stationary vector AR(p) stochastic
+process. The Z(L) is assumed to be of the rst order, Z(L) = [I Z1L]:
+The rst step is to understand if the largest eigenvalue of A BD 1C is smaller than one in
+modulus, to check if we can write yt as innite-order V AR representation:
+yt =
+1X
+j=1
+C
+
+A BD 1C
+j1
+BD 1ytj +D"t
+To obtain this result, the log-linearized model is solved using Sims algorithm (2002) to compute
+rational expectations.
+The rational expectations solution of the linearized model is then computed. The rst step
+towards solution is to cast the model in the following form :
+0
+s
+Zt =  1
+s
+Zt1 +C + 	t + t (57)
+t = 1;:::;T where C is a vector of constants, t is an exogenous vector of shocks, given in this
+case by t = [R;t; g;t; Z;t]0 and t is an expectional error, satisfying Et
+
+t+1
+
+= 0 , all t: The
+results are as follows:
+39
+
+
+===== PAGE 43 =====
+s
+Zt =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+ext
+et
+fRt
+fR
+t
+egt
+ezt
+Et gxt+1
+Et gt+1
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+t =
+2
+6
+4
+R
+t
+G
+t
+Z
+t
+3
+7
+5 t =
+"
+x
+t =xt Et1(xt)
+
+t =t Et1(t)
+#
+0 =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+1 0 1
+ 0 (1 g)  z
+ 1  1
+
+ 1 0 0  0 0 
+0 0 1 (1 R) 0 0 0 0
+ 2  1 0 1 0 0 0 0
+0 0 0 0 1 0 0 0
+0 0 0 0 0 1 0 0
+1 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+1 =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 R 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 g 0 0 0
+0 0 0 0 0 Z 0 0
+0 0 0 0 0 0 1 0
+0 0 0 0 0 0 0 1
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+	 =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0 0 0
+0 0 0
+1 0 0
+0 0 0
+0 1 0
+0 0 1
+0 0 0
+0 0 0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+ =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+1 0
+0 1
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+Using Table 1 with priors
+40
+
+
+===== PAGE 44 =====
+T ABLE A1. Prior Distribution for DSGE Model Parameters for sample 1981-2001
+NAME RANGE DENSITY STARTING V ALUE MEAN SD
+ln
+ R Normal 0:500 0 :500 0 :250
+ln R Normal 1:000 1 :000 0 :500
+lnr R+ Gamma 0:500 0 :500 0 :250
+ R+ Gamma 0:400 0 :300 0 :150
+ R+ Gamma 1:000 2 :000 0 :500
+ 1 R+ Gamma 2:500 1 :500 0 :250
+ 2 R+ Gamma 0:300 0 :125 0 :100
+R [0; 1) Beta 0:400 0 :500 0 :200
+G [0; 1) Beta 0:800 0 :800 0 :100
+Z [0; 1) Beta 0:200 0 :300 0 :100
+R R+ Inv:Gamma 0:500 0 :251 0 :139
+G R+ Inv:Gamma 0:500 0 :630 0 :323
+Z R+ Inv:Gamma 1:000 0 :875 0 :430
+The solution of this linearized model is the following policy function that represents the transition
+equation:
+s
+Zt = T ()
+s
+Zt1 + R ()"t (58)
+ = [ ;; 1; 2; R; g; z; R; g; Z]0
+where:
+T () =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0 0 3:293 0 0 :7251 0 :0476 0 0
+0 0 0:1551 0 0:0932 0 :0169 0 0
+0 0 0 :3631 0 0:0246 0 :0157 0 0
+0 0 0:2738 0 0:0492 0 :0313 0 0
+0 0 0 0 0 :8000 0 0 0
+0 0 0 0 0 0 :3000 0 0
+0 0 0:1196 0 0 :5882 0 :0091 0 0
+0 0 0:0563 0 0:0708 0 :0026 0 0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+41
+
+
+===== PAGE 45 =====
+R () =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+0:6585 0 :9064 0 :1587
+0:3102 0:1166 0 :0564
+0:7262 0:0308 0 :0522
+0:5476 0:0615 0 :1045
+0 0 :63 0
+0 0 0 :8750
+0:2391 0 :7352 0 :0304
+0:1126 0:0885 0 :0088
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+The transition equation (58) delivers the dynamics of the deviations of each economic variable
+from its steady state value. To obtain the dynamics of output, ination and the policy rate the last
+equation is combined with the following measurement equation:
+Zt = W ()
+s
+Zt +D() +t (59)
+where
+Zt =
+2
+6
+4
+ lnxt
+ lnPt
+lnRa
+t
+3
+7
+5 (60)
+As in Del Negro and Schorfheide (2004), measurement equations are:
+ lnxt = ln 
+ +  ext + ezt (61)
+ lnPt = ln  + et
+lnRa
+t = 4[(ln r + ln) + fRt]
+The system is characterized by the following set of parameters:
+ = [ln
+; ln; lnr;;; 1; 2; R; g; z; R; g; Z]0
+Taking into account the state, endogenous and observable variables, we can write the matrices:
+42
+
+
+===== PAGE 46 =====
+A =
+2
+6
+4
+0:5 0 0
+0 0 :8 0
+0 0 0 :3
+3
+7
+5
+B =
+2
+6
+4
+0:2510 0 0
+0 0 :63 0
+0 0 0 :8750
+3
+7
+5
+C =
+2
+6
+4
+3:293 0 :7251 0 :0476
+0:1551 0:0932 0 :0169
+0:3631 0:0246 0 :0157
+3
+7
+5
+D =
+2
+6
+4
+0:5476 0:0615 0 :1045
+0 0 :63 0
+0 0 0 :8750
+3
+7
+5
+A BD 1C =
+2
+6
+4
+0:3222 0 :3295 0 :0217
+0:1551 0 :8932 0:0169
+:3631 0 :0246 0 :2843
+3
+7
+5
+The eigenvalues vector is:
+eig =
+2
+6
+4
+0:9742
+0:2804
+0:2804
+3
+7
+5
+The eigenvalues are all strictly less than one in absolute value, then a innite-order V AR can be
+written. The A BD 1C matrix is said to be stable and the V AR can match up with the theory.
+The linearized DSGE model is written as:
+Yt = FY t1 +Gzt
+zt = Z1zt1 +"t
+Yt =
+2
+6
+4
+ext
+et
+fRt
+3
+7
+5 ;F =
+"
+A 0
+C 0
+#
+;G =
+"
+B
+D
+#
+the vector Yt has dimension n +r  1 (in this case 6x1). The vector zt has dimension m = 3:
+Suppose the number of observable variables is equal to the number of shocks ( m =r +n), if G1
+43
+
+
+===== PAGE 47 =====
+exists,
+Yt = FY t1 +Gzt
+Gzt = ( Yt FY t1)
+zt = G1 (Yt FY t1) then
+zt1 = G1 (Yt1 FY t2)
+substituting zt1 into
+zt = Z1zt1 +"t
+zt = Z1(G1 (Yt1 FY t2)) +"t
+It is possible to nd a restricted V AR(2) representation of the system:
+Yt = FY t1 +G(Z1(G1 (Yt1 FY t2)) +"t)
+Yt =
+
+F +GZ1G1
+Yt1 
+
+GZ1G1F
+
+Yt2 +G"t
+Yt =  1Yt1 + 2Yt2 +t
+where the V AR innovationst =G"t are a rotation of the a structural shocks vector "t: In this
+example,m<r +n (3<3+3), the system is singular. To obtain a non-singular V AR representation,
+some of the observable variables must be dropped from the system to satisfy m =r+n. In any cases,
+a V AR(2) representation (as discussed in Ravenna (2007)) is consistent with the DSGE model.
+It is possible to detect the true V ARMA representation:
+assume [I AL] is invertible
+xt = Axt1 +Bzt
+xt Axt1 = Bzt
+xt[I AL] = Bzt
+xt1[I AL] = Bzt1
+xt1 = [ I AL]1BLzt
+substituting into
+yt = Cx t1 +Dzt
+yt = C
+
+[I AL]1BLzt
+
++Dzt
+yt = Dzt +CH (L)BLzt (62)
+44
+
+
+===== PAGE 48 =====
+where H(L) = [I AL]1 is a lag polynomial of potentially innite order.
+Suppose a V ARMA representation for Z(L) = I and r =m (as in this case).
+If zt ="t (62) is a VMA representation of yt. If D1 is invertible (62) can be written as:
+yt =& t +CH (L)BD 1L& t
+where & t = D"t = Dzt is the reduced form innovations vector. The inverse matrix of H(L)
+can be written in terms of its determinant jH(L)j of order n in the lag operator L and the adjoint
+matrix VG(L) of order (n  1) in L :
+H(L)1 =VG(L)jH(L)j1
+Therefore:
+jH(L)jyt = jH(L)j& t +CV G(L)BD 1L& t =H  (L)& t (63)
+This equation is a V ARMA( n;n ). Consequently, the DSGE model has a V ARMA(3,3) repre-
+sentation.
+45
+
+
+===== PAGE 49 =====
+Appendix 3: Another F orward-Looking MonteCarlo
+Experiment
+The DGP of the forward-looking articial data is a V AR(1). Tables A2 and A3 show that adding
+more lags than the V AR(1), the optimal lambda is increasing and the DSGE-V AR approaches to
+be the DSGE model with an innite number of lags.
+T ABLE A2. MonteCarlo experiment with forward-looking data
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 27 0.17 28 0.2 2 0.2 2
+0.1 43 0.2 36 0.24 12 0.24 1
+0.17 19 0.24 11 0.25 19 0.28 8
+0.2 7 0.25 14 0.28 20 0.3 11
+0.24 1 0.28 6 0.3 17 0.31 22
+0.25 1 0.3 3 0.31 19 0.35 29
+0.31 1 0.4 2 0.35 8 0.4 23
+0.35 1 0.4 2 0.6 1
+0.9 1 0.7 1
+0.9 2
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.3 4 0.3 1 0.4 2 0.5 8
+0.31 2 0.35 3 0.5 28 0.6 10
+0.35 19 0.4 21 0.6 20 0.7 48
+0.4 48 0.5 45 0.7 39 0.8 1
+0.5 23 0.6 11 0.8 1 0.9 25
+0.6 2 0.7 14 0.9 8 1 8
+0.7 1 0.8 1 1 2
+0.9 1 0.9 4
+46
+
+
+===== PAGE 50 =====
+T ABLE A3. Summary Table
+AIC SIC HQ opt lambda Ratio
+Lag Frequency Lag Frequency Lag Frequency Lag Frequency Lag Frequency
+1 93 1 100 1 99 3 1 1 24
+2 5 2 1 4 1 2 35
+3 1 6 10 3 26
+4 1 7 31 4 15
+8 57
+47
+
+
+===== PAGE 51 =====
+Appendix 4: The Backward-Looking Model (Rudebusch
+and Svensson, 1998 and Lindé, 2001)
+The Rudebusch and Svensson model consists of AS and AD equations which explain the output
+gap (y) (the percentage deviation of output from its steady state level), the ination rate ( ) and
+the monetary policy (i). A third equation concerns the monetary policy instrument, the short-term
+interest rate (i) is considered.
+The economy is described by the AS and AD equations and an interest rate equation which
+follows an autoregressive process:
+t =1t1 +2t2 +3t3 +4t4 +yyt1 +"
+t (64)
+yt =y1yt1 +y2yt2 +r
+4X
+j=1
+1
+4 (i )tj +"y
+t (65)
+it =
+it1 +"i
+t (66)
+The estimation values of the parameter set is presented in Table A4:
+T ABLE A4. From Rudebusch and Svensson (RS) (1998) and Lindé (2001)
+RS LINDE LINDE LINDE LINDE 
+Whole sample Whole sample Burns Volcker Greenspan
+1961Q1-1996Q2 1970Q1-1997Q4 1970Q1-1978Q1 1979Q3-1987Q2 1987Q3-1997Q4
+AS
+1 0.7 0.559 0.062 0.136 0.174
+2 -0.1 0.293 0.133 0.140 0.077
+3 0.28 0.129 0.062 0.051 0.042
+4 0.12 0.019 0.041 0.022 0.002
+y 0.14 0.052 0.496 0.410 -0.003
+ 3.46 4.47 5.39 2.65
+AD
+y1 1.16 0.824 0.474 0.476 0.694
+y2 -0.25 0.099 0.332 0.327 0.214
+r -0.10 -0.015 0.017 -0.041 -0.014
+y 2.24 2.83 3.32 2.00
+48
+
+
+===== PAGE 52 =====
+The backward-looking model has an exact V AR with 3 lags. The convenient state-space repre-
+sentation is:
+Xt =AXt1 +t (67)
+where
+Xt =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+t
+yt
+it
+t1
+t2
+t3
+yt1
+yt2
+yt3
+it1
+it2
+it3
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+;Xt1 =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+t1
+yt1
+it1
+t2
+yt2
+it2
+t3
+yt3
+it3
+t4
+yt4
+it4
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+;t =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+"
+t
+"y
+t
+"i
+t
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+A =
+2
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+4
+1 y 0 2 0 0 3 0 0 4 0 0
+ r
+4 y1  r
+4  r
+4 y2  r
+4  r
+4 0  r
+4  r
+4 0  r
+4
+0 0 
+ 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 0
+0 0 0 0 0 0 0 0 1 0 0 0
+3
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+5
+The three shocks are distributed as a standard normal. In this case, the backward-looking
+articial data can be represented by a V AR with 3 lags.
+49
+
+
+===== PAGE 53 =====
+Appendix 5: F orecasting
+In this Section, forecasting evaluation is presented for MonteCarlo experiments and for empirical
+analysis in the real world.
+The MonteCarlo analysis is completed by considering the out-of-sample forecasting performance
+of DSGE-V AR models in articial world. These models are estimated over the sample from the
+rst quarter of 1981 to the last quarter of 1997 and the out-of-sample performance is used for the
+period spanning from the rst quarter of 1998 to the last quarter of 2001 (16 observations in the
+forecasting sample). The most used indicator is the Root Mean Squared Error of the forecasting
+errors from the di¤erent models, and is computed as follows:
+RMSE y =
+v
+u
+u
+t
+1
+16
+16X
+h=1
+
+yt+h  byt+hjt
+2
+y = [ ln xt;  lnPt; lnRt]
+where byt+hjt is the mean forecast computed as the average across draws and t = 1997 : 4:
+In this case, RMSE for each lag of the di¤erent DSGE-V AR model in each replication of the
+MonteCarlo experiment is computed. In Table A1, for each DSGE-V AR (from 1 to 8 lags), RMSE,
+the minimum, the maximum and the mean value across the 100 replications in the experiments, for
+50
+
+
+===== PAGE 54 =====
+the three variables (real GDP, CPI, Interest Rate) are reported for forward-looking model ad DGP.
+T ABLE A5. Forecasting in MonteCarlo experiment with forward-looking as DGP
+MEAN MAX MIN MEAN MAX MIN
+DSGE-V AR(1) DSGE-V AR(5)
+ lnxt 0.66 0.87 0.52  lnxt 0.66 0.89 0.48
+ lnPt 0.33 0.42 0.24  lnPt 0.32 0.42 0.21
+lnRt 0.94 1.83 0.59 lnRt 0.99 1.40 0.65
+DSGE-V AR(2) DSGE-V AR(6)
+ lnxt 0.65 0.85 0.51  lnxt 0.66 0.85 0.48
+ lnPt 0.34 0.44 0.26  lnPt 0.34 0.45 0.24
+lnRt 0.99 1.87 0.59 lnRt 1.36 2.50 0.79
+DSGE-V AR(3) DSGE-V AR(7)
+ lnxt 0.64 0.92 0.46  lnxt 0.66 0.85 0.49
+ lnPt 0.31 0.39 0.23  lnPt 0.35 0.46 0.25
+lnRt 0.99 1.51 0.61 lnRt 1.34 2.27 0.69
+DSGE-V AR(4) DSGE-V AR(8)
+ lnxt 0.68 0.94 0.47  lnxt 0.65 0.84 0.46
+ lnPt 0.32 0.40 0.25  lnPt 0.32 0.43 0.24
+lnRt 1.06 1.73 0.71 lnRt 1.23 2.01 0.69
+Taking into account RMSE for each variable across lags, there is no any clear indication con-
+cerning the best forecasting evaluation. However, it seems that a DSGE-V AR with 3 lags has the
+best forecasting performance for real GDP and CPI and DSGE-V AR with only one lag has the best
+performance in case of FFR.
+In Table A2, the forecasting evaluation in MonteCarlo experiment is presented when parameters
+of the backward-looking model are calibrated by using the whole sample calibration.
+51
+
+
+===== PAGE 55 =====
+T ABLE A6. Forecasting Backward-looking model as DGP (Whole Sample)
+MEAN MAX MIN MEAN MAX MIN
+DSGE-V AR(1) DSGE-V AR(5)
+ lnxt 0.66 0.81 0.51  lnxt 0.67 0.84 0.51
+ lnPt 0.33 0.43 0.22  lnPt 0.32 0.43 0.24
+lnRt 0.95 1.72 0.55 lnRt 1 1.66 0.65
+DSGE-V AR(2) DSGE-V AR(6)
+ lnxt 0.65 0.86 0.51  lnxt 0.67 0.79 0.49
+ lnPt 0.34 0.44 0.25  lnPt 0.34 0.44 0.21
+lnRt 0.97 1.85 0.50 lnRt 1.37 2.53 0.79
+DSGE-V AR(3) DSGE-V AR(7)
+ lnxt 0.65 0.87 0.47  lnxt 0.65 0.81 0.53
+ lnPt 0.30 0.41 0.20  lnPt 0.35 0.46 0.27
+lnRt 1.03 1.83 0.62 lnRt 1.24 1.98 0.74
+DSGE-V AR(4) DSGE-V AR(8)
+ lnxt 0.66 0.91 0.50  lnxt 0.64 0.88 0.41
+ lnPt 0.33 0.44 0.20  lnPt 0.32 0.42 0.22
+lnRt 1.01 1.66 0.60 lnRt 1.28 2.02 0.59
+As before, there is no evidence that a certain model is the best in forecasting performance. In
+this second table, forecasting evaluation in MonteCarlo experiment is presented where parameters
+of the backward-looking model are calibrated by using only Greenspan sample calibration.
+52
+
+
+===== PAGE 56 =====
+T ABLE A7. Forecasting Backward-looking model as DGP(Greenspan Sample)
+MEAN MAX MIN MEAN MAX MIN
+DSGE-V AR(1) DSGE-V AR(5)
+ lnxt 0.66 0.86 0.53  lnxt 0.66 0.84 0.49
+ lnPt 0.33 0.42 0.25  lnPt 0.32 0.43 0.23
+lnRt 0.94 1.56 0.59 lnRt 0.97 1.71 0.65
+DSGE-V AR(2) DSGE-V AR(6)
+ lnxt 0.64 0.81 0.48  lnxt 0.66 0.90 0.50
+ lnPt 0.34 0.45 0.25  lnPt 0.35 0.46 0.27
+lnRt 0.99 2.08 0.51 lnRt 1.36 2.45 0.81
+DSGE-V AR(3) DSGE-V AR(7)
+ lnxt 0.64 0.92 0.41  lnxt 0.66 0.83 0.49
+ lnPt 0.31 0.39 0.23  lnPt 0.36 0.45 0.27
+lnRt 0.99 1.50 0.65 lnRt 1.31 2.51 0.61
+DSGE-V AR(4) DSGE-V AR(8)
+ lnxt 0.67 0.85 0.44  lnxt 0.63 0.85 0.47
+ lnPt 0.32 0.39 0.21  lnPt 0.31 0.42 0.24
+lnRt 1.05 1.67 0.54 lnRt 1.15 1.93 0.67
+There is no evidence that a certain model is the best in forecasting performance, however, it
+seems that a DSGE-V AR with 8 lags has the best forecasting performance for real GDP and CPI
+and DSGE-V AR with only one lag has the best performance in case of FFR.
+As done with MonteCarlo experiments, the exercise with real data can be completed by a
+forecasting evaluation.
+The next tables analyze the forecasting performance in the real world. Table A4 shows the
+forecasting evaluation for the small sample size of 80 quarters from 1981:01 to 2001:04. Instead,
+Table A5 shows the forecasting evaluation for the large sample of 160 quarters from 1961:01 to
+2001:04. The b has been found for each sample is used in this new estimation for the forecasting
+performance. The sample of the estimation for the forecasting is, respectively, from 1981 to 1997,
+in case of a small sample (with b estimated for 80 quarters) and from 1961 to 1997, in case of a
+large sample (with b estimated for 160 quarters).
+53
+
+
+===== PAGE 57 =====
+T ABLE A8. The Forecasting Performance of alternative models: small sample
+MODEL  lnxt  lnPt lnRt
+RMSE RMSE RMSE
+V AR(4) 80Q 0:62 0:29 0:87
+DSGE 0:62
+(1:00)
+0:27
+(0:93)
+0:72
+(0:83)
+DSGE-V AR(4)( = 0:6) 80Q 0:61
+(0:98)
+0:26
+(0:90)
+0:80
+(0:92)
+RMSE relative to the V AR(4) within brackets
+T ABLE A9. The Forecasting Performance of alternative models: large sample
+MODEL  lnxt  lnPt lnRt
+RMSE RMSE RMSE
+V AR(4) 160Q 0:65 0:26 0:78
+DSGE 0:62
+(0:95)
+0:27
+(1:04)
+0:72
+(0:92)
+DSGE-V AR(4)( = 0:3) 160Q 0:83
+(1:28)
+0:26
+(1:00)
+0:77
+(0:99)
+RMSE relative to the V AR(4) within brackets
+Considering the results shown in Tables A4-A5, the hybrid model, DSGE-V AR does not seem
+to be always the best model in terms of the forecasting performance. Moreover, it is interesting
+to note that using a larger sample in DSGE-V AR model does not improve as one would expect
+the forecast performance. This aspect may depend on the priors that have been considered to be
+the same for all the samples. However, in case of DSGE, the interest rate has the best forecast
+performance in both samples.
+In Table A6-A7, the forecasting performance is evaluated by considering the most parsimonious
+model with only one lag for V AR and DSGE-V AR. Moreover, DSGE-V AR are evaluated on the two
+di¤erent samples: the small sample and the large one.
+54
+
+
+===== PAGE 58 =====
+T ABLE A10. The Forecasting Performance of alternative models: V AR(1), small sample
+MODEL  lnxt  lnPt lnRt
+RMSE RMSE RMSE
+V AR(1) 0:62 0:29 0:90
+DSGE 0:62
+(1:00)
+0:27
+(0:93)
+0:72
+(0:80)
+DSGE-V AR(1)( = 0:15) 80Q 0:59
+(0:95)
+0:26
+(0:90)
+1:04
+(1:16)
+RMSE relative to the V AR(1) within brackets
+T ABLE A11. The Forecasting Performance of alternative models: V AR(1), large sample
+MODEL  lnxt  lnPt lnRt
+RMSE RMSE RMSE
+V AR(1) 0:62 0:38 0:97
+DSGE 0:62
+(1:00)
+0:27
+(0:71)
+0:72
+(0:74)
+DSGE-V AR(1)( = 0:1) 160Q 0:63
+(1:02)
+0:26
+(0:68)
+1:41
+(1:45)
+RMSE relative to the V AR(1) within brackets
+In this case, the best performed model is the DSGE-V AR (apart for FFR) representation, in
+case of a small sample; instead in case of a larger sample, there is no models with the best forecast
+performance. However, as before, RMSE for the interest rate is the smallest one in case of DSGE
+model.
+55
+
+
+===== PAGE 59 =====
+Appendix 6: Other Results
+T ABLE A12. MonteCarlo experiment with backward-looking data (Whole Sample)
+unitary variance shock
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 76 0.2 40 0.2 1 0.25 2
+0.1 8 0.24 11 0.24 7 0.28 1
+0.13 14 0.25 38 0.25 34 0.3 1
+0.2 2 0.28 1 0.28 4 0.31 25
+0.31 10 0.31 33 0.35 21
+0.35 8 0.4 45
+0.4 13 0.5 1
+0.6 4
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.31 4 0.4 11 0.5 2 0.6 19
+0.35 4 0.5 9 0.6 32 0.8 72
+0.4 45 0.6 41 0.7 3 1 9
+0.5 8 0.8 36 0.8 54
+0.6 28 1 3 1 9
+0.8 11
+56
+
+
+===== PAGE 60 =====
+APPENDIX A13 MonteCarlo experiment with backward-looking data (Greenspan Sample)
+unitary variance shock
+DSGE-V AR(1) DSGE-V AR(2) DSGE-V AR(3) DSGE-V AR(4)
+b Frequency b Frequency b Frequency b Frequency
+0.09 57 0.17 2 0.24 8 0.3 8
+0.1 29 0.2 12 0.25 8 0.31 25
+0.13 6 0.24 27 0.3 29 0.35 17
+0.2 2 0.25 25 0.31 37 0.4 4
+0.24 4 0.3 14 0.35 12 0.5 43
+0.25 2 0.31 18 0.4 2 0.6 2
+0.35 2 0.5 4 0.9 1
+DSGE-V AR(5) DSGE-V AR(6) DSGE-V AR(7) DSGE-V AR(8)
+b Frequency b Frequency b Frequency b Frequency
+0.35 7 0.5 66 0.5 21 0.5 1
+0.4 3 0.6 5 0.6 9 0.6 5
+0.5 72 0.7 4 0.7 6 0.7 5
+0.6 12 0.9 11 0.9 28 0.9 30
+0.9 3 1 14 1 36 1 59
+1 3
+57

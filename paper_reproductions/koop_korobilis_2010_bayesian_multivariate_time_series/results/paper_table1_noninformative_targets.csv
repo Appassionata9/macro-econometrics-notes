@@ -1,0 +1,14 @@
+"coefficient","inflation_paper","unemployment_paper","tbill_rate_paper"
+"Intercept",0.292,0.3222,-0.0138
+"inflation_lag1",1.5087,0.004,0.5493
+"unemployment_lag1",-0.2664,1.2727,-0.7192
+"tbill_rate_lag1",-0.057,-0.0211,0.7746
+"inflation_lag2",-0.4678,0.1005,-0.7745
+"unemployment_lag2",0.1967,-0.3102,0.7883
+"tbill_rate_lag2",0.0626,-0.0229,-0.0288
+"inflation_lag3",-0.0774,-0.1879,0.817
+"unemployment_lag3",-0.0142,-0.1293,-0.3547
+"tbill_rate_lag3",-0.0073,0.0967,0.0996
+"inflation_lag4",0.0369,0.115,-0.4851
+"unemployment_lag4",0.0372,0.0669,0.3108
+"tbill_rate_lag4",-0.0013,-0.0254,0.0591

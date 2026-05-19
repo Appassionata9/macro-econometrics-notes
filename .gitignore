@@ -8,6 +8,7 @@
 
 # User-specific files
 .Ruserdata
+.Rproj.user/
 
 # Example code in package build process
 *-Ex.R
@@ -17,9 +18,6 @@
 
 # Output files from R CMD check
 /*.Rcheck/
-
-# RStudio files
-.Rproj.user/
 
 # produced vignettes
 vignettes/*.html
@@ -47,3 +45,9 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Project outputs and local files
+output/
+paper_text*.txt
+.DS_Store
+.vscode/

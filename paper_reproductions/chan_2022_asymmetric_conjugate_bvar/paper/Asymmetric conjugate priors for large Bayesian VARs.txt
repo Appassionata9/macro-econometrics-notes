@@ -1,0 +1,1607 @@
+
+
+===== PAGE 1 =====
+Quantitative Economics 13 (2022), 1145–1169 1759-7331/20221145
+Asymmetric conjugate priors for large Bayesian VARs
+Joshua C. C. Chan
+Department of Economics, Purdue University
+Large Bayesian VARs are now widely used in empirical macroeconomics. One
+popular shrinkage prior in this setting is the natural conjugate prior as it facili-
+tates posterior simulation and leads to a range of useful analytical results. This
+is, however, at the expense of modeling ﬂexibility, as it rules out cross-variable
+shrinkage, that is, shrinking coefﬁcients on lags of other variables more aggres-
+sively than those on own lags. We develop a prior that has the best of both worlds:
+it can accommodate cross-variable shrinkage, while maintaining many useful an-
+alytical results, such as a closed-form expression of the marginal likelihood. This
+new prior also leads to fast posterior simulation—for a BVAR with 100 variables
+and 4 lags, obtaining 10,000 posterior draws takes less than half a minute on a
+standard desktop. We demonstrate the usefulness of the new prior via a struc-
+tural analysis using a 15-variable VAR with sign restrictions to identify 5 structural
+shocks.
+Keywords . Shrinkage prior, marginal likelihood, optimal hyperparameters,
+structural VAR, sign restrictions.
+JEL classification. C11, C52, C55, E44.
+1. I ntroduction
+Large Bayesian vector autoregressions (BVARs) have become increasingly popular in
+empirical macroeconomics for forecasting and structural analysis since the inﬂuential
+work by Banbura, Giannone, and Reichlin(2010). Prominent examples include Carriero,
+Kapetanios, and Marcellino (2009), Koop (2013), Koop and Korobilis (2013), and Koro-
+bilis and Pettenuzzo (2019). VARs tend to have a lot of parameters, and the key that
+makes these highly parameterized VARs useful is the introduction of shrinkage priors.
+For large BVARs, one commonly adopted prior is the natural conjugate prior, which has
+a few advantages over alternatives. First, this prior is conjugate, and consequently it
+gives rise to a range of useful analytical results, including a closed-form expression of
+the marginal likelihood.
+1 Second, the posterior covariance matrix of the VAR coefﬁ-
+Joshua C. C. Chan: joshuacc.chan@gmail.com
+I would like to thank Todd Clark, Gary Koop, Christian Matthes, Michele Piffer, and two anonymous refer-
+ees for many constructive comments and useful suggestions that have substantially improved a previous
+version of the paper.
+1An analytical expression for the marginal likelihood is valuable for many purposes. First, it is useful for
+model selection, for example, choosing the lag length in BVARs. Second, it can be used to select prior hy-
+perparameters that control the degree of shrinkage. Examples include Del Negro and Schorfheide (2004),
+Schorfheide and Song (2015), and Carriero, Clark, and Marcellino(2015). This approach of selecting hyper-
+© 2022 The Author. Licensed under the Creative Commons Attribution-NonCommercial License 4.0 .
+Available at http://qeconomics.org. https://doi.org/10.3982/QE1381
+
+
+
+===== PAGE 2 =====
+1146 Joshua C. C. Chan Quantitative Economics 13 (2022)
+cients under this prior has a Kronecker product structure, which can be used to speed
+up computations.
+On the other hand, a key limitation of the natural conjugate prior is that the prior
+covariance matrix of the VAR coefﬁcients needs to have a Kronecker product structure,
+which implies cross-equation restrictions that might not be reasonable. In particular,
+this Kronecker structure requires symmetric treatment of own lags and lags of other vari-
+ables. In many applications, one might wish to shrink the coefﬁcients on other variables’
+lags more strongly to zero than those of own lags. This cross-variable shrinkage, how-
+ever, cannot be implemented using the natural conjugate prior due to this Kronecker
+structure. Carriero, Clark, and Marcellino(2015) summarize this dilemma between com-
+putational convenience and prior ﬂexibility as: “While the pioneering work ofLitterman
+(1986) suggested it was useful to have cross-variable shrinkage, it has become more
+common to estimate larger models without cross-variable shrinkage, in order to have
+a Kronecker structure that speeds up computations and facilitates simulation.”
+We develop a prior that solves this dilemma—this new prior allows asymmetric
+treatment between own lags and lags of other variables, while it maintains many use-
+ful analytical results, such as a closed-form expression of the marginal likelihood. In
+addition, we exploit these analytical results to develop an efﬁcient method to simulate
+directly from the posterior distribution—we obtain independent posterior draws and
+avoid Markov chain Monte Carlo (MCMC) methods altogether. For a BVAR with 100 vari-
+ables and 4 lags, simulating 10,000 posterior draws under this new asymmetric conju-
+gate prior takes less than 30 seconds.
+To develop this asymmetric conjugate prior, we ﬁrst write the BVAR in a recursive
+structural form, under which the error covariance matrix is diagonal. We then adopt
+an equation-by-equation estimation approach in the spirit of Carriero, Clark, and Mar-
+cellino (2019). In particular, we assume that the parameters are ap r i o r iindependent
+across equations, that is, the joint prior density is a product of densities, each for the set
+of parameters in each equation. Under this setup, we show that if the VAR coefﬁcients
+and the error variance in each equation follows a normal-inverse-gamma prior, the pos-
+terior distribution has the same form, that is, it is a product of normal-inverse-gamma
+densities. It is useful to emphasize that this particular structural-form parameterization
+is intended to be a computational device and it does not commit the user to a recursive
+identiﬁcation scheme. In particular, one can recover the reduced-form parameters from
+the structural-form parameter, and the posterior sampler can be used in conjunction
+with other identiﬁcation schemes, as demonstrated in the application.
+To help elicit the hyperparameters in this asymmetric conjugate prior, we prove
+that if we assume a standard inverse-Wishart prior on the reduced-form error covari-
+ance matrix, the implied prior on the structural-form impact matrix and error vari-
+ances is a product of normal-inverse-gamma densities and vice versa. Hence, using this
+proposition, we can ﬁrst elicit the hyperparameters in the reduced-form prior, which
+parameters is incorporated in the BEAR MATLAB toolbox developed by the European Central Bank (Dieppe,
+Legrand, and Van Roye(2016)).
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 3 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1147
+is often more natural, and then obtain the implied hyperparameters in the structural-
+form prior. Since we can directly specify prior beliefs on the reduced-form error covari-
+ance matrix, this proposition implies that the proposed prior—with carefully chosen
+hyperparameters—is independent of the order of the variables.
+We demonstrate the usefulness of the proposed asymmetric conjugate prior and the
+associated posterior sampler by revisiting the empirical study in Furlanetto, Ravazzolo,
+and Sarferaz (2019), who use 6-variable VAR to identify 5 structural shocks using a set of
+sign restrictions on the contemporaneous impact matrix. Here, we augment their sys-
+tem with a set of additional variables and consider a 15-variable VAR, which is one of
+the largest VARs identiﬁed with sign restrictions considered in the literature so far. Even
+though there are good reasons to consider larger systems—such as concerns of informa-
+tional deﬁciency and nonunique mapping from economic variables to data—empirical
+works that impose sign restrictions typically use small or medium VARs (e.g., up to 6 or 7
+variables) due to the computational burden. With more variables and sign restrictions,
+it is clear that conventional approaches that use standard Gibbs samplers are too com-
+putationally expensive. In contrast, using the proposed asymmetric conjugate prior and
+the associated efﬁcient sampler, it is feasible to conduct structural analysis with a large
+number of sign restrictions, which helps sharpen inference.
+The rest of the paper is organized as follows. We ﬁrst introduce in Section 2 a repa-
+rameterization of the reduced-form BVAR and the new asymmetric conjugate prior. We
+then derive the associated posterior distribution and the marginal likelihood. Section 3
+discusses a few extensions of the standard BVAR, and outlines the corresponding sam-
+pling schemes. It is followed by a structural analysis using sign restrictions to illustrate
+the usefulness of the proposed prior in Section 4.L a s t l y ,S e c t i o n5 concludes and brieﬂy
+discusses some future research directions.
+2. B ayesian VARs and conjugate priors
+Let y
+t = (y1,t ,/periodori/periodori/periodori,yn,t )′ be an n × 1 vector of endogenous variables at time t.As t a n d a r d
+VAR can be written as
+yt = ˜b + ˜B1yt− 1 +···+ ˜Bpyt−p +˜εy
+t , ˜εy
+t
+∼ N (0, ˜/Sigma1),( 1 )
+where ˜b is an n × 1 vector of intercepts, ˜B1,/periodori/periodori/periodori, ˜Bp are n ×n VAR coefﬁcient matrices,
+and ˜
+/Sigma1is a full covariance matrix.
+The parameters in this model can be naturally divided into two blocks: the er-
+ror covariance matrix ˜/Sigma1and the matrix of intercepts and VAR coefﬁcients, that is,
+˜B = (˜b, ˜B
+1,/periodori/periodori/periodori, ˜Bp )′. Under this parameterization, there is a conjugate prior on (˜B, ˜
+/Sigma1),
+namely, the normal-inverse-Wishart distribution:
+˜
+/Sigma1∼
+IW (˜ν0, ˜S0 ),
+(
+vec(˜B) | ˜
+/Sigma1
+)
+∼
+N
+(
+vec(˜B0 ), ˜
+/Sigma1⊗ ˜V
+)
+,
+where ⊗ denotes the Kronecker product, vec(·) vectorizes a matrix by stacking the
+c o l u m n sf r o ml e f tt or i g h t ,a n d
+IW denotes the inverse-Wishart distribution. This prior
+is commonly called the natural conjugate prior and can be traced back toZellner (1971).
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 4 =====
+1148 Joshua C. C. Chan Quantitative Economics 13 (2022)
+For textbook treatment of this prior and the associated posterior distribution see, for
+example, Koop and Korobilis (2010), Karlsson (2013), or Chan (2020b).
+The main advantage of the natural conjugate prior is that it gives rise to a range of
+analytical results. For example, the associated posterior and one-step-ahead predictive
+distributions are both known; the marginal likelihood is also available in closed form.
+These analytical results are useful for a variety of purposes. For instance, the closed-
+form expression of the marginal likelihood under the natural conjugate prior can be
+used to calculate optimal hyperparameters, as is done in Del Negro and Schorfheide
+(2004), Schorfheide and Song (2015), and Carriero, Clark, and Marcellino (2015). The
+direct sampling algorithm to draw from the posterior distribution of (vec(˜B), ˜/Sigma1) can be
+used to develop efﬁcient posterior samplers to estimate large, heteroscedastic Bayesian
+VARs. Examples include Carriero, Clark, and Marcellino (2016)a n dChan (2020a).
+On the other hand, one key drawback of the natural conjugate prior is that the prior
+covariance matrix ofvec(˜B) is restrictive—to be conjugate it needs to have the Kronecker
+product structure ˜/Sigma1⊗ ˜V, which implies cross-equation restrictions on the covariance
+matrix. In particular, this structure requires symmetric treatment of own lags and lags
+of other variables. In many situations, one might want to shrink the coefﬁcients on lags
+of other variables more strongly to zero than those of own lags. This prior belief, how-
+ever, cannot be implemented using the natural conjugate prior due to the Kronecker
+structure.
+Here, we develop a prior that solves this dilemma: this new prior allows asymmetric
+treatment between own lags and lags of other variables, while it maintains many useful
+analytical results. In what follows, we ﬁrst consider a reparameterization of the reduced-
+form VAR in ( 1). We introduce in Section 2.2 the new asymmetric conjugate prior and
+discuss its properties. We then derive the associated posterior distribution and discuss
+an efﬁcient sampling scheme in Section 2.3. Finally, we give an analytical expression of
+the marginal likelihood in Section 2.4.
+2.1 The Bayesian VAR in structural form
+In this section, we introduce a reparameterization of the reduced-form VAR in ( 1)a n d
+derive the associated likelihood function. To that end, we ﬁrst write the VAR in the fol-
+lowing structural form:
+Ay
+t = b + B1yt− 1 +···+ Bpyt−p + εy
+t , εy
+t
+∼ N (0, /Sigma1),( 2 )
+where b is an n × 1 vector of intercepts, B1,/periodori/periodori/periodori, Bp aren ×n VAR coefﬁcient matrices, A
+is an n ×n lower triangular matrix with ones on the diagonal, and /Sigma1= diag(σ2
+1 ,/periodori/periodori/periodori,σ2
+n )
+is diagonal. Since the covariance matrix /Sigma1is diagonal, we can estimate this recursive
+system equation by equation without loss of efﬁciency. 2 It is easy to see that we can
+2Carriero, Clark, and Marcellino (2019) pioneer a similar equation-by-equation estimation approach to
+estimate a large VAR with a standard stochastic volatility speciﬁcation. However, they use the reduced-
+form parameterization in (1), whereas here we use the structural form in (2). As we will see below, the latter
+parameterization has the advantage of having a convenient representation as n independent regressions
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 5 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1149
+recover the reduced-form parameters by setting ˜b = A− 1b, ˜Bj = A− 1Bj ,j = 1,/periodori/periodori/periodori,p,a n d
+˜/Sigma1= A− 1/Sigma1(A− 1 )′.
+For later reference, we introduce some notation. Let bi denote the ith element of b
+and let bj,i represent theith row of Bj .T h e nβi = (bi, b1,i,/periodori/periodori/periodori, bp,i )′ is the intercept and
+VAR coefﬁcients for theith equation. Furthermore, letαi denote the free elements in the
+ith row of the impact matrix A,t h a ti s ,αi = (Ai,1 ,/periodori/periodori/periodori,Ai,i− 1 )′. We then follow Chan and
+Eisenstat (2018) to rewrite theith equation of the system in (2)a s
+yi,t = ˜wi,t αi +˜xt βi +εy
+i,t , εy
+i,t ∼ N
+(
+0,σ2
+i
+)
+,
+where ˜wi,t = (−y 1,t ,/periodori/periodori/periodori, −yi− 1,t ) and ˜xt = (1, y′
+t− 1,/periodori/periodori/periodori, y′
+t−p ).N o t et h a tyi,t depends on
+the contemporaneous variables y1,t ,/periodori/periodori/periodori,yi− 1,t . But since the system is triangular, when
+we perform the change of variables from εy
+t to yt to obtain the likelihood function, the
+corresponding Jacobian has unit determinant and the likelihood function has the usual
+Gaussian form.
+If we let xi,t = (˜wi,t , ˜xt ), we can further simplify theith equation as
+yi,t = xi,t θi +εy
+i,t , εy
+i,t ∼ N
+(
+0,σ2
+i
+)
+,
+where θi = (β′
+i, α′
+i
+)′ is of dimension ki =np+i. Hence, we have rewritten the structural
+VAR in (2) as a system ofn independent regressions. Moreover, by stacking the elements
+of the impact matrix αi and the VAR coefﬁcients βi, we can sample them together to
+improve efﬁciency.3
+To derive the likelihood function, we further stack yi = (yi,1 ,/periodori/periodori/periodori,yi,T )′ and deﬁne Xi
+and εy
+i similarly. Hence, we can rewrite the above equation as follows:
+yi = Xiθi + εy
+i , εy
+i
+∼ N
+(
+0,σ2
+i IT
+)
+.
+Finally, let θ = (θ′
+1,/periodori/periodori/periodori, θ′
+n )′ and σ 2 = (σ2
+1 ,/periodori/periodori/periodori,σ2
+n )′. Then the likelihood function of the
+VAR in (2)i sg i v e nb y
+p
+(
+y | θ, σ 2)
+=
+n∏
+i=1
+p
+(
+yi | θi,σ2
+i
+)
+=
+n∏
+i=1
+(
+2πσ2
+i
+)− T
+2 e
+− 1
+2σ2
+i
+(yi− Xiθi )′(yi− Xiθi )
+.( 3 )
+In other words, the likelihood function is the product ofn Gaussian densities.
+2.2 Asymmetric conjugate priors
+Next, we introduce a conjugate prior on (θ, σ 2 ) that allows differential treatment be-
+tween prior variances on own lags versus others. We assume that the parameters are
+and it consequently leads to a more efﬁcient sampling scheme. Ando and Zellner (2010)a l s oc o n s i d e ra
+similar reparameterization of the reduced-form VAR that allows equation-by-equation estimation. But in
+their implementation they need to switch between two parameterizations, which makes estimation more
+cumbersome.
+3This more efﬁcient blocking scheme has been used previously in the literature. For example, Eisenstat,
+Chan, and Strachan (2016) use it to speed up computations in the context of time-varying parameter VARs
+with stochastic volatility.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 6 =====
+1150 Joshua C. C. Chan Quantitative Economics 13 (2022)
+ap r i o r iindependent across equations, that is, p(θ, σ 2 ) = ∏n
+i=1p(θi,σ2
+i ). Furthermore,
+we consider a normal-inverse-gamma prior for each pair (θi,σ2
+i ),i = 1,/periodori/periodori/periodori,n:
+(
+θi |σ2
+i
+)
+∼ N
+(
+mi,σ2
+i Vi
+)
+, σ2
+i ∼ IG (νi,Si ),( 4 )
+and we write (θi,σ2
+i ) ∼ NIG (mi, Vi,νi,Si ). In other words, the prior density of(θ, σ 2 ) is
+given by
+p
+(
+θ, σ 2)
+=
+n∏
+i=1
+ci
+(
+σ2
+i
+)− (νi+1+ki
+2 )e
+− 1
+σ2
+i
+(Si+ 1
+2 (θi− mi )′V−1
+i (θi− mi ))
+,( 5)
+whereci = (2π)− ki
+2 |Vi|− 1
+2 Sνi
+i //Gamma1(νi ).4
+Since the prior variance of each element of θi is controlled by the corresponding
+diagonal element of Vi, it is obvious that this prior can accommodate different prior
+variances between own lags versus others. As we will show in the next section, this prior
+is also conjugate. To distinguish this from the natural conjugate prior, we call the prior
+in (4) the asymmetric conjugate prior. The hyperparameters of the asymmetric conju-
+gate prior are m
+i, Vi, νi,a n dSi, i = 1,/periodori/periodori/periodori,n. Next, we describe how one can elicit these
+hyperparameters.
+First, partition mi = (m′
+β,i, m′
+α,i
+) and Vi = diag(Vβ,i, Vα,i ),w h e r emα,i and Vα,i are
+the hyperparameters corresponding to αi, whereas mβ,i and Vβ,i are those associated
+with βi. In what follows, we ﬁrst discuss eliciting the hyperparameters associated with
+αi andσ2
+i ,t h a ti s ,mα,i, Vα,i,νi,a n dSi. We then introduce two Minnesota-type shrinkage
+priors for the VAR coefﬁcients βi.
+Since αi and σ2
+i control the reduced-form error covariance matrix ˜/Sigma1= A− 1/Sigma1(A− 1 )′,
+one concern is that an arbitrary choice of the hyperparameters for αi and σ2
+i would
+induce some unreasonable prior on ˜
+/Sigma1. For example, the implied prior on the ith diago-
+nal element of ˜/Sigma1might mechanically depend on its position in the n-tuple, that is, the
+induced prior on ˜/Sigma1depends on the order of the variables and is not invariant to reorder-
+ing. This problem is especially acute for large systems due to the fact that A
+− 1 is lower
+triangular.
+To avoid this potential noninvariance problem, we instead specify a prior on the
+reduced-form error covariance matrix ˜/Sigma1. And given this prior on ˜
+/Sigma1, we then derive the
+implied prior on α
+i and σ2
+i ,i = 1,/periodori/periodori/periodori,n. Since we can directly elicit prior beliefs on the
+elements of ˜
+/Sigma1, as a result these prior beliefs do not depend on the parameters’ position
+in ˜/Sigma1. To that end, we consider a standard inverse-Wishart prior on ˜
+/Sigma1centered around
+S = diag(s
+2
+1 ,/periodori/periodori/periodori,s2
+n ),w h e r es2
+i denotes the sample variance of the residuals from an AR(4)
+model for the variable i,i = 1,/periodori/periodori/periodori,n.M o r ep r e c i s e l y ,˜/Sigma1∼ IW (ν0, S) withν0 =n + 2. This
+prior on ˜/Sigma1is commonly used in the literature (e.g., in Rao Kadiyala and Karlsson (1997),
+4The proposed prior is related to the work of Baumeister and Hamilton (2015) ,w h oa l s oc o n s i d e r
+equation-speciﬁc conjugate priors on the structural VAR coefﬁcients and error variances. But since they
+consider a more general setting with a possibly nontriangular impact matrix A, they need a Metropolis–
+Hastings step to explore the marginal posterior distribution A. In contrast, in our special case with a lower
+triangular A, the proposed prior can be shown to be conjugate and direct sampling of all the parameters is
+available.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 7 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1151
+Carriero, Clark, and Marcellino (2015)). It turns out that, quite remarkably, the implied
+prior on αi and σ2
+i is normal-inverse-gamma. The following proposition and corollary
+summarize this result.5
+Proposition 1. Consider the following normal-inverse-gamma priors on the diagonal
+elements of /Sigma1and the lower triangular elements of A:
+σ2
+i ∼ IG
+(ν0 +i − n
+2 , s2
+i
+2
+)
+, i = 1,/periodori/periodori/periodori,n,( 6 )
+(
+Ai,j |σ2
+i
+)
+∼ N
+(
+0, σ2
+i
+s2
+j
+)
+,1 ≤ j<i ≤ n,i = 2,/periodori/periodori/periodori,n.( 7 )
+Then ˜/Sigma1
+− 1
+= A′/Sigma1− 1A has the Wishart distribution ˜
+/Sigma1
+− 1
+∼ W(ν0, S− 1 ), where S = diag(s2
+1 ,
+/periodori/periodori/periodori,s2
+n ). It follows that ˜/Sigma1∼ IW (ν0, S).
+The proof is given in the Appendix of the Online Supplementary Material (Chan
+(2022)). Since the mapping ˜/Sigma1
+− 1
+= A′/Sigma1− 1A is one-to-one, the converse of Proposition1 is
+also true.
+Corollary 1. Using the same notation as in Proposition 1, if ˜
+/Sigma1∼
+IW (ν0, S), then the
+implied priors onAi,j andσ2
+i ,i = 1,/periodori/periodori/periodori,n,j = 1,/periodori/periodori/periodori,i− 1, are the normal-inverse-gamma
+distributions given in (6) and (7).
+The proof is given in the Appendix of the Online Supplementary Material. With these
+results, we can now make precise the claim that the proposed normal-inverse-gamma
+prior is independent of the order of the variables. Suppose the covariance matrix of the
+reduced-form error vector ˜εy
+t is ˜/Sigma1, which has the prior IW (ν0, S). We claim that if we
+change the order of the reduced-form errors, we can use the normal-inverse-gamma
+prior to specify an appropriate inverse-Wishart prior—we simply need to reorder the
+associated hyperparameters accordingly. More speciﬁcally, let π denote an arbitrary
+permutation of n elements with the associated permutation matrix Pπ. If we permute
+the order of the dependent variables via Pπyt = (yπ(1),t ,/periodori/periodori/periodori,yπ(n),t )′, its error covari-
+ance matrix is then Pπ˜/Sigma1P′
+π and has the IW (ν0, Sπ) distribution, where Sπ= PπSP′
+π
+=
+diag(s2
+π(1),/periodori/periodori/periodori,s2
+π(n) ). Using Proposition 1, we can ﬁnd a set of normal-inverse-gamma
+priors that induces this inverse-Wishart prior IW (ν0, Sπ). We summarize this result in
+the following corollary.
+Corollary 2. Suppose ˜/Sigma1∼ IW (ν0, S) and let π denote a permutation of n elements
+with the associated permutation matrix Pπ. It follows that Pπ˜/Sigma1P′
+π∼ IW (ν0, Sπ), where
+5In the context of a general structural VAR,Sims and Zha (1998) suggest precisely this approach of deriv-
+ing the implied prior on the impact matrix from a natural prior (inverse-Wishart) on the error covariance
+matrix. However, under their parameterization (Cholesky factorization), the implied prior on the impact
+matrix is nonstandard. In contrast, we use a modiﬁed Cholesky factorization and the implied prior can be
+shown to be of the form of a normal-inverse-gamma distribution.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 8 =====
+1152 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Sπ= diag(s2
+π(1),/periodori/periodori/periodori,s2
+π(n) ). Consider the following normal-inverse-gamma priors on the
+diagonal elements of /Sigma1and the lower triangular elements of A:
+σ2
+i ∼ IG
+(ν0 +i − n
+2 ,
+s2
+π(i)
+2
+)
+, i = 1,/periodori/periodori/periodori,n,
+(
+Ai,j |σ2
+i
+)
+∼ N
+(
+0, σ2
+i
+s2
+π(j)
+)
+,1 ≤ j<i ≤ n,i = 2,/periodori/periodori/periodori,n.
+Then ˘/Sigma1
+− 1
+= A′/Sigma1− 1A has the Wishart distribution W(ν0, S− 1
+π ). That is, ˘/Sigma1∼ IW (ν0, Sπ).
+The proof follows directly from Proposition 1. In addition, Proposition 1 holds for
+the more general case where S is any symmetric positive deﬁnite matrix. That is, the
+induced priors on the structural-form variances are independent gamma distributions
+and the conditional priors of the free elements of A are normal distributions. But un-
+like the previous case with diagonal S, here the free elements in the same row of A are
+correlated. We summarize the results in the following corollary.6 Its proof is given in the
+Online Appendix.
+Corollary 3. Suppose ˜/Sigma1∼ IW (ν0, R), where R is a symmetric positive deﬁnite ma-
+trix. Factor ˜/Sigma1
+− 1
+= C′/Sigma1− 1C and R− 1 = L′S− 1L, where C and L are lower triangular ma-
+trices with ones on the main diagonal, /Sigma1= diag(σ2
+1 ,/periodori/periodori/periodori,σ2
+n ) and S = diag(s2
+1 ,/periodori/periodori/periodori,s2
+n )
+are diagonal matrices . Let ci denote the free elements of the ith row of C, that is , ci =
+(Ci,1 ,/periodori/periodori/periodori,Ci,i− 1 )′, and let L1:i− 1 denote the (i − 1) × (i − 1) matrix that consists of the ﬁrst
+(i − 1) rows and columns of L. Similarly, deﬁne li and S1:i− 1. Then the implied priors on
+ci andσ2
+i are
+σ2
+i ∼ IG
+(ν0 +i − n
+2 , s2
+i
+2
+)
+, i = 1,/periodori/periodori/periodori,n,( 8 )
+(
+ci |σ2
+i
+)
+∼ N
+(
+li,σ2
+i L′
+1:i− 1S− 1
+1:i− 1L1:i− 1
+)
+, i = 2,/periodori/periodori/periodori,n.( 9 )
+Since the mapping ˜/Sigma1
+− 1
+= C′/Sigma1− 1C is one-to-one, the converse is also true . That is, if we
+assume that (ci,σ2
+i ) follows the normal-inverse-gamma distributions given in (8) and
+(9), then the implied prior on ˜/Sigma1is inverse-Wishart: ˜/Sigma1∼ IW (ν0, R).
+Hence, the above proposition and corollaries give us a guide to elicit the hyperpa-
+rameters associated with αi and σ2
+i . In our baseline case, we set νi = 1 +i/2, Si =s2
+i /2,
+mα,i = 0 and Vα,i = diag(1/s2
+1 ,/periodori/periodori/periodori,1/s2
+i− 1 ). These values imply that the prior on the
+reduced-form error covariance matrix is ˜/Sigma1∼ IW (n + 2, S) with prior mean S.F u r t h e r -
+more, if we wish to have an inverse-Wishart prior on ˜
+/Sigma1with a nondiagonal prior mean,
+we can simply use Corollary 3 to elicit the associated values for m
+α,i and Vα,i.
+6Chan and Jeliazkov (2009) have shown a similar result. However, their proof is not sufﬁciently construc-
+tive and they did not give an explicit mapping between the inverse-Wishart parameters and the normal-
+inverse-gamma parameters.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 9 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1153
+Next, we describe two ways to set the hyperparameters mβ,i and Vβ,i.T h eﬁ r s ta p -
+proach directly elicits prior beliefs on the structural VAR coefﬁcients βi.T h ei d e ao f
+cross-variable shrinkage in this setting has been previously explored in Leeper, Sims,
+and Zha (1996)a n dSims and Zha (1998). We therefore follow Sims and Zha (1998), who
+consider Minnesota-type shrinkage priors for VAR coefﬁcients in the structural form. 7
+More speciﬁcally, we set mβ,i = 0 to shrink the VAR coefﬁcients to zero for growth rates
+data; for level data, mβ,i is set to be zero as well except the coefﬁcient associated with
+the ﬁrst own lag, which is set to be one.
+Recall that Vβ,i is the ratio of the prior covariance matrix of βi relative to the error
+varianceσ2
+i . Similar to the Minnesota prior, here we assumeVβ,i to be diagonal with the
+kth diagonal element (Vβ,i )k set to be:
+(Vβ,i )k =
+⎧
+⎪⎪⎪⎪⎨
+⎪⎪⎪⎪
+⎩
+κ
+1
+l2s2
+i
+, for the coefﬁcient on the lth lag of variablei,
+κ2
+l2s2
+j
+, for the coefﬁcient on the lth lag of variablej,j ̸=i,
+κ3, for the intercept.
+The hyperparameter κ1 controls the overall shrinkage strength for coefﬁcients on own
+lags, whereas κ2 controls those on lags of other variables. These two hyperparameters
+will play a key role in the empirical analysis, and we will select them optimally by maxi-
+mizing the associated marginal likelihood. We setκ3 = 100, which implies essentially no
+shrinkage for the intercepts.8
+By contrast, in the second approach we ﬁrst elicit the prior means and variances on
+the reduced-form VAR coefﬁcients. We then derive the implied prior means and vari-
+ances on the structural-form VAR coefﬁcients. Since the prior beliefs are elicited on the
+reduced-form parameters, this approach is comparable to commonly-used Minnesota
+priors on the reduced-form parameters. More speciﬁcally, let ˜m
+β,i and σ2
+i ˜Vβ,i denote
+the prior mean vector and covariance matrix of the reduced-form parameters˜βi—these
+hyperparameters can be elicited similarly as above. For later reference, we let ˜κ1 and
+˜κ2 denote the corresponding shrinkage hyperparameters. Finally, let mβ,i and σ2
+i Vβ,i
+denote the corresponding hyperparameters of the structural-form parameters βi.T h e
+Online Appendix provides the details of the derivation and the explicit formulas of mβ,i
+and Vβ,i using ˜mβ,i and ˜Vβ,i as inputs. Both approaches give a normal-inverse-gamma
+p r i o ro ft h ef o r mg i v e ni n(4).
+7As noted by Sims and Zha (1998), a general structural VAR is a simultaneous equations model and there
+is no dependent variable in an equation (other than an arbitrary normalization). Hence, the distinction
+between “own” lags versus “others” is not meaningful. However, our setup is the special case of a recursive
+system, where there is a natural dependent variable in each equation. Hence, we can distinguish between
+“own” versus “other” lags.
+8In principle, one can select κ3 optimally as well, but the corresponding optimization is more costly to
+solve. More generally, high-dimensional numerical optimization using derivative-free methods is time con-
+suming. One feasible alternative is to use automatic differentiation to obtain the relevant partial derivatives,
+which are then fed to numerical optimization routines that use these partial derivatives to more efﬁciently
+ﬁnd the maximizer. See Chan, Jacobi, and Zhu (2020) for an example.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 10 =====
+1154 Joshua C. C. Chan Quantitative Economics 13 (2022)
+2.3 Posterior distribution and efﬁcient sampling
+In this section, we ﬁrst derive the posterior distribution of(θ, σ 2 ) under the asymmetric
+conjugate prior and show that it has indeed the same form as the prior. Then we describe
+an efﬁcient method for posterior simulation.
+Since both the likelihood in (3 ) and the prior in (5 ) have the product form, we can
+estimate each pair (θi,σ2
+i ) separately. More speciﬁcally, the posterior distribution of
+(θ, σ 2 ) is given by
+p
+(
+θ, σ 2 | y
+)
+∝ p
+(
+θ, σ 2)
+p
+(
+y | θ, σ 2)
+=
+n∏
+i=1
+p
+(
+θi,σ2
+i
+)
+p
+(
+yi | θi,σ2
+i
+)
+=
+n∏
+i=1
+ci
+(
+σ2
+i
+)− (νi+1+ki
+2 )e
+− 1
+σ2
+i
+(Si+ 1
+2 (θi− mi )′V−1
+i (θi− mi ))
+×
+(
+2πσ2
+i
+)− T
+2 e
+− 1
+2σ2
+i
+(yi− Xiθi )′(yi− Xiθi )
+=
+n∏
+i=1
+ci(2π)− T
+2
+(
+σ2
+i
+)− (νi+T+ki
+2 +1)e
+− 1
+σ2
+i
+(Si+ 1
+2 (θ′
+i(V−1
+i +X′
+iXi )θi− 2θ′
+i
+(V−1
+i mi+X′
+iyi )+m′
+i
+V−1
+i mi+y′
+iyi ))
+=
+n∏
+i=1
+ci(2π)− T
+2
+(
+σ2
+i
+)− (νi+T+ki
+2 +1)e
+− 1
+σ2
+i
+(ˆSi+ 1
+2 (θi−ˆθi )′Kθi (θi−ˆθi ))
+,
+where Kθi = V− 1
+i + X′
+iXi, ˆθi = K− 1
+θi (V− 1
+i mi + X′
+i
+yi ) and ˆSi = Si + (y′
+i
+yi + m′
+i
+V− 1
+i mi −
+ˆθ′
+iKθi
+ˆθi )/2. Hence, the posterior distribution is a product of n normal-inverse-gamma
+distributions and we have
+(
+θi,σ2
+i | y
+)
+∼ NIG
+(
+ˆθi, K− 1
+θi ,νi + T
+2 , ˆSi
+)
+, i = 1,/periodori/periodori/periodori,n. (10)
+Using properties of the normal-inverse-gamma distribution, it is easy to see that the
+posterior means of θi and σ2
+i are respectively ˆθi and ˆSi/(νi + T/2 − 1). Other poste-
+rior moments can also be obtained by using similar properties of the normal-inverse-
+gamma distribution. For other quantities of interest where analytical results are not
+available, we can estimate them by posterior simulation. For example, theh-step-ahead
+predictive distribution of yT+h is nonstandard. But we can obtain posterior draws from
+p(θ, σ 2 | y) to construct theh-step-ahead predictive distribution.
+In what follows, we outline an efﬁcient method to simulate a sample of size M from
+the posterior distribution. Here, we can directly generate independent draws from the
+posterior distribution as opposed to MCMC draws that are correlated by construction.
+First, note that (θ, σ
+2 | y) is a product ofn normal-inverse-gamma distributions as given
+in (10). Thus, we can sample each pair (θi,σ2
+i | y) individually. Next, we can sample
+(θi,σ2
+i | y) in two steps. First, we draw σ2
+i marginally from (σ2
+i | y) ∼ IG (νi + T/2, ˆSi ).
+Then, given theσ2
+i sampled, we obtain θi from the conditional distribution
+(
+θi | y,σ2
+i
+)
+∼ N
+(ˆθi,σ2
+i K− 1
+θi
+)
+.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 11 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1155
+Here, the covariance matrixσ2
+i K− 1
+θi is of dimensionki =np+i.W h e nn is large, sampling
+from this normal distribution using conventional methods—based on the Cholesky fac-
+tor of σ2
+i K− 1
+θi —is computationally intensive for two reasons. First, inverting the ki ×ki
+matrix Kθi to obtain the covariance matrixσ2
+i K− 1
+θi is computationally costly. Second, the
+Cholesky factor of the covariance matrix needs to be computedM times—once for each
+draw of σ2
+i from the marginal distribution. It turns out that both of these computation-
+ally intensive steps can be avoided.
+To that end, we introduce the following notation: given a nonsingular square matrix
+F and a conformable vector d,l e t F\d denote the unique solution to the linear system
+Fz = d,t h a ti s ,F\d = F− 1d.W h e nF is lower triangular, this linear system can be solved
+quickly by forward substitution; whenF is upper triangular, it can be solved by backward
+substitution.9 Now, compute the Cholesky factor CKθi
+of Kθi such that Kθi = CKθi
+C′
+Kθi
+.
+Note that this needs to be done only once. Letu be aki ×1 vector of independent sample
+from N (0,σ2
+i ).T h e nr e t u r n
+ˆθi + C′
+K
+θ\u,
+which has the N (ˆθi,σ2
+i K− 1
+θi ) distribution.10 Finally, we can further speed up the compu-
+tations by vectorizing all operations to obtain M posterior draws instead of using for-
+loops.
+This sampling scheme is more efﬁcient than the method in Carriero, Clark, and
+Marcellino (2019), who propose estimating the reduced-form parameters equation-by-
+equation. The main reason is that their method requires computing the Cholesky fac-
+tor of every sampled reduced-form error covariance matrix (e.g., a total of M times for
+M draws as they use MCMC). In contrast, the proposed method needs to compute the
+Cholesky factor of the error covariance matrix only once, because here it does not de-
+pend on the sampled coefﬁcients (i.e., the proposed sampler is not a Gibbs sampler).
+This difference becomes more important when n becomes larger, as number of opera-
+tions for computing the Cholesky factor of ann ×n matrix is O(n3 ).
+To get a sense of how long it takes to obtain posterior draws using the proposed al-
+gorithm, we ﬁt Bayesian VARs of different sizes, each with p = 4 lags. The algorithm is
+implemented using Matlab on a desktop with an Intel Core i7-7700 @3.60 GHz proces-
+sor and 64GB memory. The computation times (in seconds) to obtain 10,000 posterior
+draws of (θ, σ 2 ) are reported in Table 1. As it is evident from the table, the proposed
+method is fast and scales well. It also compares favorably to the algorithm in Carriero,
+Clark, and Marcellino (2019), especially when n is large. For example, for a large BVAR
+withn = 100 variables, the proposed method takes about half a minute to obtain 10,000
+posterior draws. In comparison, using the algorithm in Carriero, Clark, and Marcellino
+(2019) takes about 43 minutes.11
+9Forward and backward substitutions are implemented in standard packages such as M atlab,G auss
+and R. In M atlab, for example, it is done by mldivide(F, d) or simply F\d.
+10Note that ˆθi can be obtained similarly without explicitly computing the inverse of Kθi . Speciﬁcally, it is
+easy to see that ˆθi can be calculated as C′
+Kθi
+\(CKθi
+\(V− 1
+i mi + X′
+iyi )) by forward then backward substitution.
+Also note that since V− 1
+i is diagonal, its inverse is straightforward to compute.
+11As recently pointed out in Bognanni (2021), the original algorithm in Carriero, Clark, and Marcellino
+(2019) is not exact and can only be viewed as an approximation. The corrected algorithm described in Car-
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 12 =====
+1156 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Table 1. The computation times (in seconds) to obtain 10,000 posterior draws of (θ, σ 2 ) us-
+ing the proposed method compared to the method in Carriero, Clark, and Marcellino (2019). All
+BVARs havep = 4l a g s .
+n = 25 n = 50 n = 100
+Proposed method 1.3 6.8 28
+CCM 58 238 2574
+2.4 The marginal likelihood
+In this section, we provide an analytical expression of the marginal likelihood. This
+closed-form expression is useful for a range of purposes, such as obtaining optimal hy-
+perparamaters or designing efﬁcient estimation algorithms for more ﬂexible Bayesian
+VARs.
+To prevent arithmetic underﬂow and overﬂow, we evaluate the marginal likelihood
+in log scale. Given the likelihood function in (3 ) and the asymmetric conjugate prior in
+(5), the associated log marginal likelihood of the VAR has the following analytical expres-
+sion:
+logp(y) =− Tn
+2 log(2π) +
+n∑
+i=1
+[
+− 1
+2
+(
+log|Vi|+ log|Kθi |
+)
++ log/Gamma1
+(
+νi + T
+2
+)
++νi logSi − log/Gamma1(νi ) −
+(
+νi + T
+2
+)
+log ˆSi
+]
+. (11)
+The details of the derivation are given in Appendix B. The above expression is straight-
+forward to evaluate. We only note that to compute the log determinant log |Kθi |,i ti s
+numerically more stable to ﬁrst compute its Cholesky factor CKθi
+and return 2 ∑ logcii,
+wherecii is theith diagonal element of the CKθi
+.
+3. E xtensions
+In this section, we brieﬂy discuss how we can use the above analytical results and the
+efﬁcient sampling scheme in more general settings. Suppose we augment our BVAR in
+(3)t ot h em o d e lp(y | θ, σ
+2, γ) with the additional parameter vector γ.F u r t h e r ,c o n s i d e r
+the priorp(θ, σ 2, γ) =p(θ, σ 2 | γ)p(γ),w h e r ep(θ, σ 2 | γ) is the asymmetric conjugate
+prior that could potentially depend on γ and the marginal prior p(γ) is left unspeciﬁed
+for now. Before we discuss some efﬁcient posterior samplers, we ﬁrst give two examples
+that ﬁt into this framework.
+In our ﬁrst example, we augment the BVAR by treating the hyperparameters κ
+1 and
+κ2 as parameters to be estimated. That is, γ = (κ1,κ2 )′. This extension is useful as it
+takes into account the parameter uncertainty of κ1 and κ2 (see also Giannone, Lenza,
+riero, Chan, Clark, and Marcellino (2021) is about 3–10 times slower than the original algorithm, depending
+on the size of the system. Hence, the advantage of our posterior sampler is even more substantial when the
+corrected algorithm is used.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 13 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1157
+and Primiceri (2015)). This extension is considered in the empirical application. In our
+second example, we extend the BVAR by adding an MA(1) component to each equation:
+yi,t = xi,t θi +εy
+i,t ,
+εy
+i,t =ui,t +ψiui,t− 1,
+where ui,t ∼ N (0,σ2
+i ),t = 1,/periodori/periodori/periodori,T ,i = 1,/periodori/periodori/periodori,n.I nt h i sc a s e ,γ = (ψ1,/periodori/periodori/periodori,ψn )′.T h i se x -
+tension is motivated by the empirical ﬁnding that allowing for moving average errors
+often improves forecast performance (see, e.g., Chan (2013, 2020a)).
+Both examples ﬁt into the framework with likelihood p(y | θ, σ 2, γ) and prior
+p(θ, σ 2, γ). One natural posterior sampler is to construct a Markov chain by sequen-
+tially sampling from p(θ, σ 2 | y, γ) and p(γ | y, θ, σ 2 ). The ﬁrst density is a product of
+normal-inverse-gamma densities, and we can efﬁciently obtain a draw from it as de-
+scribed before. The second density depends on the model, but it is often easy to sample
+from.12
+Alternatively, a more efﬁcient approach is the collapsed sampler that samples from
+p(γ | y). This sampling scheme is typically more efﬁcient as it integrates out the high-
+dimensional parameters (θ, σ 2 ) analytically. The density p(γ | y) can be evaluated
+quickly since
+p(γ | y) ∝ p(y | γ)p(γ),
+where p(y | γ) is the “marginal likelihood” of the standard BVAR. For instance, for the
+ﬁrst example with γ = (κ1,κ2 )′, the quantity p(y | γ) is exactly as the analytical expres-
+s i o ng i v e ni n(11). Finally, given the posterior draws of γ, we can obtain the posterior
+draws of (θ, σ 2 ) fromp(θ, σ 2 | y, γ).
+4. A pplication:I dentifying financial shocks
+In this section, we illustrate the usefulness of the proposed asymmetric conjugate prior
+by revisiting the empirical study inFurlanetto, Ravazzolo, and Sarferaz(2019), who iden-
+tify ﬁnancial shocks in a VAR using sign restrictions. More speciﬁcally, for their baseline
+they consider a 6-variable VAR—using US data on GDP , prices, interest rate, investment,
+stock prices, and credit spread—to identify demand, supply, monetary, investment, and
+ﬁnancial shocks using a set of sign restrictions on the contemporaneous impact matrix.
+Here, we revisit their empirical study by using a larger set of variables and consider a
+15-variable VAR.
+There are a few reasons in favor of using a larger set of macroeconomic and ﬁnancial
+variables. First, there is the concern of informational deﬁciency of using a limited in-
+formation set. As pointed out in the seminal papers by Hansen and Sargent (1991)a n d
+Lippi and Reichlin (1993, 1994), when the econometrician considers a narrower set of
+12For our ﬁrst example with a low-dimensionalγ = (κ1,κ2 )′, an independent-chain Metropolis–Hastings
+algorithm can be easily constructed. For our second example with γ = (ψ1,/periodori/periodori/periodori,ψn )′,i tt u r n so u tt h a tw e
+can factor p(γ | y, θ, σ 2 ) =p(ψ | y, θ, σ 2 ) = ∏n
+i=1 p(ψi | y, θ, σ 2 ).T h e ne a c hψi can be simulated using the
+method in Chan (2013).
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 14 =====
+1158 Joshua C. C. Chan Quantitative Economics 13 (2022)
+variables than the economic agent, the underlying model used by the econometrician is
+nonfundamental, in the sense that current and past observations of the variables do not
+span the same space spanned by the structural shocks. Consequently, structural shocks
+cannot be recovered from the model. Using a larger set of relevant variables can alleviate
+this concern (see, e.g., Gambetti (2021), for a recent review on nonfundamentalness).
+Second, the mapping from variables in an economic model to the data is typically
+not unique. For example, take the economic variable inﬂation. Should one match it to
+the data based on the CPI, PCE, or the GDP deﬂator ( Loria, Matthes, and Wang (2020))?
+One natural way to circumvent an arbitrary choice is to include multiple data series cor-
+responding to the same economic variable in the analysis. An added beneﬁt of this ap-
+proach is that by using more data series (and the corresponding sign restrictions), one
+often obtains sharper inference.
+While Furlanetto, Ravazzolo, and Sarferaz(2019) consider a noninformative prior for
+their 6-variable VAR, shrinkage is essential here for our much larger system. In particu-
+lar, we use the proposed asymmetric conjugate prior to shrink the VAR coefﬁcients in a
+data-based manner. After describing the macroeconomic data set in Section4.1, we ﬁrst
+present the estimates of the shrinkage hyperparameters in Section 4.2, highlighting the
+empirical relevance of allowing for different levels of shrinkage on own lags and other
+lags. We then conduct a structural analysis with sign restrictions in Section 4.3.
+4.1 Data
+The data set for our empirical application consists of 15 US quarterly variables and the
+sample period is from 1985:Q1 to 2019:Q4. These variables are constructed from raw
+time-series obtained from various sources, including the FRED database at the Federal
+Reserve Bank of St. Louis and the Federal Reserve Bank of Philadelphia. The complete
+list of these time-series and their sources are given in Appendix A.
+In addition to the 6 variables used in the baseline model in Furlanetto, Ravazzolo,
+and Sarferaz (2019)— namely, real GDP , GDP deﬂator, 3-month treasury rate, ratio of
+private investment over output, S&P 500 index, and a credit spread deﬁned as the dif-
+ference between Moody’ s baa corporate bond yield and the federal funds rate— we in-
+clude 9 additional macroeconomic and ﬁnancial variables, such as ratio of total credit
+over real estate value, industrial production, mortgage rates, as well as other measures
+of inﬂation, interest rates, and stock prices. These 15 variables are listed in Table3.
+4.2 Optimal shrinkage hyperparameters
+In this section, we ﬁt the 15-variable VAR with the proposed asymmetric conjugate prior.
+More speciﬁcally, we implement the version that elicits prior beliefs on the reduced-
+form parameters ˜β
+i with hyperparameters ˜κ1 and ˜κ2. We obtain the optimal hyperpa-
+rameter values by maximizing the log marginal likelihood. The results are reported in
+Table 2.
+For comparison, we also consider two useful benchmarks. In the ﬁrst case, we set
+˜κ1 = ˜κ2 = ˜κand maximize the log marginal likelihood with respect to˜κonly. This bench-
+mark mimics the standard practice of using the natural conjugate prior that does not
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 15 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1159
+Table 2. Optimal values of the hyperparameters under the symmetric prior (˜κ1 = ˜κ2 ),t h es u b -
+jective prior (Carriero, Clark, and Marcellino(2015)) and the proposed asymmetric prior (elicited
+on the reduced-form parameters).
+Symmetric prior Subjective prior Asymmetric prior
+˜κ1 0.008 0.040 0.058
+˜κ2 0.008 0.0016 0.0043
+log-ML 4333.3 4329.8 4341.6
+distinguish between own lags and lags of other variables. We refer to this version as the
+symmetric prior. The second benchmark is a set of subjectively chosen values that apply
+cross-variable shrinkage. In particular, we follow Carriero, Clark, and Marcellino (2015)
+and consider ˜κ
+1 = 0.04 and ˜κ2 = 0.0016. This second benchmark is referred to as the
+subjective prior.
+Under the symmetric prior with the restriction that ˜κ1 = ˜κ2, the optimal hyperpa-
+rameter value is 0.008. If we allow ˜κ1 and ˜κ2 to be different, we obtain very different re-
+sults: the optimal value for˜κ1 increases more than 7 times to 0.058, whereas the optimal
+value of ˜κ2 reduces by about half to 0.0043. These results suggest that the data prefers
+shrinking the coefﬁcients on lags of other variables much more aggressively to zero than
+those on own lags. This makes intuitive sense as one would expect, on average, a vari-
+able’ s own lags would contain more information about its future evolution than lags of
+other variables. By relaxing the restriction that˜κ
+1 = ˜κ2, the marginal likelihood value in-
+creases by about 4000. If we were to test the hypothesis that˜κ1 = ˜κ2, this large difference
+in marginal likelihood values would have decidedly reject it.
+In addition, the optimal values of ˜κ1 and ˜κ2 under the asymmetric prior are also
+quite different from those of the subjective prior with ˜κ1 = 0.04 and ˜κ2 = 0.0016. By se-
+lecting the values of ˜κ1 and ˜κ2 optimally, one can increase the marginal likelihood value
+by more than 13,000. These results suggest that the subjective prior shrinks both the
+coefﬁcients on own and other lags too aggressively for our data set.
+We have so far taken the empirical Bayes approach of choosing hyperparameter val-
+ues by maximizing the log marginal likelihood. A fully Bayesian approach would specify
+proper priors on ˜κ
+1 and ˜κ2 and obtain the corresponding posterior distribution. The
+latter approach has the additional advantage of being able to quantity parameter uncer-
+tainty of ˜κ
+1 and ˜κ2. In view of this, we take a fully Bayesian approach and treat ˜κ1 and
+˜κ2 as parameters to be estimated. Speciﬁcally, we assume a uniform prior on the unit
+square (0, 1) × (0, 1) for ˜κ1 and ˜κ2, and compute the marginal posterior distribution of
+˜κ1 and ˜κ2. The contour plot of the joint posterior density is reported in Figure 1.
+As the contour plot in the right panel shows, most of the mass of ˜κ1 lies between
+0.03 and 0.09, whereas the mass of ˜κ2 is mostly between 0.002 and 0.007. That is, ˜κ1
+tends to be an order of magnitude larger than ˜κ2. These results conﬁrm the conclusion
+that one should shrink the coefﬁcients on other lags much more aggressively to zero
+than those on own lags. Moreover, since there is virtually no mass along the diagonal
+line ˜κ
+1 = ˜κ2, requiring them to be the same as in the natural conjugate prior appears
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 16 =====
+1160 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Figure 1. Contour plot of the joint posterior density of ˜κ1 and ˜κ2. The mode of the density is
+normalized to one for easy comparison.
+to be too restrictive. As a comparison, we also plot the values of ˜κ1 and ˜κ2 under the
+symmetric and subjective priors. As is evident from the ﬁgure, the values under both
+priors are far from the high-density region of the posterior distribution.
+Overall, the estimation results indicate that the optimal hyperparameter values
+could be very different from some subjectively chosen values commonly used in em-
+pirical work. In addition, they also highlight the importance of allowing for different
+levels of shrinkage on own versus other lags and, therefore, the empirical relevance of
+the proposed asymmetric conjugate prior.
+4.3 Sign restrictions and impulse responses
+Next, we revisit the empirical application in Furlanetto, Ravazzolo, and Sarferaz (2019)
+that identiﬁes ﬁnancial shocks using sign restrictions on the contemporaneous impact
+matrix. We ﬁrst replicate their baseline results from a 6-variable VAR to identify 5 struc-
+tural shocks, namely, demand, supply, monetary, investment, and ﬁnancial shocks. We
+then consider a larger, 15-variable VAR with the asymmetric conjugate prior to identify
+the same structural shocks.
+For the replication exercise, we use the same 6 variables and the associated sign re-
+strictions considered in Furlanetto, Ravazzolo, and Sarferaz (2019), which are listed in
+the ﬁrst 6 rows of Table3. The sign restrictions to identify supply, demand, and monetary
+shocks are standard and are consistent with a wide range of dynamic stochastic general
+equilibrium models (see, e.g., Canova and Paustian (2011)). To disentangle investment
+and ﬁnancial shocks from demand shocks, they are assumed to have different effects
+on the ratio of investment over output. More speciﬁcally, positive investment and ﬁnan-
+cial shocks have a positive effect on the ratio, which is in line with the idea that these
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 17 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1161
+Table 3. Sign restrictions and identiﬁed shocks.
+Supply Demand Monetary Investment Financial
+GDP ++ + + +
+GDP deﬂator −+ + + +
+3-month t-bill rate NA +− + +
+Investment/output NA − NA ++
+S&P 500 + NA NA −+
+Spread NA NA NA NA NA
+Spread 2 NA NA NA NA NA
+Credit/Real estate value NA NA NA NA NA
+Mortgage rates NA NA NA NA NA
+CPI −+ + + +
+PCE −+ + + +
+employment NA NA NA NA NA
+Industrial production ++ + + +
+1-year t-bill rate NA +− + +
+DJIA + NA NA −+
+Note: Spread is deﬁned as the difference between Moody’ s baa corporate bond yield and the federal funds rate; Spread 2 is
+the difference between Moody’ s baa corporate bond yield and 10-year treasury yield.
+shocks create investment booms. In contrast, positive demand shocks reduce the ratio
+of investment over output —investment level can still increase in response to demand
+shocks, but not as much as other components of the output.
+Finally, stock prices are used to disentangle investment shocks from ﬁnancial
+shocks, following the inﬂuential paper by Christiano, Motto, and Rostagno (2014). In
+particular, investment shocks are assumed to have a negative impact on the stock prices,
+whereas ﬁnancial shocks have a positive impact. The ﬁrst assumption captures the idea
+that investment shocks are shocks to the supply of capital, which generate negative
+comovements between the stock of capital and its price, where the price of capital is
+viewed as a proxy of the value of equity. In contrast, ﬁnancial shocks are stocks to the
+demand for capital, which generate positive comovements between the stock of capital
+and its price.
+We then augment the 6-variable VAR with 9 additional variables. Some of the new
+variables are alternative time series corresponding to a particular economic variable
+(e.g., CPI and PCE as prices; the Dow Jones Industrial Average as stock prices). In those
+cases, the same sign restrictions for the economic variable as discussed above are im-
+posed. In addition, we also include a few other seemingly relevant variables to alleviate
+the concern of informational deﬁciency. The additional variables and the corresponding
+sign restrictions are listed in rows 7–15 of Table3.
+Given the posterior draws of the parameters, the algorithm proposed in Rubio-
+Ramirez, Waggoner, and Zha (2010) is used to incorporate the sign restrictions to con-
+struct impulse responses. This procedure can be computational intensive when the
+number of variables and the number of identiﬁed shocks are large. In particular, when
+there are a large number of sign restrictions, it is not uncommon to require millions of
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 18 =====
+1162 Joshua C. C. Chan Quantitative Economics 13 (2022)
+posterior draws to obtain enough samples that satisfy all the sign restrictions. 13 For in-
+stance, Furlanetto, Ravazzolo, and Sarferaz (2019) consider a noninformative prior and
+construct impulse responses using a standard Gibbs sampler in conjunction with the
+algorithm in Rubio-Ramirez, Waggoner, and Zha(2010). They report estimation time of
+about a week for the 6-variable VAR using a 12-core workstation. For our 15-variable VAR
+with more sign restrictions, it would be extremely computationally expensive to use a
+standard Gibbs sampler to obtain enough posterior draws. To make estimation feasible,
+we adopt the proposed asymmetric conjugate prior and the associated efﬁcient sampler
+to generate posterior draws of the structural parameters. These structural parameters
+are then transformed to the corresponding reduced-form parameters, which are then
+used to construct candidate impulse responses.
+We ﬁrst report results from the baseline model inFurlanetto, Ravazzolo, and Sarferaz
+(2019) using the asymmetric conjugate prior elicited on the reduced-form parameters
+and an updated data set. Since an improper (noninformative) prior is used in the orig-
+inal study, to make our results comparable, we consider a proper but relatively vague
+prior by setting ˜κ
+1 = ˜κ2 = 1. Figure 2 plots the impulse responses of the 6 variables to an
+one-standard-deviation ﬁnancial shock.
+Despite using a different prior and dataset, our results are remarkably similar to
+those reported in Figure 1 ofFurlanetto, Ravazzolo, and Sarferaz(2019). In particular, we
+also ﬁnd a large effect on GDP and a relatively smaller impact on prices. The responses
+of investment and stock prices are persistent. In particular, the credible intervals ex-
+clude 0 for the ﬁrst 7 quarters after impact for both variables. It is also interesting to note
+that even though the responses of the credit spread are unrestricted in the estimation,
+they are strongly countercyclical—this highlights the fact that the estimated structural
+shock behaves like a ﬁnancial stock. The only noticeable difference is that our median
+responses of prices are all positive, whereas those inFurlanetto, Ravazzolo, and Sarferaz
+(2019) have mixed signs (although the credible intervals in both cases are relatively wide
+and include 0 for some periods).
+As a comparison, we also compute the corresponding impulse responses under a
+standard independent normal and inverse-Wishart priors: a Minnesota prior on the VAR
+coefﬁcients with hyperparameters ˜κ
+1 = ˜κ2 = 1 and an inverse-Wishart prior on ˜/Sigma1.T h e
+results are almost identical to those obtained under the asymmetric conjugate prior
+(results are reported in the Online Appendix), suggesting any minor differences from
+Furlanetto, Ravazzolo, and Sarferaz (2019) are likely due to a slightly different data set
+used.
+Next, we construct the impulse responses from the 15-variable VAR. Given the large
+number of VAR coefﬁcients, appropriate shrinkage is vital in this case. We therefore ob-
+13There are different implementations of the algorithm in Rubio-Ramirez, Waggoner, and Zha (2010).
+One common approach, as is done in Furlanetto, Ravazzolo, and Sarferaz (2019), is to combine every uni-
+form draw from the orthogonal group O (n) with a new posterior draw to generate candidate impulse re-
+sponses. If the impulse responses do not satisfy all the sign restrictions, a new orthogonal matrix and a new
+posterior draw are used to generate candidate impulse responses. Alternatively, one can reuse the posterior
+draw and only generate a new orthogonal matrix. In this case, the number of posterior draws required can
+be reduced. But to ensure the algorithm terminates, one typically sets an upper bound on the number of
+times a posterior draw can be reused.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 19 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1163
+Figure 2. Impulse responses from a 6-variable VAR with the asymmetric conjugate prior to an
+one-standard-deviation ﬁnancial shock. The shaded region represents the 16th and 84th per-
+centiles.
+tain the optimal shrinkage hyperparameters by maximizing the marginal likelihood of
+the VAR with the asymmetric conjugate prior. As reported in Section 4.2, the optimal
+shrinkage hyperparameters are found to be ˜κ1 = 0.058 and ˜κ2 = 0.0043. The following
+results are based on these hyperparameter values.
+Figure 3 reports the impulse responses of the same 6 variables to an one-standard-
+deviation ﬁnancial shock. Compared to the results from the 6-variable VAR depicted
+in Figure 2, the median responses are mostly the same, but the credible intervals are
+substantially narrower. For example, the responses of GDP are much more precisely
+estimated—the credible intervals exclude 0 for the ﬁrst 30 quarters after impact. These
+results highlight the usefulness of the proposed asymmetric conjugate prior and the
+value of including more variables and sign restrictions in identifying structural shocks.
+As mentioned earlier, there are typically multiple data series corresponding to the
+same economic variable. And it is often unclear which one should be used, if only one
+variable is to be selected. In our application, for example, the time-series GDP deﬂator,
+CPI and PCE are all good candidates for the economic variable prices. Instead of picking
+one out of the three candidates, we include them all in the analysis. Figure 4 reports
+impulse responses of the three measure of prices to an one-standard-deviation ﬁnancial
+shock. The median responses of the three variables are all positive and have very similar
+shapes. However, their credible intervals are somewhat different—only in the case of
+CPI do the credible intervals mostly exclude 0. If one had only used CPI, one might have
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 20 =====
+1164 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Figure 3. Impulse responses from a 15-variable VAR with the asymmetric conjugate prior to
+an one-standard-deviation ﬁnancial shock. The shaded region represents the 16th and 84th per-
+centiles.
+drawn a stronger conclusion than it is warranted. This again highlights the beneﬁt of
+including more variables and performing a more comprehensive structural analysis.
+5. C oncluding remarks and future research
+We developed a new asymmetric conjugate prior for large BVARs that can accommodate
+cross-variable shrinkage, while maintaining many useful analytical results as the natural
+conjugate prior. Using the new prior and the associated efﬁcient sampler, we were able
+Figure 4. Impulse responses of prices to an one-standard-deviation ﬁnancial shock. The
+shaded region represents the 16th and 84th percentiles.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 21 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1165
+to identify 5 structural shocks using a 15-variable VAR with a set of sign restrictions on
+the contemporaneous impact matrix. We showed that the larger number of variables
+and sign restrictions—when used in conjunction with the asymmetric conjugate prior—
+can sharpen inference on impulse responses.
+There is now a large empirical literature that shows that models with stochastic
+volatility tend to forecast substantially better (Clark (2011), D’Agostino, Gambetti, and
+Giannone (2013), Cross and Poon (2016)). In future work, it would be useful to develop
+similar efﬁcient posterior samplers for large BVARs with stochastic volatility, such as
+the models in Carriero, Clark, and Marcellino (2019)a n dChan, Eisenstat, and Strachan
+(2020). In addition, it would be interesting to use Proposition 1 to construct a multivari-
+ate stochastic volatility model that is invariant to reordering of the variables.
+Appendix A: D ata
+This Appendix provides the details of the raw data used to construct the variables in
+the empirical application. In particular, Table4 lists the variables and their sources. The
+sample period is from 1985:Q1 to 2019:Q4.
+Appendix B: D erivation of the marginal likelihood
+In this Appendix, we prove that the marginal likelihood of the VAR( p) under the asym-
+metric conjugate prior in (4) has the following expression:
+p(y) =
+n∏
+i=1
+(2π)− T
+2 |Vi|− 1
+2 |Kθi |− 1
+2
+/Gamma1(νi +T/2)Sνi
+i
+/Gamma1(νi )ˆS
+νi+T
+2
+i
+.
+This result follows from direct computation:
+p(y) =
+n∏
+i=1
+p(yi )
+=
+n∏
+i=1
+∫
+p
+(
+θi,σ2
+i
+)
+p
+(
+yi | θi,σ2)
+d
+(
+θi,σ2
+i
+)
+=
+n∏
+i=1
+ci(2π)− T
+2
+∫ (
+σ2
+i
+)− (νi+T+ki
+2 +1)e
+− 1
+σ2
+i
+(ˆSi+ 1
+2 (θi−ˆθi )′Kθi (θi−ˆθi ))
+d
+(
+θi,σ2
+i
+)
+=
+n∏
+i=1
+ci(2π)− T
+2 (2π)
+ki
+2
+⏐⏐K− 1
+θi
+⏐
+⏐
+1
+2 /Gamma1(νi +T/2)
+ˆS
+νi+T
+2
+i
+=
+n∏
+i=1
+(2π)− T
+2 |Vi|− 1
+2 |Kθi |− 1
+2
+/Gamma1(νi +T/2)Sνi
+i
+/Gamma1(νi )ˆS
+νi+T
+2
+i
+.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 22 =====
+1166 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Table 4. Description of variables used in the empirical application.
+Variable Description Source
+GDP Log of real GNP/GDP Federal Reserve Bank of
+Philadelphia
+GDP Deﬂator Log of price index of GNP/GDP Federal Reserve Bank of
+Philadelphia
+3-month treasury bill 3-month treasury bill rate Federal Reserve Bank of St. Louis
+Investment Log of real gross private domestic
+investment
+Federal Reserve Bank of St. Louis
+S&P 500 Log of S&P 500 Yahoo Finance
+Total credit Log of loans to nonﬁnancial private
+sector
+Board of Governors of the
+Federal Reserve System
+Mortgages Log of home mortgages of households
+and nonproﬁt organizations
+Federal Reserve Bank of St. Louis
+Real estate value Log of real estate at market value of
+households and nonproﬁt
+organizations
+Federal Reserve Bank of St. Louis
+Corporate bond yield Moody’ s baa corporate bond yield Federal Reserve Bank of St. Louis
+10-year treasury note 10-year treasury constant maturity
+rate
+Federal Reserve Bank of St. Louis
+Federal funds rate Federal funds rate Federal Reserve Bank of St. Louis
+Mortgage rate 30-year ﬁxed rate mortgage average Federal Reserve Bank of St. Louis
+CPI Log of consumer price index Federal Reserve Bank of St. Louis
+PCE Log of price index of personal
+consumption expenditure
+Federal Reserve Bank of St. Louis
+Employment Log of employment level Federal Reserve Bank of St. Louis
+Industrial production Log of industrial production index Federal Reserve Bank of St. Louis
+1-year treasury bill 1-year treasury constant maturity rate Federal Reserve Bank of St. Louis
+Dow Jones Industrial Average Log of Dow Jones Industrial Average
+index
+Google Finance
+where ci = (2π)− ki
+2 |Vi|− 1
+2 Sνi
+i //Gamma1(νi ), Kθi = V− 1
+i + X′
+iXi, ˆθi = K− 1
+θi (V− 1
+i mi + X′
+i
+yi ) and ˆSi =
+Si + (y′
+i
+yi + m′
+i
+V− 1
+i mi − ˆθ′
+iKθi
+ˆθi )/2 .I nt h ea b o v ed e r i v a t i o n ,w eh a v eu s e dt h ef a c tt h a t
+∫ (
+σ2
+i
+)− (νi+T+ki
+2 +1)e
+− 1
+σ2
+i
+(ˆSi+ 1
+2 (θi−ˆθi )′Kθi (θi−ˆθi ))
+= (2π)
+ki
+2
+⏐⏐K− 1
+θi
+⏐
+⏐
+1
+2 /Gamma1(νi +T/2)
+ˆS
+νi+T
+2
+i
+.
+The above equality holds because the quantity on the right-hand side is the normalizing
+constant of the (θi,σ2
+i ) ∼ NIG (mi, Vi,νi,Si ) distribution.
+References
+Ando, Tomohiro and Arnold Zellner (2010), “Hierarchical Bayesian analysis of the seem-
+ingly unrelated regression and simultaneous equations models using a combination of
+direct Monte Carlo and importance sampling techniques.” Bayesian Analysis, 5 (1), 65–
+95. [1149]
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 23 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1167
+Banbura, Marta, Domenico Giannone, and Lucrezia Reichlin (2010), “Large Bayesian
+vector auto regressions.” Journal of Applied Econometrics, 25 (1), 71–92. [1145]
+Baumeister, Christiane and James D. Hamilton (2015), “Sign restrictions, structural vec-
+tor autoregressions, and useful prior information.” Econometrica, 83 (5), 1963–1999.
+[1150]
+Bognanni, Mark (2021), “Comment on ‘Large Bayesian vector autoregressions with
+stochastic volatility and non-conjugate priors’ .” Journal of Econometrics. [1155]
+Canova, Fabio and Matthias Paustian (2011), “Business cycle measurement with some
+theory.”Journal of Monetary Economics, 58 (4), 345–361. [1160]
+C a r r i e r o ,A n d r e a ,J o s h u aC .C .C h a n ,T o d dE .C l a r k ,a n dM a s s i m i l i a n oG .M a r c e l l i n o
+(2021), “Corrigendum to: Large Bayesian vector autoregressions with stochastic volatil-
+ity and non-conjugate priors.” Journal of Econometrics. [1156]
+Carriero, Andrea, Todd E. Clark, and Massimiliano G. Marcellino (2015), “Bayesian VARs:
+Speciﬁcation choices and forecast accuracy.”Journal of Applied Econometrics, 30 (1), 46–
+73. [1145, 1146, 1148, 1151, 1159]
+Carriero, Andrea, Todd E. Clark, and Massimiliano G. Marcellino (2016), “Common drift-
+ing volatility in large Bayesian VARs.”Journal of Business and Economic Statistics,3 4( 3 ) ,
+375–390. [1148]
+Carriero, Andrea, Todd E. Clark, and Massimiliano G. Marcellino (2019), “Large Bayesian
+vector autoregressions with stochastic volatility and non-conjugate priors.” Journal of
+Econometrics, 212 (1), 137–154. [1146, 1148, 1155, 1156, 1165]
+Carriero, Andrea, George Kapetanios, and Massimiliano Marcellino (2009), “Forecasting
+exchange rates with a large Bayesian VAR.” International Journal of Forecasting ,2 5( 2 ) ,
+400–417. [1145]
+Chan, Joshua C. C. (2013), “Moving average stochastic volatility models with application
+to inﬂation forecast.” Journal of Econometrics, 176 (2), 162–172. [1157]
+Chan, Joshua C. C. (2020a), “Large Bayesian VARs: A ﬂexible Kronecker error covariance
+structure.” Journal of Business and Economic Statistics, 38 (1), 68–79. [1148, 1157]
+Chan, Joshua C. C. (2020b), “Large Bayesian vector autoregressions.” InMacroeconomic
+Forecasting in the Era of Big Data (Peter Fuleky, ed.), 95–125, Springer. [1148]
+Chan, Joshua C. C. (2022), “Supplement to ‘ Asymmetric conjugate priors for large
+B
+ayesian VARs’ .”Quantitative Economics Supplemental Material, 13, https://doi.org/10.
+3982/QE1381.[ 1151]
+Chan, Joshua C. C. and Eric Eisenstat (2018), “Comparing hybrid time-varying parame-
+ter VARs.”Economics Letters, 171, 1–5. [1149]
+Chan, Joshua C. C., Eric Eisenstat, and Rodney. W . Strachan (2020), “Reducing the state
+space dimension in a large TVP-VAR.”Journal of Econometrics, 218 (1), 105–118. [1165]
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 24 =====
+1168 Joshua C. C. Chan Quantitative Economics 13 (2022)
+Chan, Joshua C. C., Liana Jacobi, and Dan Zhu (2020), “Efﬁcient selection of hyperpa-
+rameters in large Bayesian vars using automatic differentiation.” Journal of Forecasting,
+39 (6), 934–943. [1153]
+Chan, Joshua C. C. and Ivan Jeliazkov (2009), “MCMC estimation of restricted covariance
+matrix.” Journal of Computational and Graphical Statistics, 18, 457–480. [1152]
+Christiano, Lawrence J., Roberto Motto, and Massimo Rostagno (2014), “Risk shocks.”
+American Economic Review, 104 (1), 27–65. [1161]
+Clark, Todd E. (2011), “Real-time density forecasts from Bayesian vector autoregressions
+with stochastic volatility.” Journal of Business and Economic Statistics, 29 (3), 327–341.
+[1165]
+Cross, Jamie and Aubrey Poon (2016), “Forecasting structural change and fat-tailed
+events in Australian macroeconomic variables.” Economic Modelling, 58, 34–51. [1165]
+D’Agostino, Antonello, Luca Gambetti, and Domenico Giannone (2013), “Macroeco-
+nomic forecasting and structural change.” Journal of Applied Econometrics, 28, 82–101.
+[1165]
+Del Negro, Marco and Frank Schorfheide (2004), “Priors from general equilibrium mod-
+els for VARs.”International Economic Review, 45, 643–673. [1145, 1148]
+Dieppe, Alistair, Romain Legrand, and Björn Van Roye (2016). The BEAR toolbox. ECB
+Working Paper 1934. [1146]
+Eisenstat, Eric, Joshua C. C. Chan, and Rodney W . Strachan (2016), “Stochastic model
+speciﬁcation search for time-varying parameter VARs.” Econometric Reviews, 35 (8-10),
+1638–1665. [1149]
+Furlanetto, Francesco, Francesco Ravazzolo, and Samad Sarferaz (2019), “Identiﬁcation
+of ﬁnancial factors in economic ﬂuctuations.”The Economic Journal, 129 (617), 311–337.
+[1147, 1157, 1158, 1160, 1162]
+Gambetti, Luca (2021), “Shocks, information, and structural vars.” In Oxford Research
+Encyclopedia of Economics and Finance, Oxford University Press. [1158]
+Giannone, Domenico, Michele Lenza, and Giorgio E. Primiceri (2015), “Prior selection
+for vector autoregressions.” Review of Economics and Statistics , 97 (2), 436–451. [1156,
+1157]
+Hansen, Lars P . and Thomas J. Sargent (1991), “Two difﬁculties in interpreting vector
+autoregressions.” In Rational Expectations Econometrics (L. P . Hansen and T . J. Sargent,
+eds.), 77–119, Westview Press. [1157]
+Karlsson, Sune (2013), “Forecasting with Bayesian vector autoregressions.” InHandbook
+of
+Economic Forecasting (G. Elliott and A. Timmermann, eds.), Handbook of Economic
+Forecasting, Vol. 2, 791–897, Elsevier. [1148]
+Koop, Gary (2013), “Forecasting with medium and large Bayesian VARs.” Journal of Ap-
+plied Econometrics, 28 (2), 177–203. [1145]
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+
+
+===== PAGE 25 =====
+Quantitative Economics 13 (2022) Asymmetric conjugate priors 1169
+Koop, Gary and Dimitris Korobilis (2010), “Bayesian multivariate time series methods
+for empirical macroeconomics.” Foundations and Trends in Econometrics, 3 (4), 267–
+358. [1148]
+Koop, Gary and Dimitris Korobilis (2013), “Large time-varying parameter VARs.”Journal
+of Econometrics, 177 (2), 185–198. [1145]
+Korobilis, Dimitris and Davide Pettenuzzo (2019), “ Adaptive hierarchical priors for high-
+dimensional vector autoregressions.” Journal of Econometrics, 212 (1), 241–271. [1145]
+Leeper, Eric M., Christopher A. Sims, and Tao Zha (1996), “What does monetary policy
+do?” Brookings papers on economic activity, 1996 (2), 1–78. [1153]
+Lippi, Marco and Lucrezia Reichlin (1993), “The dynamic effects of aggregate demand
+and supply disturbances.” Comment. The American Economic Review , 83 (3), 644–652.
+[1157]
+Lippi, Marco and Lucrezia Reichlin (1994), “VAR analysis, nonfundamental representa-
+tions, Blaschke matrices.” Journal of Econometrics, 63 (1), 307–325. [1157]
+Litterman, Robert B. (1986), “Forecasting with Bayesian vector autoregressions — ﬁve
+years of experience.” Journal of Business and Economic Statistics, 4, 25–38. [1146]
+Loria, Francesca, Christian Matthes, and Mu-Chun Wang (2020), “Economic theories
+and macroeconomic reality.” Journal of Monetary Economics. [1158]
+Rao Kadiyala, K. and Sune Karlsson (1997), “Numerical methods for estimation and in-
+ference in Bayesian VAR-models.”Journal of Applied Econometrics, 12 (2), 99–132.[1150]
+Rubio-Ramirez, Juan F ., Daniel F . Waggoner, and Tao Zha (2010), “Structural vector au-
+toregressions: Theory of identiﬁcation and algorithms for inference.”T h eR e v i e wo fE c o -
+nomic Studies, 77 (2), 665–696. [1161, 1162]
+Schorfheide, Frank and Dongho Song (2015), “Real-time forecasting with a mixed-
+frequency VAR.”Journal of Business and Economic Statistics, 33 (3), 366–380.[1145, 1148]
+Sims, Christopher A. and Tao Zha (1998), “Bayesian methods for dynamic multivariate
+models.” International Economic Review, 39 (4), 949–968. [1151, 1153]
+Zellner, Arnold (1971), An Introduction to Bayesian Inference in Econometrics .W i l e y ,
+New York. [1147]
+Co-editor Tao Zha handled this manuscript.
+Manuscript received 3 July, 2019; ﬁnal version accepted 30 October, 2021; available online 3 De-
+cember, 2021.
+ 17597331, 2022, 3, Downloaded from https://onlinelibrary.wiley.com/doi/10.3982/QE1381 by University Of Sydney, Wiley Online Library on [07/05/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License

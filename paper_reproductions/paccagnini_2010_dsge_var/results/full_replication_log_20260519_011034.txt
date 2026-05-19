@@ -1,0 +1,8 @@
+
+> sink(log_con, type = "message")
+
+> on.exit({
++   sink(type = "message")
++   sink()
++   close(log_con)
++ }, add = TRUE)

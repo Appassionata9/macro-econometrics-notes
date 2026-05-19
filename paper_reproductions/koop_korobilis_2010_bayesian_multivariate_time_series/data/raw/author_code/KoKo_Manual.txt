@@ -1,0 +1,1226 @@
+
+
+===== PAGE 1 =====
+Manual to accompany MATLAB package for
+Bayesian VAR models
+Gary Koop
+University of Strathclyde
+Dimitris Korobilis
+University of Strathclyde
+Glasgow, September 2009
+Contents
+1 Introduction 2
+2 VAR models 4
+2.1 Analytical results for VAR models . . . . . . . . . . . . . . . . . . . . 4
+2.1.1 The Diffuse Prior . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+2.1.2 The Natural Conjugate Prior . . . . . . . . . . . . . . . . . . . 5
+2.1.3 The Minnesota Prior . . . . . . . . . . . . . . . . . . . . . . . . 5
+2.2 Estimation of VARs using the Gibbs sampler . . . . . . . . . . . . . 6
+2.2.1 The Independent Normal-Wishart Prior-Posterior algorithm . 6
+2.2.2 Stochastic Search Variable Selection in VAR models . . . . . 7
+2.2.3 Flexible Variable Selection in VAR models . . . . . . . . . . . 9
+3 Time-Varying parameters VAR models 12
+3.1 Homoskedastic TVP-VAR . . . . . . . . . . . . . . . . . . . . . . . . . 12
+3.1.1 Variable Selection in the Homoskedastic TVP-VAR . . . . . . 13
+3.2 Hierarchical TVP-VAR . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+3.3 Heteroskedastic TVP-VAR . . . . . . . . . . . . . . . . . . . . . . . . . 15
+4 Factor models 18
+
+
+===== PAGE 2 =====
+1 Introduction 2
+4.1 Static factor model . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+4.2 Dynamic factor model (DFM) . . . . . . . . . . . . . . . . . . . . . . 18
+4.3 Factor-augmented VAR (FAVAR) . . . . . . . . . . . . . . . . . . . . . 19
+4.4 Time-varying parameters Factor-augmented VAR (FAVAR) . . . . . . 20
+4.5 Data used for factor model applications . . . . . . . . . . . . . . . . 22
+1 Introduction
+This notes manual accompanies the monograph on empirical VAR models and
+the associated MATLAB code. The ultimate purpose is to introduce academics,
+students and applied economists to the world of Bayesian time series modelling
+combining theory with easily digestable computer code. For that reason, we
+present code in a format that follows the theoretical equations as close as pos-
+sible, so that users can make the connection easily and understand the models
+they are estimating. This means that in some cases the code might not be as
+computationally efﬁcient as it should be in practice, if there is the danger to sac-
+riﬁce clarity. We try to avoid structure arrays which can be confusing, that is we
+only represent our variables as vectors or matrices (the SSVS model is the only
+exception, where we use the MATLAB cell array capabilities).
+The directories in the ﬁle BAYES_VARS.zip, are:
+
+
+===== PAGE 3 =====
+1 Introduction 3
+BV AR_Analytical VAR models using analytical results
+BV AR_GIBBS VAR models using the Gibbs sampler
+BV AR_F U LL
+Programs to replicate Empirical
+Illustration 1. This code uses simulation
+to get the posterior parameters with a
+ﬂexible choice of 6 different priors.
+SSV S VAR with SSVS mixture prior as in George,
+Sun and Ni (2008)
+V AR_Selection Variable selection in VARs as in
+Korobilis (2009b)
+T V P_V AR_CK TVP-VAR model using the Carter and
+Kohn (1994) smoother as in Primiceri(2005)
+T V P_V AR_DK TVP-VAR model using the Durbin and
+Koopman (2002) smoother
+T V P_V AR_GCK Mixture innovations TVP-VAR as in Koop,
+Leon-Gonzales and Strachan (2009)
+HierarchicalT V P _V AR Hierarchical TVP-VAR as in Chib and
+Greenberg (1995)
+F actor_M odels Estimation of static and dynamic factor
+models
+F AV AR FAVAR as in Bernanke, Boivin and
+Eliasz (2005)
+T V P_F AV AR TVP-FAVAR as in Korobilis (2009a)
+GAU SS2M AT LAB Some usefull GAUSS routines, transcribed
+for MATLAB
+
+
+===== PAGE 4 =====
+2 VAR models 4
+2 VAR models
+2.1 Analytical results for VAR models
+The simple, reduced-form VAR model can be writen as
+Yt = XtA + "t, with "t  N (0; ) (1)
+As we have shown in the previous subsection, this model can be written in the
+form
+yt = ( IM 
+ Xt)  + "t (2)
+or compactly
+yt = Zt + "t (3)
+where a = vec (A) .
+In the computations presented henceforth, we will need the OLS estimates of
+a, A and . Subsequently, using the notation X = (X1; :::; XT )0, we deﬁne
+b =
+X
+Z 0
+tZt
+1X
+Z 0
+tyt
+
+(4)
+the OLS estimate of a,
+bA = (X 0X)1 (X 0Y ) (5)
+the OLS estimate of A,
+bS =
+
+Y  XbA
+0
+Y  XbA
+
+(6)
+the sum of squared errors of the VAR, and
+b = bS= (T  K) (7)
+the OLS estimate of .
+Code BVAR_ANALYT .m(found in folder BVAR_Analytical) gives posterior means
+and variances of parameters & predictives, using the analytical formulas.
+Code BVAR_FULL.m (found in the folder BVAR_FULL) estimates the BVAR
+model combining all the priors discussed below, and provides predictions and
+impulse responses (check Empirical Application 1 in the monograph)
+
+
+===== PAGE 5 =====
+2.1 Analytical results for VAR models 5
+2.1.1 The Diffuse Prior
+The diffuse (or Jeffreys’) prior for a and  takes the form
+p (; ) / jj(M +1)=2
+The conditional posteriors are easily derived, and it is proven that they are of the
+form
+j; y  N (ba; ) , jy  IW
+
+bS; T  K
+
+2.1.2 The Natural Conjugate Prior
+The natural conjugate prior has the form
+j  N (;  
+ V )
+and
+1  W
+
+v; S1
+The posterior for a is
+j; y  N
+
+;  
+ V
+
+where V =
+
+V 1 + X 0X
+1
+and  = vec
+
+A
+
+with A = V
+
+V 1A + X 0XbA
+
+:
+The posterior for  is
+1jy  W
+
+; S
+1
+where  = T +  and S = S + S + bA0X 0XbA + A0V 1A  A
+0
+V 1 + X 0X
+
+A.
+2.1.3 The Minnesota Prior
+The Minnesota Prior refers mainly to restricting the hyperparameters of a. The
+data-based restrictions are the ones presented in the monograph. The prior for
+a is still normal and the posteriors are the similar to the Natural conjugate prior
+case.  is assumed known in this case (for example equal to b).
+
+
+===== PAGE 6 =====
+2.2 Estimation of VARs using the Gibbs sampler 6
+2.2 Estimation of VARs using the Gibbs sampler
+2.2.1 The Independent Normal-Wishart Prior-Posterior algorithm
+We write the VAR as:
+yt = Zt + "t
+where Zt = IM 
+ Xt and "t is N (0; ).
+It can be seen that the restricted VAR can be written as a Normal linear
+regression model with an error covariance matrix of a particular form. A very
+general prior for this model (which does not involve the restrictions inherent in
+the natural conjugate prior) is the independent Normal-Wishart prior:
+p
+
+; 1
+= p () p
+
+1
+where
+  N
+
+; V 
+
+(8)
+and
+1  W
+
+; S1
+: (9)
+Note that this prior allows for the prior covariance matrix, V , to be anything the
+researcher chooses, rather than the restrictive 
+V form of the natural conjugate
+prior. For instance, the researcher could choose a prior similar in spirit to the
+Minnesota prior, but allow for different forms of shrinkage in different equations.
+A noninformative prior can be obtained by setting  = S = V 1
+ = 0.
+The conditional posteriors are:
+Posterior on  = vec (B)
+jy; 1  N
+
+; V 
+
+; (10)
+where  = V 
+
+V 1
+  +PT
+i=1 Z 0
+t1yt
+
+and V  =
+
+V 1
+ +PT
+t=1 Z 0
+t1Zt
+1
+Posterior on 
+
+
+===== PAGE 7 =====
+2.2 Estimation of VARs using the Gibbs sampler 7
+1jy;   W
+
+; S
+1
+(11)
+where  = T +  and S = S +PT
+t=1 (yt  Zt) (yt  Zt)0.
+The one-step ahead predictive density, conditional on the parameters of the
+model is:
+ytjZt; ;   N (Zt; )
+As we note in the monograph, in order to calculate reasonable predictions, Zt
+should contain lags of the dependent variables, and exogenous variables which
+are observed at time t  h, where h is the desired forecast horizon. This result,
+along with a Gibbs sampler producing draws (r); (r) for r = 1 ; ::; R allows for
+predictive inference. 1 For instance, the predictive mean (a popular point forecast)
+could be obtained as:
+E (y jZ ) =
+PR
+r=1 Zt(r)
+R
+and other predictive moments can be calculated in a similar fashion. Alterna-
+tively, predictive simulation can be done at each Gibbs sampler draw, but this
+can be computationally demanding. For forecast horizons greater than one, the
+direct method can be used. This strategy for doing predictive analysis can be
+used with any of the models discussed below.
+Code BVAR_GIBBS.m (found in the folder BVAR_Gibbs) estimates this model,
+but also allows the prior mean and covariance of  (i.e. the hyperparameters
+; V 
+
+) to be set as in the Minnesota case.
+2.2.2 Stochastic Search Variable Selection in VAR models
+In the VAR model
+Yt = XtA + "t (12)
+we can introduce the SSVS prior (George and McCullogh, 1993) which is a hier-
+archical prior of the form
+aj  N (0; D) (13)
+1Typically, some initial draws are discarded as the “burn in”. Accordingly, r = 1 ; ::; R should
+be the post-burn in draws.
+
+
+===== PAGE 8 =====
+2.2 Estimation of VARs using the Gibbs sampler 8
+where  = vec (A) = ( 1; :::; KM )0 and D is a diagonal matrix. If we write its
+j  th diagonal element as Dj;j, this prior implies that there is dependence on a
+hyperparameter  = (1; :::; KM )0 of the following form
+Dj;j =
+(
+2
+0j if j = 0
+2
+1j if j = 1 (14)
+where we a-priori set the hyperparameters 2
+0j ! 0 and 2
+1j ! 1 . This prior
+implies that when j = 0 the prior variance of the j  th element of a, call it aj, will
+be equal to 2
+0j, which is very low since 2
+0j ! 0. Subsequently, the posterior of the
+j  th parameter will be restricted in this case to shrink towards the prior mean,
+which is 0. In the alternative case, j = 1, the parameter will remain unrestricted
+and the posterior will be determined mainly by the likelihood. The SSVS prior
+in (13) can be written in a mixture of Normals form, which is more illuminating
+about the effect of each j on the prior of aj:
+jjj 
+
+1  j
+
+N
+
+0; 2
+0j
+
++ jN
+
+0; 2
+1j
+
+The way in which it is determined whether j is 0 or 1 (and hence whether
+aj is restricted or not) is not chosen by the researcher, as in the case of the
+Minnesota prior which favors only own lags and the constant parameters (and
+restricts the other R.H.S. variables in a semi-data-based way). The value of j
+should is determined fully in a data-based fashion, and hence a prior is assigned
+to . In a Bayesian context, a prior on a binomial variable which results in easy
+computations is the Bernoulli density. Note also that it helps calculations if we
+assume that the elements of  are independent of each other and sample each j
+individually. Subsequently, the prior for  is of the form
+jjnj  Bernoulli
+
+1; qj
+
+This prior can also be written in the form: Pr
+
+j = 1
+
+= qj and Pr
+
+j = 0
+
+= 1  qj.
+A typical "noninformative" value of the hyperparameter qj is 0.5, although the
+reader might want to consult Chipman et al. (2001) and George and McCullogh
+(1997) on this issue.
+Finally for  we assume the standard Wishart prior
+1;  W
+
+v; S1
+
+
+===== PAGE 9 =====
+2.2 Estimation of VARs using the Gibbs sampler 9
+George, Sun and Ni (2008) provide details on how to implement the restriction
+search (SSVS prior) on elements of . The MATLAB code implements this ap-
+proach, but it is not discussed here. The reader is referred to the article by
+George, Sun and Ni.
+The conditional posteriors are
+1. Sample  from the density
+jy; ;   N (; V );
+where V  = [ 1 
+ (X 0X) + (DD)1]1 and  = V [(		0) 
+ (X 0X)^] where ^ is
+the OLS estimate of .
+2. Sample j from the density
+jjnj; b; y; Z  Bernoulli
+
+1; qj
+
+(15)
+where
+qj =
+1
+1j
+exp
+
+ 2
+j
+22
+1j
+
+qj
+1
+1j
+exp
+
+ 2
+j
+22
+1j
+
+qj + 1
+0j
+exp
+
+ 2
+j
+22
+0j
+
+1  qj
+
+3. Sample 1 from the density
+1  W ishart
+
+v; S
+
+where v = T +v and S =
+
+S1 +PT
+t=1 (Yt  Zt)0 (Yt  Zt)
+1
+.
+Code SSVS_VAR.m and SSVS_VAR_CONST .m(found in the folder SSVS_VAR)
+estimate this model. The ﬁrst model assumes that all parameters are subject to
+restriction search. The second code allows the intercepts to be unrestricted, as
+in the example of George, Sun and Ni (2008).
+2.2.3 Flexible Variable Selection in VAR models
+Another way to incorporate variable selection in the VAR model is to explicitly
+restrict the parameter to be zero, when the indicator variable is zero. As we
+
+
+===== PAGE 10 =====
+2.2 Estimation of VARs using the Gibbs sampler 10
+explain in the monograph, the VAR model
+yt = Zt + "t
+can be written now as
+yt = Zt + "t
+where  =   and  = diag () = diag (1; :::; KM ). If we denote by j the j-th
+element of the vector  (which is also the j-th diagonal element of the matrix ),
+and by =j the vector  where the j-th element is removed, a Gibbs sampler for
+this model takes the following form:
+Priors:
+  NM K
+
+; V
+
+(16)
+jjnj  Bernoulli (1; ) (17)
+1  W ishart (v; S) (18)
+Conditional posteriors:
+1. Sample  from the density
+j; H; y; Z  NM K
+
+; V
+
+(19)
+where V =
+
+V 1 +PT
+t=1 Z 0
+t 1Z 
+t
+1
+and  = V
+
+V 1 +PT
+t=1 Z 0
+t 1Yt
+
+, and
+Z 
+t = Zt.
+2. Sample j from the density
+jjnj; b; y; Z  Bernoulli (1; j) (20)
+preferably in random order j, where j = l0j
+l0j +l1j
+, and
+l0j = exp
+ 
+1
+2 tr
+ TX
+t=1
+(Yt  Zt)0 1 (Yt  Zt)
+!!
+0j
+l1j = exp
+ 
+1
+2 tr
+ TX
+t=1
+(Yt  Zt)0 1 (Yt  Zt)
+!!
+(1  0j) :
+
+
+===== PAGE 11 =====
+2.2 Estimation of VARs using the Gibbs sampler 11
+Here we deﬁne  to be equal to  but with the j  th element j = j (i.e.
+when j = 1 ). Similarly, we deﬁne  to be equal to  but with the j  th
+element j = 0 (i.e. when j = 0).
+3. Sample 1 from the density
+1  W ishart
+
+v; S
+
+where v = T + vand S =
+
+S1 +PT
+t=1 (Yt  Zt)0 (Yt  Zt)
+1
+.
+Code VAR_SELECTION.m (found in the folder VAR_Selection) estimates this
+model.
+
+
+===== PAGE 12 =====
+3 Time-Varying parameters VAR models 12
+3 Time-Varying parameters VAR models
+3.1 Homoskedastic TVP-VAR
+The basic TVP-VAR can be written as:
+yt = Ztt + "t, (21)
+and
+t+1 = t + ut, (22)
+where "t is i.i.d. N (0; ) and ut is i.i.d. N (0; Q). "t and us are independent of one
+another for all s and t.
+In this model, using priors of the form
+0  N
+
+; V
+
+1  W
+
+; S1
+Q  W
+
+Q; S1
+Q
+
+we sample t (conditional on the values of  and Q) using the Kalman ﬁlter and
+a smoother (see the monograph for more information), and  from the usual
+Wishart density as
+1jt; Q; y  W
+
+; S
+1
+(23)
+where  = T +  and S = S +PT
+t=1 (yt  Ztt) (yt  Ztt)0.
+Finally we sample Q from the Wishart density
+Q1jt; ; y  W
+
+Q; S
+1
+Q
+
+(24)
+where Q = T + Q and SQ = SQ +PT
+t=1
+
+t  t1
+
+t  t1
+0
+.
+There are two different versions of this model. The one is Homo_TVP_VAR.m
+(found in the folder TVP_VAR_CK) which estimates this model plus impulse re-
+sponses, using the Carter and Kohn (1994) algorithm. Thes second code is
+Homo_TVP_VAR_DK.m (found in the folder TVP_VAR_DK) which estimates this
+model plus impulse responses, using the Durbin and Koopman (2002) algorithm.
+
+
+===== PAGE 13 =====
+3.2 Hierarchical TVP-VAR 13
+3.1.1 Variable Selection in the Homoskedastic TVP-VAR
+Variable selection is deﬁned by rewritting the TVP-VAR model as
+yt = Ztt + "t,
+t+1 = t + ut,
+where now t =  t and  is a diagonal matrix (see also the variable selection in
+the simple VAR case, when t is constant).
+The time-varying parameters t and the covariance  are generated exactly
+as in the homoskedastic TVP-VAR, described in the previous subsection, but
+conditional on the RHS variables being Z 
+t = Zt. The extra step added to the
+standard Gibbs sampler for TVP-VAR models, is sampling of the indicators j.
+These are generated - preferably in random order j - as in (20). The only mod-
+iﬁcation required in this case is that in equations ( ??) and ( ??) the densities
+p
+
+yjj; nj; j = 1
+
+and p
+
+yjj; nj; j = 0
+
+are derived from the full likelihood of
+the TVP-VAR model, and hence l0j and l1j are written as
+l0j = 0j exp
+ 
+1
+2
+TX
+t=1
+(Yt  Zt
+t )0 1
+t (Yt  Zt
+t )
+!
+l1j = (1  0j) exp
+ 
+1
+2
+TX
+t=1
+(Yt  Zt
+t )0 1
+t (Yt  Zt
+t )
+!
+Code TVP_VAR_SELECTION.m (found in the folder VAR_Selection) estimates
+this model.
+3.2 Hierarchical TVP-VAR
+The hierarchical TVP-VAR, based on the model of Chib and Greenberg (1995) is
+yt = Ztt + "t
+t+1 = A0t+1 + ut; (25)
+t+1 = t + t:
+
+
+===== PAGE 14 =====
+3.2 Hierarchical TVP-VAR 14
+where 2
+64
+"t
+ut
+t
+3
+75
+iid
+ N
+0
+B@0;
+2
+64
+ 0 0
+0 Q 0
+0 0 R
+3
+75
+1
+CA :
+The priors for this model are
+ Prior on A0
+A0  N (A; V A)
+ Prior on t
+0  N
+
+0; V 0
+
+ Prior on 
+1  W
+
+v; S1
+
+
+ Prior on Q
+Q1  W
+
+vQ; S1
+Q
+
+ Prior on R
+R1  W
+
+vR; S1
+R
+
+By deﬁning priors on these parameters, we also implicitly specify a prior for
+t of the form
+tjA0; 0; Q  N (A0t; Q) , for t = 0; ::; T:
+The conditional posteriors are
+1. Sample t from
+tj; A0; t; Q; yt  N
+
+t; V
+
+where t = V (Q1 (A0t) + Zt1yt) and V = (Q1 + Z 0
+t1Zt)1.
+2. Sample A0 from
+A0jt; t; Q  N
+
+A; V A
+
+where A = V A (V AA + 0Q1) and V A = (V A + 0Q1)
+1
+.
+
+
+===== PAGE 15 =====
+3.3 Heteroskedastic TVP-VAR 15
+3. Sample  from
+1jA0; t; t; Q; yt  W
+
+v; S
+1
+
+
+where v = T + v and S =
+
+S +PT
+t=1 (yt  Ztt)0 (yt  Ztt)
+
+.
+4. Sample Q from
+Q1jA0; t; t  W
+
+vQ; S
+1
+Q
+
+where vQ = T + vQ and SQ =
+
+SQ +PT
+t=1 (t  A0t)0 (t  A0t)
+
+.
+5. Sample R from
+R1jt  W
+
+vR; S
+1
+R
+
+where vR = T + vR and SR =
+
+SR +PT
+t=1 (t  t1)0 (t  t1)
+
+.
+6. Sample t using Carter and Kohn (1994)
+Code HierarchicalTVP_VAR.m (found in the folder HierarchicalTVP_VAR) es-
+timates the parameters of this model.
+3.3 Heteroskedastic TVP-VAR
+The Heteroskedastic TVP-VAR takes the form
+yt = Ztt + "t
+where "t  N (0; t), and t = L1DtDtL10 where Dt is a diagonal matrix with di-
+agonal elements dit = exp
+ 1
+2 hit
+
+being the error time-varying standard deviations,
+and L is a lower triangular matrix of time-varying covariances, with ones on the
+diagonal. For instance, in the M = 3 case we have
+L =
+2
+64
+1 0 0
+L21 1 0
+L31 L32 1
+3
+75
+If we ﬁrst stack the unrestricted elements of L by rows into a M (M 1)
+2 vector
+as lt =
+
+L21;t; L31;t; L32;t; ::; Lp(p1);t
+0
+and ht = ( h1t; :::; hM t)0, then t, lt and ht follow
+independent random walks
+
+
+===== PAGE 16 =====
+3.3 Heteroskedastic TVP-VAR 16
+t+1 = t + ut
+lt+1 = lt +  t
+ht+1 = ht + t
+The errors in the three state equations are
+2
+64
+ut
+ t
+t
+3
+75
+iid
+ N
+0
+B@0;
+2
+64
+Q 0 0
+0 S 0
+0 0 W
+3
+75
+1
+CA
+The state-space methods used to estimate t can also be used to estimate lt and
+ht. We remind that Zt is of dimensions M KM , so that the number of elements of
+each column vector t is n = KM (for each t). Similarly, the number of elements
+in each column lt is nl = M (M 1)
+2 , and the number of elements in each column
+vector ht is nh = M . The priors (initial condition at time t = 0) on the time-varying
+parameters are:
+0  N
+
+0; 4In
+
+l0  N (0; 4Inl) (26)
+h0  N (0; 4Inh)
+and the priors on their error covariances, are
+Q1  W
+
+1 + n;
+
+(kQ)2  (1 + n)  In
+1
+S1  W
+
+1 + nl;
+
+(kS)2  (1 + nl)  Inl
+1
+(27)
+W 1  W
+
+1 + nh;
+
+(kW )2  (1 + nh)  Inh
+1
+where the hyperparameters are set to kQ = 0:01, kS = 0:1 and kW = 0:01, and Im is
+the identity matrix of dimensions m  m. The user can also specify a prior based
+on the OLS estimates of a constant parameters VAR on a training sample (see
+Primiceri (2005) and the code for this approach).
+One can inform the priors using a training sample. In particular, assume that
+
+
+===== PAGE 17 =====
+3.3 Heteroskedastic TVP-VAR 17
+bOLS and V
+
+bOLS
+
+are the mean and variance respectively of the OLS estimate (or
+a Bayesian estimate using noninformative priors) of  = f; l; hg based on a VAR
+with constant parameters using an initial, training sample. Then the priors can
+be rewritten as
+0  N (OLS; 4V (OLS))
+l0  N (lOLS; 4V (lOLS)) (28)
+h0  N (hOLS; 4V (hOLS))
+Q1  W
+
+1 + n;
+
+(kQ)2  (1 + n)  V (OLS)
+1
+S1  W
+
+1 + nl;
+
+(kS)2  (1 + nl)  V (lOLS)
+1
+(29)
+W 1  W
+ 
+1 + nh;
+
+(kW )2  (1 + nh)  V
+
+h...OLS
+1!
+The posterior of t is easily obtained, as in the case of the Homoskedastic VAR.
+The only difference is that now, we draw t conditional on the VAR covariance
+matrix being t. Draws of lt and ht will provide us with draws of Lt and Dt
+respectively, and then we can recover t using t = L1
+t DtDtL10
+t . For detailed
+info see the monograph, and the appendix Primiceri (2005).
+Code Hetero_TVP_VAR.m (found in the folder TVP_VAR_CK) estimates the
+parameters and impulse responses from this model.
+
+
+===== PAGE 18 =====
+4 Factor models 18
+4 Factor models
+4.1 Static factor model
+The static factor model is (ignoring the intercept)
+yt = ft + "t
+where yt is an M  1 vector of observed time series variables, ft is a q  1 vector of
+unobserved factors with ft  N (0; Iq),  is an M  q matrix of coefﬁcients (factor
+loadings), and "t  N (0; ) with  = diag (2
+1; :::; 2
+M ). A popular way to identify this
+model (see Lopes and West, 2004, and Geweke and Zhou, 1996) is to impose 
+to be block lower triangular with diagonal elements strictly positive, i.e. jj > 0
+and jk = 0 for j > k , j = 1 ; ::; q. Since the covariance matrix  is diagonal, we
+can treat this model as M indepedent regressions (conditional on knowing ft).
+Subsequently we set proper priors of the Normal - inverse-Gamma form, and 
+is sampled with the restriction that its diagonal elements come from a truncated
+normal density, while the upper diagonal elements are zero.
+Code BFM.m (found in folder Factor_Models) replicates this model, following
+Lopes and West (2004).
+4.2 Dynamic factor model (DFM)
+The dynamic factor model assumes that the factors follow a VAR. A simple form
+of this model is
+yit = 0i + ift + "it
+ft =  1ft1 + :: + pftp + "f
+t
+This model needs only a small modiﬁcation in order to write it as a linear state-
+space model, with ft the state variable. This modiﬁcation is to write the p-lag
+state equation as a ﬁrst order Markov system (i.e. transform the VAR(p) equation
+ft =  1ft1 + :: +  pftp + "f
+t , into a VAR(1) model; we have seen how to do this
+in the simple VAR models when we wanted to compute the impulse responses).
+Conditional on this transformation, a Gibbs sampler is used to draw ft using
+the Carter and Kohn (1994) algorithm, while conditional on the draw of ft the
+parameters  can be estimated using any of the VAR priors of section 2 (see also
+the monograph). In the ﬁrst (the measurement) equation, conditional on ft, we
+
+
+===== PAGE 19 =====
+4.3 Factor-augmented VAR (FAVAR) 19
+sample each i using the arguments for simple regression models, i.e. a prior of
+the Normal-Gamma form (see Koop, 2003).
+Code BAYES_DFM.m (found in folder Factor_Models) estimates the above
+model.
+4.3 Factor-augmented VAR (FAVAR)
+The factor augmented VAR builds on the dynamic factor model structure and
+allows to identify monetary policy shocks. We use the simple formulation of
+Bernanke, Boivin and Eliasz (2005) which is
+yit = ift + irt + "it; (30)
+ 
+ft
+rt
+!
+=e1
+ 
+ft1
+rt1
+!
++ :: +ep
+ 
+ftp
+rtp
+!
++e"f
+t (31)
+wheree"f
+t is i.i.d. N
+
+0;ef
+
+and rt is a kr  1 vector of observed variables. For
+instance, Bernanke, Boivin and Eliasz (2005) set rt to be the Fed Funds rate (a
+monetary policy instrument) and, thus, kr = 1 . All other assumptions about the
+measurement equation are the same as for the DFM.
+Note that conditional on the parameters, the factors can be sampled using
+state-space methods (see the previous section) where ft is the unobserved state
+variable. This is easily implemented if we convert equation (31) from a VAR(p)
+model into a VAR(1) model (so that ft is Markov, which is a necessary assump-
+tion in order to use the Kalman ﬁlter). Subsequently, the parameter matrices
+e and ef have to be augmented with zeros in order to conform with the VAR(1)
+transformation, but we sample the non-zero elements the usual way.
+A different option is to use Principal Components to approximate the factors
+ft. Bayesian estimation provides us with dynamic factors, with covariance ef .
+Principal Components provide us only with static factors with normalized covari-
+ance I (since Principal Components provide a solution only to the factor equation
+(30) without taking into account the dynamics of the factors in equation (31)).
+PC estimates is a computationally tractable method regardless of the dimension
+of the data or the factors we want to extract but are subject to sampling error.
+MCMC estimation can be cumbersome in very large problems, but having the full
+
+
+===== PAGE 20 =====
+4.4 Time-varying parameters Factor-augmented VAR (FAVAR) 20
+posterior of the factors eliminates any sampling error uncertainty. MCMC esti-
+mation (and in general likelihood-based estimation) of dynamic factors using the
+Kalman ﬁlter requires strong identiﬁcation restrictions which may lead to factors
+with poor economic content. Subsequently the practitioner of this model should
+be very carefull when choosing a speciﬁc method to sample latent factors. Our
+empirical application proceeds with Principal Components, due to their compu-
+tational simplicity. No matter the chosen method, the parameters are sampled
+conditional on the current draw (for MCMC) or ﬁnal estimate (if using PC) of the
+factors, i.e. just as if the factors were observed data.
+In (30) we have M independent equations, so we can sample the parameters
+i and i equation-by-equation. Subsequently, we have M univariate regression
+models and a standard conjugate prior that can be used for the parameters is
+the Normal-Gamma (see Koop, 2003). Equation (31) is a VAR model on
+ 
+ft
+rt
+!
+and the reader is free to use any of the priors discussed in the respective Section
+about VAR models. For the purpose of the empirical illustration, we use the
+Noninformative prior. To summarize, we use priors of the form:
+i  N (0; cI)
+
+2
+i
+1
+ G (a; )
+e;ef _
+ef
+
+(M +kr+1)=2
+where, in the absense of prior information, c, a and  can be used in a data-based
+fashion, or set to uninformative values, like 100, 0:01 and 0:01, respectively.
+Code FAVAR.m (found in folder FAVAR) estimates this model using Principal
+Components and gives impulse responses for 115 + 3 variables in total. There is
+the option to use MCMC estimation of the factors, but this is not done automat-
+ically. There are directions to the user in order to comment some parts of the
+code, and uncomment others, in order to do that.
+4.4 Time-varying parameters Factor-augmented VAR (FAVAR)
+Extending the FAVAR model into a model with time-varying parameters is as
+"easy" as extending the VAR model into the TVP-VAR model we examined in
+the previous section. Given that one can still use a principal components ap-
+
+
+===== PAGE 21 =====
+4.4 Time-varying parameters Factor-augmented VAR (FAVAR) 21
+proximation of the factors in the TVP-FAVAR model, questions of interest are
+which parameters should be allowed to vary over time 2? For the purpose of our
+empirical illustration, we extend the FAVAR model of the previous subsection,
+equations (30) - (31) by allowing e =
+h
+e1; ::::;ep
+i
+and ef to be time-varying in a
+form which is exactly the same as the Heteroskedastic VAR model already dis-
+cussed (i.e. random walk evolution on each parameter). Exact details are given
+in the monograph, and section 3.3. We only have to note here that in contrast
+with the empirical illustration of the Homoskedastic and Heteroskedastic TVP-
+VARs, we do not use a training sample for the TVP-FAVAR application (though
+the reader can deﬁne a training sample in the same fashion as in section 3.3).
+Subsequently, the priors on the parameters et and ef
+t are given by equations
+(26) and (27). The priors for the constant parameters i and i are the ones used
+in the FAVAR model above.
+One can allow the loadings matrix to be time varying, as well as the log-
+variances of the errors in the equation (30). However the loadings matrix  con-
+tains many parameters, so the reader should be carefull to avoid overparame-
+trization when relaxing the assumption of constant loadings.
+Code TVP_FAVAR_FULL.m (found in folder TVP-FAVAR) estimates the TVP-
+FAVAR model and gives impulse responses for 115 + 3 variables in total.
+2This issue is addressed in Korobilis (2009a) and the reader is referred to this paper for more
+information.
+
+
+===== PAGE 22 =====
+4.5 Data used for factor model applications 22
+4.5 Data used for factor model applications
+All series were downloaded from St. Louis’ FRED database and cover the quar-
+ters Q1:1959 to Q3:2006. The series HHSNTN, PMNO, PMDEL, PMNV, MOCMQ,
+MSONDQ (series numbered 152 - 157 in the following table) were kindly provided
+by Mark Watson and come from the Global Insights Basic Economics Database.
+All series were seasonally adjusted: either taken adjusted from FRED or by ap-
+plying to the non-seasonally adjusted series a quarterly X11 ﬁlter based on an
+AR(4) model (after testing for seasonality). Some series in the database were ob-
+served only on a monthly basis and quarterly values were computed by averag-
+ing the monthly values over the quarter. Following [ ?], the fast moving variables
+are interest rates, stock returns, exchange rates and commodity prices. The
+rest of the variables in the dataset are the slow moving variables (output, em-
+ployment/unemployment etc). All variables are transformed to be approximate
+stationary. In particular, if zi;t is the original untransformed series, the transfor-
+mation codes are (column Tcode below): 1 - no transformation (levels), xi;t = zi;t;
+2 - ﬁrst difference, xi;t = zi;t  zi;t1 ; 4 - logarithm, xi;t = log zi;t; 5 - ﬁrst difference
+of logarithm, xi;t = log zi;t  log zi;t1.
+# Mnemonic Tcode Description
+1 CBI 1 Change in Private Inventories
+2 GDPC96 5 Real Gross Domestic Product, 3 Decimal
+3 FINSLC96 5 Real Final Sales of Domestic Product, 3 Decimal
+4 CIVA 1 Corporate Inventory Valuation Adjustment
+5 CP 5 Corporate Proﬁts After Tax
+6 CNCF 5 Corporate Net Cash Flow
+7 GDPCTPI 5 Gross Domestic Product: Chain-type Price Index
+8 FPI 5 Fixed Private Investment
+9 GSAVE 5 Gross Saving
+
+
+===== PAGE 23 =====
+4.5 Data used for factor model applications 23
+10 PRFI 5 Private Residential Fixed Investment
+11 CMDEBT 5 Household Sector: Liabilites: Household Credit
+Market Debt Outstanding
+12 INDPRO 5 Industrial Production Index
+13 NAPM 1 ISM Manufacturing: PMI Composite Index
+14 HCOMPBS 5 Business Sector: Compensation Per Hour
+15 HOABS 5 Business Sector: Hours of All Persons
+16 RCPHBS 5 Business Sector: Real Compensation Per Hour
+17 ULCBS 5 Business Sector: Unit Labor Cost
+18 COMPNFB 5 Nonfarm Business Sector: Compensation Per
+Hour
+19 HOANBS 5 Nonfarm Business Sector: Hours of All Persons
+20 COMPRNFB 5 Nonfarm Business Sector: Real Compensation
+Per Hour
+21 ULCNFB 5 Nonfarm Business Sector: Unit Labor Cost
+22 UEMPLT5 5 Civilians Unemployed - Less Than 5 Weeks
+23 UEMP5TO14 5 Civilian Unemployed for 5-14 Weeks
+24 UEMP15OV 5 Civilians Unemployed - 15 Weeks & Over
+25 UEMP15T26 5 Civilians Unemployed for 15-26 Weeks
+26 UEMP27OV 5 Civilians Unemployed for 27 Weeks & Over
+27 NDMANEMP 5 All Employees: Nondurable Goods Manufactur-
+ing
+28 MANEMP 5 Employees on Nonfarm Payrolls: Manufacturing
+29 SRVPRD 5 All Employees: Service-Providing Industries
+30 USTPU 5 All Employees: Trade, Transportation & Utilities
+31 USWTRADE 5 All Employees: Wholesale Trade
+32 USTRADE 5 All Employees: Retail Trade
+33 USFIRE 5 All Employees: Financial Activities
+34 USEHS 5 All Employees: Education & Health Services
+35 USPBS 5 All Employees: Professional & Business Services
+
+
+===== PAGE 24 =====
+4.5 Data used for factor model applications 24
+36 USINFO 5 All Employees: Information Services
+37 USSERV 5 All Employees: Other Services
+38 USPRIV 5 All Employees: Total Private Industries
+39 USGOVT 5 All Employees: Government
+40 USLAH 5 All Employees: Leisure & Hospitality
+41 AHECONS 5 Average Hourly Earnings: Construction
+42 AHEMAN 5 Average Hourly Earnings: Manufacturing
+43 AHETPI 5 Average Hourly Earnings: Total Private Indus-
+tries
+44 AWOTMAN 1 Average Weekly Hours: Overtime: Manufactur-
+ing
+45 AWHMAN 1 Average Weekly Hours: Manufacturing
+46 HOUST 4 Housing Starts: Total: New Privately Owned
+Housing Units Started
+47 HOUSTNE 4 Housing Starts in Northeast Census Region
+48 HOUSTMW 4 Housing Starts in Midwest Census Region
+49 HOUSTS 4 Housing Starts in South Census Region
+50 HOUSTW 4 Housing Starts in West Census Region
+51 HOUST1F 4 Privately Owned Housing Starts: 1-Unit Struc-
+tures
+52 PERMIT 4 New Private Housing Units Authorized by Build-
+ing Permit
+53 NONREVSL 5 Total Nonrevolving Credit Outstanding, SA, Bil-
+lions of Dollars
+54 USGSEC 5 U.S. Government Securities at All Commercial
+Banks
+55 OTHSEC 5 Other Securities at All Commercial Banks
+56 TOTALSL 5 Total Consumer Credit Outstanding
+57 BUSLOANS 5 Commercial and Industrial Loans at All Com-
+mercial Banks
+58 CONSUMER 5 Consumer (Individual) Loans at All Commercial
+Banks
+59 LOANS 5 Total Loans and Leases at Commercial Banks
+60 LOANINV 5 Total Loans and Investments at All Commercial
+Banks
+
+
+===== PAGE 25 =====
+4.5 Data used for factor model applications 25
+61 INVEST 5 Total Investments at All Commercial Banks
+62 REALLN 5 Real Estate Loans at All Commercial Banks
+63 BOGAMBSL 5 Board of Governors Monetary Base, Adjusted for
+Changes in Reserve Requirements
+64 TRARR 5 Board of Governors Total Reserves, Adjusted for
+Changes in Reserve Requirements
+65 BOGNONBR 5 Non-Borrowed Reserves of Depository Institu-
+tions
+66 NFORBRES 1 Net Free or Borrowed Reserves of Depository In-
+stitutions
+67 M1SL 5 M1 Money Stock
+68 CURRSL 5 Currency Component of M1
+69 CURRDD 5 Currency Component of M1 Plus Demand De-
+posits
+70 DEMDEPSL 5 Demand Deposits at Commercial Banks
+71 TCDSL 5 Total Checkable Deposits
+72 TB3MS 1 3-Month Treasury Bill: Secondary Market Rate
+73 TB6MS 1 6-Month Treasury Bill: Secondary Market Rate
+74 GS1 1 1-Year Treasury Constant Maturity Rate
+75 GS3 1 3-Year Treasury Constant Maturity Rate
+76 GS5 1 5-Year Treasury Constant Maturity Rate
+77 GS10 1 10-Year Treasury Constant Maturity Rate
+78 MPRIME 1 Bank Prime Loan Rate
+79 AAA 1 Moody’s Seasoned Aaa Corporate Bond Yield
+80 BAA 1 Moody’s Seasoned Baa Corporate Bond Yield
+81 sTB3MS 1 TB3MS - FEDFUNDS
+82 sTB6MS 1 TB6MS - FEDFUNDS
+83 sGS1 1 GS1 - FEDFUNDS
+84 sGS3 1 GS3 - FEDFUNDS
+85 sGS5 1 GS5 - FEDFUNDS
+
+
+===== PAGE 26 =====
+4.5 Data used for factor model applications 26
+86 sGS10 1 GS10 - FEDFUNDS
+87 sMPRIME 1 MPRIME - FEDFUNDS
+88 sAAA 1 AAA - FEDFUNDS
+89 sBAA 1 BBB - FEDFUNDS
+90 EXSZUS 5 Switzerland / U.S. Foreign Exchange Rate
+91 EXJPUS 5 Japan / U.S. Foreign Exchange Rate
+92 PPIACO 5 Producer Price Index: All Commodities
+93 PPICRM 5 Producer Price Index: Crude Materials for Fur-
+ther Processing
+94 PPIFCF 5 Producer Price Index: Finished Consumer Foods
+95 PPIFCG 5 Producer Price Index: Finished Consumer Goods
+96 PFCGEF 5 Producer Price Index: Finished Consumer Goods
+Excluding Foods
+97 PPIFGS 5 Producer Price Index: Finished Goods
+98 PPICPE 5 Producer Price Index Finished Goods: Capital
+Equipment
+99 PPIENG 5 Producer Price Index: Fuels & Related Products
+& Power
+100 PPIIDC 5 Producer Price Index: Industrial Commodities
+101 PPIITM 5 Producer Price Index: Intermediate Materials:
+Supplies & Components
+102 CPIAUCSL 5 Consumer Price Index For All Urban Consumers:
+All Items
+103 CPIUFDSL 5 Consumer Price Index for All Urban Consumers:
+Food
+104 CPIENGSL 5 Consumer Price Index for All Urban Consumers:
+Energy
+105 CPILEGSL 5 Consumer Price Index for All Urban Consumers:
+All Items Less Energy
+106 CPIULFSL 5 Consumer Price Index for All Urban Consumers:
+All Items Less Food
+107 CPILFESL 5 Consumer Price Index for All Urban Consumers:
+All Items Less Food & Energy
+
+
+===== PAGE 27 =====
+4.5 Data used for factor model applications 27
+108 OILPRICE 5 Spot Oil Price: West Texas Intermediate
+109 HHSNTN 1 Uni. of Mich. Index of Consumer Expectations
+(BCD-83)
+110 PMI 1 Purchasing Managers’ Index
+111 PMNO 1 NAPM New Orders Index
+112 PMDEL 1 NAPM Vendor Deliveries Index
+113 PMNV 1 NAPM Inventories Index
+114 MOCMQ 5 New Orders (NET) - Consumer Goods & Materi-
+als, 1996 Dollars (BCI)
+115 MSONDQ 5 New Orders - Non-defence Capital Goods, 1996
+Dollars (BCI)

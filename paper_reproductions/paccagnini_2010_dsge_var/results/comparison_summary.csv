@@ -1,0 +1,17 @@
+"experiment","lags","total_absolute_frequency_difference"
+"forward",1,200
+"forward",2,200
+"forward",3,200
+"forward",4,200
+"forward",5,200
+"forward",6,200
+"forward",7,200
+"forward",8,200
+"backward",1,64
+"backward",2,6
+"backward",3,58
+"backward",4,22
+"backward",5,168
+"backward",6,106
+"backward",7,32
+"backward",8,32

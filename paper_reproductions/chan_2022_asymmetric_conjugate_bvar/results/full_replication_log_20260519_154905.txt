@@ -1,0 +1,19 @@
+Preparing author and FRED data...
+Running asymmetric conjugate BVAR replication...
+ACP replication outputs written to: /Users/appassionata/Documents/New project/paper_reproductions/chan_2022_asymmetric_conjugate_bvar/results 
+         dataset      prior     kappa1     kappa2   log_ml
+kappa1      6var  symmetric 0.05075643 0.05075643 1599.167
+1           6var subjective 0.04000000 0.00160000 1556.368
+kappa11     6var asymmetric 0.14912572 0.02582378 1609.727
+kappa12    15var  symmetric 0.03224867 0.03224867 4233.384
+11         15var subjective 0.04000000 0.00160000 4146.118
+kappa111   15var asymmetric 0.13683895 0.01875885 4267.269
+       prior dataset     kappa1     kappa2   log_ml kappa1_paper kappa2_paper
+1 asymmetric   15var 0.13683895 0.01875885 4267.269        0.058       0.0043
+2 subjective   15var 0.04000000 0.00160000 4146.118        0.040       0.0016
+3  symmetric   15var 0.03224867 0.03224867 4233.384        0.008       0.0080
+  log_ml_paper kappa1_diff kappa2_diff log_ml_diff
+1       4341.6  0.07883895  0.01445885   -74.33137
+2       4329.8  0.00000000  0.00000000  -183.68243
+3       4333.3  0.02424867  0.02424867   -99.91634
+Full replication log saved to: /Users/appassionata/Documents/New project/paper_reproductions/chan_2022_asymmetric_conjugate_bvar/results/full_replication_log_20260519_154905.txt

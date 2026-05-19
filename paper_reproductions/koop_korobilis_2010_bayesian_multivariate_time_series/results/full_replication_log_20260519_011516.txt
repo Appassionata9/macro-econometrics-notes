@@ -1,0 +1,52 @@
+Preparing real data...
+trying URL 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDPCTPI'
+Content type 'application/csv' length 5766 bytes
+==================================================
+downloaded 5766 bytes
+
+trying URL 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE'
+Content type 'application/csv' length 14136 bytes (13 KB)
+==================================================
+downloaded 13 KB
+
+trying URL 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=TB3MS'
+Content type 'application/csv' length 17785 bytes (17 KB)
+==================================================
+downloaded 17 KB
+
+Wrote real-data files to: /Users/appassionata/Documents/New project/paper_reproductions/koop_korobilis_2010_bayesian_multivariate_time_series/data/processed 
+      variable observations mean_absolute_difference max_absolute_difference
+1    inflation          215                0.1592215               0.6475614
+2 unemployment          215                0.1151938               0.6000000
+3   tbill_rate          215                0.2243876               3.5833333
+  correlation
+1   0.9982188
+2   0.9944206
+3   0.9882443
+Running BVAR empirical illustration replication...
+BVAR replication outputs written to: /Users/appassionata/Documents/New project/paper_reproductions/koop_korobilis_2010_bayesian_multivariate_time_series/results 
+         coefficient inflation unemployment tbill_rate
+1          Intercept    0.2925       0.3207    -0.0116
+2     inflation_lag1    1.5088       0.0035     0.5494
+3  unemployment_lag1   -0.2663       1.2730    -0.7207
+4    tbill_rate_lag1   -0.0570      -0.0210     0.7741
+5     inflation_lag2   -0.4684       0.1016    -0.7757
+6  unemployment_lag2    0.1971      -0.3097     0.7897
+7    tbill_rate_lag2    0.0626      -0.0229    -0.0289
+8     inflation_lag3   -0.0772      -0.1885     0.8180
+9  unemployment_lag3   -0.0150      -0.1296    -0.3557
+10   tbill_rate_lag3   -0.0075       0.0966     0.1003
+11    inflation_lag4    0.0371       0.1151    -0.4848
+12 unemployment_lag4    0.0374       0.0670     0.3114
+13   tbill_rate_lag4   -0.0012      -0.0256     0.0591
+                      prior inflation_mean inflation_sd unemployment_mean
+1            noninformative       3.102664    0.3169589          4.610982
+2                 minnesota       3.110699    0.3191345          4.615038
+3         natural_conjugate       3.103874    0.3128545          4.606661
+inflation        true_value       3.275446           NA          4.700000
+          unemployment_sd tbill_rate_mean tbill_rate_sd
+1               0.3171899        4.380218     0.7825269
+2               0.3273269        4.354656     0.8187324
+3               0.3156904        4.387973     0.7591978
+inflation              NA        4.600000            NA
+Full replication log saved to: /Users/appassionata/Documents/New project/paper_reproductions/koop_korobilis_2010_bayesian_multivariate_time_series/results/full_replication_log_20260519_011516.txt
